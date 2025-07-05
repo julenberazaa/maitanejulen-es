@@ -69,9 +69,6 @@ const config: Config = {
           "sans-serif",
         ],
       },
-      animation: {
-        "bounce-slow": "bounce 2s infinite",
-      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
