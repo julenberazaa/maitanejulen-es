@@ -9,6 +9,7 @@ interface ImageState {
   rect: DOMRect | null
 }
 
+
 export default function TimelinePage() {
   const heroRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
