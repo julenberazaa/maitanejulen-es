@@ -90,6 +90,138 @@ export default function TimelinePage() {
     }
   }, [])
 
+  // Lógica del chat de Tuenti
+  useEffect(() => {
+    // Array de mensajes del chat - 3 enviados por Maitane, 1 respuesta de Julen
+    const messages = [
+      {from: 'out', text: 'Hola guapo'},
+      {from: 'out', text: 'Me gustas guapo'},
+      {from: 'out', text: '¿quieres quedar un día?'},
+      {from: 'in', text: 'Hoy no puedo, me voy a Olabeaga con mis amigos'}
+    ];
+
+    // Función para insertar un mensaje en el chat
+    const insertMessage = (message: {from: string, text: string}, index: number) => {
+      const chatBody = document.getElementById('chat-body');
+      if (!chatBody) return;
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `tuenti-message ${message.from === 'in' ? 'incoming' : 'outgoing'}`;
+      messageDiv.innerHTML = `<div class="tuenti-message-bubble">${message.text}</div>`;
+      
+      // Configurar la animación con delay incremental
+      messageDiv.style.animationDelay = `${index * 0.9}s`;
+      
+      chatBody.appendChild(messageDiv);
+    };
+
+    // Función para insertar indicador de "escribiendo"
+    const insertTypingIndicator = () => {
+      const chatBody = document.getElementById('chat-body');
+      if (!chatBody) return;
+      
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'tuenti-message incoming';
+      typingDiv.id = 'typing-indicator';
+      typingDiv.innerHTML = `
+        <div class="tuenti-typing-indicator">
+          <div class="tuenti-typing-dot"></div>
+          <div class="tuenti-typing-dot"></div>
+          <div class="tuenti-typing-dot"></div>
+        </div>
+      `;
+      
+      // Sin animation delay - debe aparecer inmediatamente cuando se crea
+      typingDiv.style.animationDelay = '0s';
+      
+      chatBody.appendChild(typingDiv);
+    };
+
+    // Función para reemplazar indicador con mensaje real
+    const replaceTypingWithMessage = (message: {from: string, text: string}) => {
+      const chatBody = document.getElementById('chat-body');
+      const typingIndicator = document.getElementById('typing-indicator');
+      
+      if (!chatBody || !typingIndicator) return;
+      
+      // Remover indicador
+      chatBody.removeChild(typingIndicator);
+      
+      // Insertar mensaje real
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `tuenti-message ${message.from === 'in' ? 'incoming' : 'outgoing'}`;
+      messageDiv.innerHTML = `<div class="tuenti-message-bubble">${message.text}</div>`;
+      
+      // Sin delay porque aparece inmediatamente después de remover el indicador
+      messageDiv.style.animationDelay = '0s';
+      
+      chatBody.appendChild(messageDiv);
+    };
+
+    // Insertar mensajes con delay progresivo
+    const timeouts: NodeJS.Timeout[] = [];
+    messages.forEach((message, index) => {
+      if (index < 3) {
+        // Primeros 3 mensajes (Maitane) - comportamiento normal
+        const timeout = setTimeout(() => {
+          insertMessage(message, index);
+          
+                  // Status dot ya no parpadea como se solicitó
+          
+          // Reproducir sonido si está soportado y el usuario no tiene reduced-motion
+          if (message.from === 'out' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            // Crear elemento ARIA live para accesibilidad
+            const ariaLive = document.createElement('div');
+            ariaLive.setAttribute('aria-live', 'polite');
+            ariaLive.style.position = 'absolute';
+            ariaLive.style.left = '-10000px';
+            ariaLive.textContent = 'Nuevo mensaje recibido';
+            document.body.appendChild(ariaLive);
+            
+            // Remover después de 2 segundos
+            setTimeout(() => {
+              if (document.body.contains(ariaLive)) {
+                document.body.removeChild(ariaLive);
+              }
+            }, 2000);
+            
+            // Intentar reproducir sonido (opcional)
+            try {
+              const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmfUARdm');
+              audio.volume = 0.1;
+              audio.play().catch(() => {}); // Ignorar errores si no se puede reproducir
+            } catch (e) {
+              // Ignorar errores de audio
+            }
+          }
+        }, index * 900); // 0.9 segundos de delay entre mensajes
+        
+        timeouts.push(timeout);
+      } else if (index === 3) {
+        // Mensaje de Julen - proceso de 2 pasos
+        
+        // Paso 1: Mostrar indicador de "escribiendo" a los 6.7s
+        const typingTimeout = setTimeout(() => {
+          insertTypingIndicator();
+        }, 6700); // 4700 + 2000ms adicionales
+        
+        timeouts.push(typingTimeout);
+        
+        // Paso 2: Reemplazar con mensaje real a los 9s
+        const messageTimeout = setTimeout(() => {
+          replaceTypingWithMessage(message);
+        }, 9000); // 6000 + 2000ms adicionales + 1000ms más de carga
+        
+        timeouts.push(messageTimeout);
+      }
+    });
+
+    // Cleanup function para limpiar timeouts
+    return () => {
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
+  }, [])
+
   const openImage = (e: React.MouseEvent<HTMLImageElement>) => {
     if (isMobile) return
     const rect = e.currentTarget.getBoundingClientRect()
@@ -174,32 +306,44 @@ export default function TimelinePage() {
           </div>
           <h1 className="text-6xl md:text-8xl font-bold mb-4 font-serif">Julen & Maitane</h1>
           <p className="text-xl md:text-2xl font-light mb-8 max-w-2xl mx-auto">
-            El último atardecer antes de su boda los encuentra de la mano frente al mar, celebrando casi tres décadas de recuerdos compartidos. Sus pasos sin prisa resumen la risa tímida del primer encuentro y los mapas doblados de sus viajes juntos. Cada color del cielo evoca los retos superados y los sueños cumplidos. Hoy abren este álbum infinito para compartir con quienes siempre los han acompañado.
+            Con toda la ilusion del mundo hemos tejido este pequeño regalo: un mosaico de risas y recuerdos para agradeceros el amor, la alegría y la inspiración que sembrais en cada uno de nosotros. Que estos pedacitos de vuestra vida os devuelvan multiplicado el cariño que hoy nos une para celebrar vuestra historia.
           </p>
           <div className="text-lg md:text-xl opacity-90">¡Nos casamos!</div>
         </div>
       </section>
 
       {/* Timeline Sections */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        {/* 2010 - Conocidos */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-            <img
-                src="/a1.jpg"
-                alt="Conocidos"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-            />
+      <div className="max-w-7xl mx-auto px-4 py-32">
+        {/* 2010 - Conocidos - Chat Tuenti */}
+        <section id="conocidos-2010" className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="lg:col-span-6 lg:pr-8">
+            {/* Chat de Tuenti */}
+            <div className="p-6">
+              <div className="tuenti-chat rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500 overflow-hidden" id="tuenti-chat-widget">
+                <div className="tc-header">
+                  <div className="tc-status" id="status-dot"></div>
+                  <span className="tc-title">Julen Baños Martín</span>
+                  <div className="tc-window-controls">
+                    <button className="tc-btn tc-minimize" title="Minimizar">−</button>
+                    <button className="tc-btn tc-maximize" title="Maximizar">□</button>
+                    <button className="tc-btn tc-close" title="Cerrar">×</button>
+                  </div>
+                </div>
+                <div className="tc-body" id="chat-body">
+                  {/* Aquí se insertarán las burbujas via JavaScript */}
+                </div>
+              </div>
             </div>
           </div>
-          <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
+          <div className="lg:col-span-6 lg:pl-8">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
-                <span className="text-ivory font-bold">14</span>
+                <svg className="w-6 h-6" viewBox="145.5 144.8 609 609.7" xmlns="http://www.w3.org/2000/svg">
+                  <path d="m269.2 146.1c-64.7 6.2-109.9 47.5-121.4 111l-2.3 12.4v360l2.3 12.6c5.7 31.6 17.9 55 39.3 75.4 17.5 16.7 39.4 28 63.8 32.9 19.7 4 23.3 4.1 201.1 4.1 161 0 172.2-.1 183.5-1.8 36.1-5.5 60.5-17.3 81.6-39.4 19.1-20 29.9-42 35.2-71.7l2.2-12.1v-361l-2.3-12c-5.9-31-18.9-55.8-39.3-75-22-20.6-48.3-31.9-82.9-35.5-11.5-1.2-348.5-1.1-360.8.1zm262.8 129.6c5.9 2.7 8.6 5.3 14.7 13.8 21.3 30 37.8 73.7 44.4 117.5 3.1 21 3.2 56.1 0 78-5.6 39.6-17.9 74.3-38.3 108.6-11.4 19.2-19 25.3-32.3 26.2-17.5 1.1-32.2-11.8-33.3-29.2-.6-9.6.6-13.3 8.4-25.6 46.2-73.1 45.6-168.9-1.6-240-5.8-8.7-7.3-13.8-6.8-22.2.9-13.8 9.4-24.5 22.8-28.9 4.4-1.5 17.1-.4 22 1.8zm-135 37.7c32 6.9 42.9 47.6 18.8 70.2-20.4 19-53.1 12.9-65.5-12.4-3.6-7.2-3.8-8.1-3.8-17.1 0-12.9 2.5-19.7 10.7-28.5 10.5-11.6 23.8-15.6 39.8-12.2zm1.8 154.1c7.3 2.2 15 8.8 18.7 16 2.7 5.3 3 6.8 3 14.9v9.1l-7.2 14.5c-3.9 8-12.1 24.8-18.2 37.5-20.4 41.9-22.1 45.1-26.4 49.3-7.1 6.9-11.8 8.7-22.2 8.7-7.8 0-9.7-.4-14.7-2.8-6.3-3.1-11.5-8.5-15-15.6-1.8-3.7-2.2-6.3-2.3-13.1v-8.5l8.2-17c9.4-19.8 32.1-66.3 36.5-75 4.7-9.4 11.9-15.8 20.8-18.6 4.3-1.3 13.4-1 18.8.6z" 
+                        fill="white"/>
+                </svg>
               </div>
-              <h3 className="text-3xl font-serif font-bold text-terracotta">Conocidos · 2010</h3>
+              <h3 className="text-3xl font-serif font-bold text-terracotta">Inicio · 2009</h3>
             </div>
             <p className="text-lg leading-relaxed text-midnight/80">
               En su primer día en tercero de ESO, Julen llega tarde y Maitane dibuja constelaciones junto a la ventana. El profesor los une en la misma fila y nace una amistad gracias a un comentario sobre música. Al intercambiar números prometen ayudarse con mates, sin imaginar que encendían algo más grande. Aquella tarde fue el inicio de un vínculo que perduraría más allá de un simple trabajo escolar.
@@ -221,13 +365,15 @@ export default function TimelinePage() {
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-            <img
-                src="/a2.jpg"
-                alt="Amigos inseparables"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-            />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a2.jpg"
+                    alt="Amigos inseparables"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -235,13 +381,15 @@ export default function TimelinePage() {
         {/* 2013 - Primera aventura */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-            <img
-                src="/a3.jpg"
-                alt="Primera aventura"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-            />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a3.jpg"
+                    alt="Primera aventura"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
@@ -271,13 +419,15 @@ export default function TimelinePage() {
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-            <img
-                src="/a4.jpg"
-                alt="Primer beso"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-            />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a4.jpg"
+                    alt="Primer beso"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -285,13 +435,15 @@ export default function TimelinePage() {
         {/* 2015 - A distancia */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-            <img
-                src="/a5.jpg"
-                alt="A distancia"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-            />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a5.jpg"
+                    alt="A distancia"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
@@ -321,13 +473,15 @@ export default function TimelinePage() {
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-            <img
-                src="/a6.jpg"
-                alt="Reencuentro en París"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-            />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a6.jpg"
+                    alt="Reencuentro en París"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -335,13 +489,15 @@ export default function TimelinePage() {
         {/* 2019 - Vuelta al mundo */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-              <img
-                src="/a7.jpg"
-                alt="Vuelta al mundo"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-              />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a7.jpg"
+                    alt="Vuelta al mundo"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
@@ -371,13 +527,15 @@ export default function TimelinePage() {
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-              <img
-                src="/a11.jpg"
-                alt="Adopción de Ilun"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-              />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a11.jpg"
+                    alt="Adopción de Ilun"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -385,13 +543,15 @@ export default function TimelinePage() {
         {/* 2022 - Propuesta */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-              <img
-                src="/a8.png"
-                alt="Propuesta"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-              />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a8.png"
+                    alt="Propuesta"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
@@ -421,13 +581,15 @@ export default function TimelinePage() {
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-              <img
-                src="/a9.png"
-                alt="Preparativos"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-              />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a9.png"
+                    alt="Preparativos"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -435,13 +597,15 @@ export default function TimelinePage() {
         {/* 2025 - La boda */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="overflow-hidden rounded-2xl shadow-xl">
-              <img
-                src="/a10.jpg"
-                alt="La boda"
-                className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer transition-transform duration-500 ease-in-out hover:scale-105' : ''}`}
-                onClick={openImage}
-              />
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+                <img
+                    src="/a10.jpg"
+                    alt="La boda"
+                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                    onClick={openImage}
+                />
+              </div>
             </div>
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
@@ -493,15 +657,17 @@ export default function TimelinePage() {
             </button>
           )}
 
-          <div className={`w-full max-w-4xl transition-all duration-700 ease-in-out overflow-hidden ${showVideo ? 'max-h-[600px] mt-8' : 'max-h-0'}`}>
-            <div className="aspect-video rounded-2xl shadow-2xl overflow-hidden">
-              <video
-                ref={videoRef}
-                src="https://res.cloudinary.com/dlyb3ahsq/video/upload/v1751704818/garaiona_video_4_v7dq3i.mp4"
-                controls
-                playsInline
-                className="w-full h-full"
-              ></video>
+          <div className={`w-full max-w-4xl transition-all duration-700 ease-in-out ${showVideo ? 'max-h-[600px] mt-8' : 'max-h-0 overflow-hidden'}`}>
+            <div className="p-6">
+              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom-large hover:custom-shadow-right-bottom-large-hover transition-all duration-500">
+                <video
+                  ref={videoRef}
+                  src="https://res.cloudinary.com/dlyb3ahsq/video/upload/v1751704818/garaiona_video_4_v7dq3i.mp4"
+                  controls
+                  playsInline
+                  className="w-full aspect-video"
+                ></video>
+              </div>
             </div>
           </div>
         </div>
