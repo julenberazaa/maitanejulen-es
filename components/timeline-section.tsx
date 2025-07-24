@@ -89,7 +89,7 @@ export default function TimelineSection({
 
             <h2 className="font-playfair text-4xl md:text-5xl font-bold text-midnight mb-6">{title}</h2>
 
-            <div className="prose prose-lg text-midnight/80 leading-relaxed">
+            <div className="prose prose-lg text-midnight/80 leading-relaxed text-justify">
               {content.split("\n").map((paragraph, i) => (
                 <p key={i} className="mb-4 last:mb-0">
                   {paragraph}

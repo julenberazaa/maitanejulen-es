@@ -432,10 +432,10 @@ export default function TimelinePage() {
                         fill="white"/>
                 </svg>
               </div>
-              <h3 className="text-3xl font-serif font-bold text-terracotta">Inicio · 2009</h3>
+              <h3 className="text-3xl font-serif font-bold text-terracotta">Los inicios... · 2009</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
-              En su primer día en tercero de ESO, Julen llega tarde y Maitane dibuja constelaciones junto a la ventana. El profesor los une en la misma fila y nace una amistad gracias a un comentario sobre música. Al intercambiar números prometen ayudarse con mates, sin imaginar que encendían algo más grande. Aquella tarde fue el inicio de un vínculo que perduraría más allá de un simple trabajo escolar.
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+              Todo empezó con un reto entre amigas, donde Maitane se fijó en Julen y se armó de valor para hablarle por Tuenti. Después de varios intentos, finalmente acabaron quedando y cuando ya estaban frente a frente Maitane pensó: "¿y ahora que?" 😨 Y a partir de aquel 17 de enero de 2009 comenzó todo….
             </p>
           </div>
         </section>
@@ -449,7 +449,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-sage">Primeras escapadas</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               Al principio mantenían la relación en secreto y cuando quedaban tenían que mentir a sus padres, con tan mala suerte, que en una ocasión les pillaron… y tuvieron que dar la cara! Poco a poco, la relación se fue consolidando, a pesar de existir alguna crisis…. 
               y empezaron los primeros viajes: cuando Julen se sacó el carnet y pedía el coche a sus padres para ir a la playa con Maitane, después a Noja y  luego su primer viaje en avión a Mallorca 🏝️. Julen viajó hasta Málaga sin que Maitane lo supiera, y se plantó ahí para darle una sorpresa y pasar unos días juntos❤️.
             </p>
@@ -493,7 +493,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-terracotta">Primera aventura · 2013</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               Con sus ahorros de verano, se apuntan a un campamento de kayak por el Sella, la primera experiencia lejos de casa. Amanecen en tienda de campaña con café soluble y nervios compartidos. Aprenden a remar sincronizados: cuando ella canta, él esquiva rocas; cuando él cede, ella lo anima. Sin saberlo, descubren que llevan años remando hacia el mismo destino.
             </p>
           </div>
@@ -508,7 +508,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-midnight">Primer beso · 2014</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               La feria de San Antón enciende Bilbao con neones y olor a algodón de azúcar. Tras una vuelta en la noria, Julen regala a Maitane un peluche ganado en el tiro al blanco. En medio de risas y música estridente, se atreven a cerrar la distancia con un beso inolvidable. Ese instante fugaz marca un antes y un después en su historia.
             </p>
           </div>
@@ -547,7 +547,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-sage">A distancia · 2015</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               La universidad los separa entre Madrid y Bilbao, pero las videollamadas se convierten en su nuevo ritual. Entre trenes nocturnos y cartas perfumadas de salvia, aprenden a medir la nostalgia en megas y husos horarios. Cada "buenas noches" incluye un "falta un día menos" que acorta kilómetros. La distancia demuestra que su amor es, más que un lugar, un lazo irrompible.
             </p>
           </div>
@@ -562,7 +562,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-terracotta">Reencuentro en París · 2017</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               Maitane sorprende a Julen en el Trocadéro durante su Erasmus y la Torre Eiffel cobra un brillo especial. Caminan abrazados junto al Sena, olvidando el frío invernal. Dejan un candado en el Pont des Arts con la promesa tácita de nunca separarse tanto. La magia de esa sorpresa consolida su compromiso sin fecha de caducidad.
             </p>
           </div>
@@ -601,7 +601,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-terracotta">Vuelta al mundo · 2019</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               Con pasaportes en mano y mochilas al hombro, abandonan el mapa convencional rumbo a Bangkok, Sydney y Ciudad de México. Cada Polaroid pegada en su diario capta motos atestadas, surf en Bondi y luchadores de lucha libre. Aprenden a pedir menú vegetariano en cinco idiomas y a reírse de vuelos retrasados. Descubren que su hogar es inseparable de su compañía mutua.
             </p>
           </div>
@@ -616,7 +616,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-sage">Adopción de Ilun · 2020</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               Un refugio local les presentó a Ilun, una bola de pelo negro con ojos color miel que necesitaba un hogar. La conexión fue instantánea. Sus días se llenaron de ladridos de bienvenida, paseos por el monte y siestas en el sofá. Ilun no solo se convirtió en su compañero fiel, sino en el corazón de su nueva familia, enseñándoles que el amor más puro a veces viene en cuatro patas.
             </p>
           </div>
@@ -655,7 +655,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-midnight">Propuesta · 2022</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               Suben al amanecer los 241 peldaños de Gaztelugatxe sin imaginar lo que les espera. En la cima, Julen se arrodilla con un anillo grabado "Kontuan izan nauzu" bajo el rugido del Cantábrico. Las lágrimas de Maitane mezclan sal y felicidad mientras la campana repica por segunda vez. Ese momento sella el inicio de un nuevo capítulo en su viaje conjunto.
             </p>
           </div>
@@ -670,7 +670,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-terracotta">Preparativos · 2024</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               Su sala se llena de muestrarios de flores, listas de invitados y tarjetas terracota dispuestas sobre la mesa. Debaten menú, música e invitaciones, aprendiendo a escuchar y ceder en cada detalle. Cada decisión refleja su complicidad y el deseo de celebrar no solo un día, sino todo lo vivido. El proceso revela que el verdadero regalo es planificar juntos su futuro.
             </p>
           </div>
@@ -709,7 +709,7 @@ export default function TimelinePage() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-midnight">La boda · 2025</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80">
+            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
               Entre encinas centenarias, sillas blancas y guirnaldas de eucalipto, los invitados se reúnen en un campo iluminado por el último rayo dorado. Julen espera con traje azul medianoche y Maitane avanza con velo ligero, sellando su historia con una promesa de amor eterno. Al confeti elevarse, cada aplauso celebra no un final, sino el prólogo de su vida en común.
             </p>
           </div>
