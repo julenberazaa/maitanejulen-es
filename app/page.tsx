@@ -450,7 +450,7 @@ export default function TimelinePage() {
               <h3 className="text-3xl font-serif font-bold text-sage">Primeras escapadas</h3>
             </div>
             <p className="text-lg leading-relaxed text-midnight/80 text-justify">
-              Al principio mantenían la relación en secreto y cuando quedaban tenían que mentir a sus padres, con tan mala suerte, que en una ocasión les pillaron… y tuvieron que dar la cara! Poco a poco, la relación se fue consolidando, a pesar de existir alguna crisis…. 
+              Al principio mantenían la relación en secreto y cuando quedaban tenían que mentir a sus padres, con tan mala suerte, que en una ocasión les pillaron… ¡y tuvieron que dar la cara! Poco a poco, la relación se fue consolidando, a pesar de existir alguna crisis…. 
               y empezaron los primeros viajes: cuando Julen se sacó el carnet y pedía el coche a sus padres para ir a la playa con Maitane, después a Noja y  luego su primer viaje en avión a Mallorca 🏝️. Julen viajó hasta Málaga sin que Maitane lo supiera, y se plantó ahí para darle una sorpresa y pasar unos días juntos❤️.
             </p>
           </div>
