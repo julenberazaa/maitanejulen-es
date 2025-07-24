@@ -33,7 +33,6 @@ export default function Hero() {
           Una historia de amor que comenzó con 7 años y culminará en 2025
         </p>
 
-        <div className="text-lg font-medium">¡Nos casamos!</div>
       </div>
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">

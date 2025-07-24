@@ -244,6 +244,10 @@
     font-size: 13px;
   }
 
+  .tuenti-sender-name {
+    font-size: 12px;
+  }
+
   .tuenti-typing-indicator {
     padding: 8px 12px;
     max-width: 50px;
@@ -381,6 +385,13 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   background: #0096D6;
   color: #FFFFFF;
+}
+
+.tuenti-sender-name {
+  font-weight: bold;
+  color: #CCE7FF;
+  font-size: 15px;
+  margin-right: 4px;
 }
 
 .tuenti-message.incoming .tuenti-message-bubble {

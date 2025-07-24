@@ -3,10 +3,13 @@
 import { useEffect, useRef, useState } from "react"
 import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint } from "lucide-react"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
+import ImageCarousel from "@/components/image-carousel"
 
 interface ImageState {
   src: string | null
   rect: DOMRect | null
+  images?: string[]
+  currentIndex?: number
 }
 
 
@@ -20,6 +23,7 @@ export default function TimelinePage() {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
+  const [modalImageIndex, setModalImageIndex] = useState(0)
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   useEffect(() => {
@@ -30,6 +34,25 @@ export default function TimelinePage() {
       return () => clearTimeout(timer)
     }
   }, [selectedImage.src])
+
+  // Modal carousel rotation effect
+  useEffect(() => {
+    if (selectedImage.images && selectedImage.images.length > 1) {
+      const interval = setInterval(() => {
+        setModalImageIndex((prevIndex) => {
+          const nextIndex = prevIndex === selectedImage.images!.length - 1 ? 0 : prevIndex + 1
+          setSelectedImage(prev => ({ 
+            ...prev, 
+            src: selectedImage.images![nextIndex],
+            currentIndex: nextIndex 
+          }))
+          return nextIndex
+        })
+      }, 3500) // Match carousel timing
+
+      return () => clearInterval(interval)
+    }
+  }, [selectedImage.images])
 
   useEffect(() => {
     if (showVideo && videoRef.current) {
@@ -94,20 +117,20 @@ export default function TimelinePage() {
   useEffect(() => {
     // Array de mensajes del chat - 3 enviados por Maitane, 1 respuesta de Julen
     const messages = [
-      {from: 'out', text: 'Hola guapo'},
-      {from: 'out', text: 'Me gustas guapo'},
-      {from: 'out', text: '¿quieres quedar un día?'},
-      {from: 'in', text: 'Hoy no puedo, me voy a Olabeaga con mis amigos'}
+      {from: 'out', sender: 'Maitane', text: 'Hola guapo'},
+      {from: 'out', sender: 'Maitane', text: 'Me gustas guapo'},
+      {from: 'out', sender: 'Maitane', text: '¿quieres quedar un día?'},
+      {from: 'in', sender: 'Julen', text: 'Hoy no puedo, me voy a Olabeaga con mis amigos'}
     ];
 
     // Función para insertar un mensaje en el chat
-    const insertMessage = (message: {from: string, text: string}, index: number) => {
+    const insertMessage = (message: {from: string, sender: string, text: string}, index: number) => {
       const chatBody = document.getElementById('chat-body');
       if (!chatBody) return;
       
       const messageDiv = document.createElement('div');
       messageDiv.className = `tuenti-message ${message.from === 'in' ? 'incoming' : 'outgoing'}`;
-      messageDiv.innerHTML = `<div class="tuenti-message-bubble">${message.text}</div>`;
+      messageDiv.innerHTML = `<div class="tuenti-message-bubble"><span class="tuenti-sender-name">${message.sender}:</span> ${message.text}</div>`;
       
       // Configurar la animación con delay incremental
       messageDiv.style.animationDelay = `${index * 0.9}s`;
@@ -138,7 +161,7 @@ export default function TimelinePage() {
     };
 
     // Función para reemplazar indicador con mensaje real
-    const replaceTypingWithMessage = (message: {from: string, text: string}) => {
+    const replaceTypingWithMessage = (message: {from: string, sender: string, text: string}) => {
       const chatBody = document.getElementById('chat-body');
       const typingIndicator = document.getElementById('typing-indicator');
       
@@ -150,7 +173,7 @@ export default function TimelinePage() {
       // Insertar mensaje real
       const messageDiv = document.createElement('div');
       messageDiv.className = `tuenti-message ${message.from === 'in' ? 'incoming' : 'outgoing'}`;
-      messageDiv.innerHTML = `<div class="tuenti-message-bubble">${message.text}</div>`;
+      messageDiv.innerHTML = `<div class="tuenti-message-bubble"><span class="tuenti-sender-name">${message.sender}:</span> ${message.text}</div>`;
       
       // Sin delay porque aparece inmediatamente después de remover el indicador
       messageDiv.style.animationDelay = '0s';
@@ -168,32 +191,7 @@ export default function TimelinePage() {
           
                   // Status dot ya no parpadea como se solicitó
           
-          // Reproducir sonido si está soportado y el usuario no tiene reduced-motion
-          if (message.from === 'out' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            // Crear elemento ARIA live para accesibilidad
-            const ariaLive = document.createElement('div');
-            ariaLive.setAttribute('aria-live', 'polite');
-            ariaLive.style.position = 'absolute';
-            ariaLive.style.left = '-10000px';
-            ariaLive.textContent = 'Nuevo mensaje recibido';
-            document.body.appendChild(ariaLive);
-            
-            // Remover después de 2 segundos
-            setTimeout(() => {
-              if (document.body.contains(ariaLive)) {
-                document.body.removeChild(ariaLive);
-              }
-            }, 2000);
-            
-            // Intentar reproducir sonido (opcional)
-            try {
-              const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmfUARdm');
-              audio.volume = 0.1;
-              audio.play().catch(() => {}); // Ignorar errores si no se puede reproducir
-            } catch (e) {
-              // Ignorar errores de audio
-            }
-          }
+
         }, index * 900); // 0.9 segundos de delay entre mensajes
         
         timeouts.push(timeout);
@@ -228,16 +226,41 @@ export default function TimelinePage() {
     setSelectedImage({ src: e.currentTarget.src, rect })
   }
 
+  const openImageCarousel = (imageSrc: string, imageArray: string[], currentIndex: number, rect: DOMRect) => {
+    if (isMobile) return
+    setSelectedImage({ src: imageSrc, rect, images: imageArray, currentIndex })
+    setModalImageIndex(currentIndex)
+  }
+
   const closeImage = () => {
     setIsClosing(true)
     setIsAnimating(false)
     setTimeout(() => {
       setSelectedImage({ src: null, rect: null })
+      setModalImageIndex(0)
       setIsClosing(false)
     }, 300) // Match transition duration
   }
 
-  const getModalStyle = (): React.CSSProperties => {
+  const getCloseButtonStyle = () => {
+    if (!selectedImage.images || selectedImage.images.length <= 1) {
+      // Para imagen individual
+      return {
+        top: `calc(${getModalStyle().top ?? '50%'} - 1.25rem)`,
+        left: `calc(${getModalStyle().left ?? '50%'} + ${getModalStyle().width ?? '0px'} - 1.25rem)`,
+      }
+    }
+    
+    // Para carrusel
+    const currentImageSrc = selectedImage.images[modalImageIndex]
+    const modalStyle = getModalStyle(currentImageSrc)
+    return {
+      top: `${window.innerHeight * 0.05 - 24}px`,
+      left: `calc(${modalStyle.left ?? '50%'} + ${modalStyle.width ?? '0px'} - 1.25rem)`,
+    }
+  }
+
+  const getModalStyle = (imageSrc?: string): React.CSSProperties => {
     const baseStyle: React.CSSProperties = { transition: 'all 0.3s ease-in-out' }
 
     if (!selectedImage.rect) {
@@ -249,13 +272,52 @@ export default function TimelinePage() {
 
     const screenWidth = window.innerWidth
     const screenHeight = window.innerHeight
-    const targetWidth = Math.min(screenWidth * 0.64, 960)
-    const targetHeight = targetWidth * (9 / 16)
+    
+    // Si la imagen viene del carrusel, usar altura auto para mantener proporciones naturales
+    const isCarouselImage = selectedImage.images && selectedImage.images.length > 1
+    let targetWidth: number
+    let targetHeight: number
+    
+    if (isCarouselImage) {
+      // Para imágenes del carrusel, calcular espacio disponible
+      const topPosition = screenHeight * 0.05 // 5% desde arriba
+      const bottomMargin = screenHeight * 0.05 + 20 // 5% adicional + 20px desde el borde inferior
+      const maxAvailableHeight = screenHeight - topPosition - bottomMargin - 60 // 60px menos de altura para más espacio inferior
+      const maxAvailableWidth = Math.min(screenWidth * 0.64, 960)
+      
+      // Todas las imágenes del carrusel tendrán la misma altura máxima
+      targetHeight = maxAvailableHeight
+      
+      // Para imágenes verticales, mantener la misma altura pero ajustar el ancho proporcionalmente
+      const isVerticalImage = imageSrc && (
+        imageSrc.includes('primeras-escapadas-01') || 
+        imageSrc.includes('vertical') ||
+        // Aquí se pueden añadir más nombres de imágenes verticales si es necesario
+        false
+      )
+      
+      if (isVerticalImage) {
+        // Para imágenes verticales, usar un ancho que permita mantener la altura máxima
+        // Esto permitirá que la imagen se escale automáticamente manteniendo proporciones
+        targetWidth = Math.min(screenWidth * 0.5, 700) // Ancho moderado para verticales
+      } else {
+        // Para imágenes horizontales, usar el ancho estándar
+        targetWidth = maxAvailableWidth
+      }
+    } else {
+      // Para imágenes individuales, mantener proporción 16:9
+      targetWidth = Math.min(screenWidth * 0.64, 960)
+      targetHeight = targetWidth * (9 / 16)
+    }
+    
     const finalStyle = {
-      top: `${(screenHeight - targetHeight) / 2}px`,
+      // Para imágenes del carrusel, posicionar más arriba (5% desde la parte superior)
+      top: isCarouselImage ? `${screenHeight * 0.05}px` : `${(screenHeight - targetHeight) / 2}px`,
       left: `${(screenWidth - targetWidth) / 2}px`,
       width: `${targetWidth}px`,
-      height: `${targetHeight}px`,
+      height: isCarouselImage ? 'auto' : `${targetHeight}px`,
+      maxHeight: isCarouselImage ? `${screenHeight - (screenHeight * 0.05) - (screenHeight * 0.05 + 20) - 60}px` : undefined,
+      maxWidth: isCarouselImage ? `${targetWidth}px` : undefined,
     }
 
     if (isClosing) return { ...baseStyle, ...initialStyle }
@@ -271,18 +333,46 @@ export default function TimelinePage() {
           onClick={closeImage}
         >
           <div className="relative w-full h-full">
-            <img 
-              src={selectedImage.src} 
-              alt="Vista ampliada" 
-              className="absolute object-cover rounded-2xl shadow-2xl"
-              style={getModalStyle()}
-            />
+            {/* Render all carousel images with fade or single image */}
+            {selectedImage.images && selectedImage.images.length > 1 ? (
+              selectedImage.images.map((image, index) => (
+                <div
+                  key={`modal-container-${image}-${index}`}
+                  className="absolute rounded-2xl shadow-2xl overflow-hidden"
+                  style={{
+                    ...getModalStyle(image),
+                    opacity: index === modalImageIndex ? 1 : 0,
+                    transition: 'opacity 1.5s ease-in-out, all 0.3s ease-in-out',
+                    zIndex: index === modalImageIndex ? 20 : 10,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <img
+                    src={image}
+                    alt={`Vista ampliada - Imagen ${index + 1}`}
+                    className="max-w-full max-h-full object-contain"
+                    style={{
+                      borderRadius: '1rem'
+                    }}
+                  />
+                </div>
+              ))
+            ) : (
+              <img 
+                src={selectedImage.src} 
+                alt="Vista ampliada" 
+                className="absolute object-cover rounded-2xl shadow-2xl"
+                style={getModalStyle()}
+              />
+            )}
             <button
               onClick={closeImage}
               className={`absolute w-12 h-12 bg-terracotta rounded-full flex items-center justify-center shadow-lg text-ivory transition-all duration-300 hover:scale-110 ${isAnimating && !isClosing ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
               style={{
-                top: `calc(${getModalStyle().top ?? '50%'} - 1.25rem)`,
-                left: `calc(${getModalStyle().left ?? '50%'} + ${getModalStyle().width ?? '0px'} - 1.25rem)`,
+                ...getCloseButtonStyle(),
+                zIndex: 30
               }}
             >
               <X className="w-6 h-6" />
@@ -305,10 +395,9 @@ export default function TimelinePage() {
             <Heart className="w-16 h-16 mx-auto mb-4 animate-pulse" />
           </div>
           <h1 className="text-6xl md:text-8xl font-bold mb-4 font-serif">Julen & Maitane</h1>
-          <p className="text-xl md:text-2xl font-light mb-8 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl font-light mb-8 max-w-2xl mx-auto mt-2">
             Con toda la ilusion del mundo hemos tejido este pequeño regalo: un mosaico de risas y recuerdos para agradeceros el amor, la alegría y la inspiración que sembrais en cada uno de nosotros. Que estos pedacitos de vuestra vida os devuelvan multiplicado el cariño que hoy nos une para celebrar vuestra historia.
           </p>
-          <div className="text-lg md:text-xl opacity-90">¡Nos casamos!</div>
         </div>
       </section>
 
@@ -356,24 +445,29 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 lg:pr-12">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center mr-4">
-                <span className="text-midnight font-bold">16</span>
+                <img src="/pareja4.svg" alt="Pareja" className="w-8 h-8" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-sage">Amigos inseparables · 2012</h3>
+              <h3 className="text-3xl font-serif font-bold text-sage">Primeras escapadas</h3>
             </div>
             <p className="text-lg leading-relaxed text-midnight/80">
-              Dos años de recreos en el parque forjaron un dúo imparable entre baloncesto, patines y risas compartidas. Sueñan juntos: él diseña coches, ella escribe guiones; graban cortos y crean chistes que solo entienden ellos. Cada tarde prometen nuevas aventuras y cumplen su palabra sin excepción. Su complicidad es tan natural que nadie imagina al uno sin el otro.
+              Al principio mantenían la relación en secreto y cuando quedaban tenían que mentir a sus padres, con tan mala suerte, que en una ocasión les pillaron… y tuvieron que dar la cara! Poco a poco, la relación se fue consolidando, a pesar de existir alguna crisis…. 
+              y empezaron los primeros viajes: cuando Julen se sacó el carnet y pedía el coche a sus padres para ir a la playa con Maitane, después a Noja y  luego su primer viaje en avión a Mallorca 🏝️. Julen viajó hasta Málaga sin que Maitane lo supiera, y se plantó ahí para darle una sorpresa y pasar unos días juntos❤️.
             </p>
           </div>
           <div className="lg:col-span-6">
             <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
-                <img
-                    src="/a2.jpg"
-                    alt="Amigos inseparables"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
-                />
-              </div>
+              <ImageCarousel
+                images={[
+                  "/experiences/experience-02/primeras-escapadas-01.jpg",
+                  "/experiences/experience-02/primeras-escapadas-02.jpg",
+                  "/experiences/experience-02/primeras-escapadas-03.jpg"
+                ]}
+                alt="Primeras escapadas"
+                experienceId="02"
+                onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                  openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                }}
+              />
             </div>
           </div>
         </section>
