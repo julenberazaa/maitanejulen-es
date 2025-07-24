@@ -46,6 +46,7 @@ export default function ImageCarousel({ images, alt, onImageClick, experienceId 
           src={image}
           alt={`${alt} - Imagen ${index + 1}`}
           draggable={false}
+          className={`${!isMobile ? 'hover:scale-105' : ''}`}
           style={{
             position: 'absolute',
             top: 0,
@@ -54,7 +55,7 @@ export default function ImageCarousel({ images, alt, onImageClick, experienceId 
             height: '100%',
             objectFit: 'cover',
             opacity: index === activeIndex ? 1 : 0,
-            transition: 'opacity 1.5s ease-in-out',
+            transition: 'opacity 1.5s ease-in-out, transform 0.5s ease-in-out',
             zIndex: index === activeIndex ? 20 : 10
           }}
         />
