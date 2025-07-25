@@ -402,9 +402,41 @@ export default function TimelinePage() {
       </section>
 
       {/* Timeline Sections */}
-      <div className="max-w-7xl mx-auto px-4 py-32">
+      <div 
+        className="w-full relative"
+        style={{
+          backgroundColor: '#fff9f4',
+          backgroundImage: 'url("https://www.transparenttextures.com/patterns/sandpaper.png")',
+          backgroundRepeat: 'repeat',
+          backgroundSize: '35%',
+          backgroundAttachment: 'local'
+        }}
+      >
+        {/* Flores decorativas en las esquinas */}
+        <img 
+          src="/flores/sup_izq.png" 
+          alt="" 
+          className="absolute top-8 left-8 md:top-12 md:left-12 w-32 h-32 md:w-48 md:h-48 opacity-70 z-10 pointer-events-none"
+        />
+        <img 
+          src="/flores/sup_der.png" 
+          alt="" 
+          className="absolute top-8 right-8 md:top-12 md:right-12 w-32 h-32 md:w-48 md:h-48 opacity-70 z-10 pointer-events-none"
+        />
+        <img 
+          src="/flores/inf_izq.png" 
+          alt="" 
+          className="absolute bottom-8 left-8 md:bottom-12 md:left-12 w-32 h-32 md:w-48 md:h-48 opacity-70 z-10 pointer-events-none"
+        />
+        <img 
+          src="/flores/inf_der.png" 
+          alt="" 
+          className="absolute bottom-8 right-8 md:bottom-12 md:right-12 w-32 h-32 md:w-48 md:h-48 opacity-70 z-10 pointer-events-none"
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 py-32 relative z-20">
         {/* 2010 - Conocidos - Chat Tuenti */}
-        <section id="conocidos-2010" className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+        <section id="conocidos-2010" className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out pt-16 md:pt-24">
           <div className="lg:col-span-6 lg:pr-8">
             {/* Chat de Tuenti */}
             <div className="p-6">
@@ -714,6 +746,7 @@ export default function TimelinePage() {
             </p>
           </div>
         </section>
+        </div>
       </div>
 
       {/* Final Section - Video */}
