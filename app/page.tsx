@@ -61,25 +61,42 @@ export default function TimelinePage() {
   }, [showVideo])
 
   useEffect(() => {
-    // Position carousel frame dynamically
-    const positionCarouselFrame = () => {
-      const anchor = document.getElementById('carousel-frame-anchor')
-      const frameImage = document.getElementById('carousel-frame-image')
+    // Position all frames dynamically
+    const positionAllFrames = () => {
+      // Position carousel frame
+      const carouselAnchor = document.getElementById('carousel-frame-anchor')
+      const carouselFrame = document.getElementById('carousel-frame-image')
       
-      if (anchor && frameImage) {
-        const rect = anchor.getBoundingClientRect()
-        frameImage.style.left = `${rect.left}px`
-        frameImage.style.top = `${rect.top}px`
-        frameImage.style.width = `${rect.width}px`
-        frameImage.style.height = `${rect.height + 2}px`
-        frameImage.style.opacity = '1'
+      if (carouselAnchor && carouselFrame) {
+        const rect = carouselAnchor.getBoundingClientRect()
+        carouselFrame.style.left = `${rect.left}px`
+        carouselFrame.style.top = `${rect.top}px`
+        carouselFrame.style.width = `${rect.width}px`
+        carouselFrame.style.height = `${rect.height + 2}px`
+        carouselFrame.style.opacity = '1'
       }
+
+      // Position individual image frames
+      const imageIds = ['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
+      imageIds.forEach(imageId => {
+        const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
+        const frame = document.getElementById(`image-frame-${imageId}`)
+        
+        if (anchor && frame) {
+          const rect = anchor.getBoundingClientRect()
+          frame.style.left = `${rect.left}px`
+          frame.style.top = `${rect.top}px`
+          frame.style.width = `${rect.width}px`
+          frame.style.height = `${rect.height + 2}px`
+          frame.style.opacity = '1'
+        }
+      })
     }
 
     // Position on load and scroll
-    positionCarouselFrame()
-    window.addEventListener('scroll', positionCarouselFrame)
-    window.addEventListener('resize', positionCarouselFrame)
+    positionAllFrames()
+    window.addEventListener('scroll', positionAllFrames)
+    window.addEventListener('resize', positionAllFrames)
 
     // Initialize scroll animations
     const observerOptions = {
@@ -129,8 +146,8 @@ export default function TimelinePage() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll)
-      window.removeEventListener("scroll", positionCarouselFrame)
-      window.removeEventListener("resize", positionCarouselFrame)
+      window.removeEventListener("scroll", positionAllFrames)
+      window.removeEventListener("resize", positionAllFrames)
       observer.disconnect()
     }
   }, [])
@@ -523,9 +540,9 @@ export default function TimelinePage() {
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="p-6 flex justify-center">
+                        <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="custom-shadow-right-bottom" style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
                   <ImageCarousel
                     images={[
                       "/experiences/experience-02/primeras-escapadas-01.jpg",
@@ -551,7 +568,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a3.jpg"
                       alt="Primera aventura"
@@ -559,17 +576,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a3" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -602,7 +610,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a4.jpg"
                       alt="Primer beso"
@@ -610,17 +618,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a4" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -631,7 +630,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a5.jpg"
                       alt="A distancia"
@@ -639,17 +638,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a5" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -682,7 +672,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a6.jpg"
                       alt="Reencuentro en París"
@@ -690,17 +680,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a6" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -711,7 +692,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a7.jpg"
                       alt="Vuelta al mundo"
@@ -719,17 +700,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a7" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -762,7 +734,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a11.jpg"
                       alt="Adopción de Ilun"
@@ -770,17 +742,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a11" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -791,7 +754,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a8.png"
                       alt="Propuesta"
@@ -799,17 +762,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a8" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -842,7 +796,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a9.png"
                       alt="Preparativos"
@@ -850,17 +804,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a9" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -871,7 +816,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a10.jpg"
                       alt="La boda"
@@ -879,17 +824,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marco floral */}
-                <img
-                  src="/marco_floral.png"
-                  alt=""
-                  className="absolute inset-0 w-full pointer-events-none z-10"
-                  style={{ 
-                    height: 'calc(384px + 2px)',
-                    objectFit: 'cover',
-                    transform: 'scale(1.5) translateX(-3px)' 
-                  }}
-                />
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="image-frame-anchor-a10" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -907,9 +843,9 @@ export default function TimelinePage() {
         </section>
         </div>
         
-        {/* Marco floral del carrusel - renderizado fuera del max-w-7xl */}
+        {/* Marcos florales - renderizados fuera del max-w-7xl */}
         <div 
-          id="carousel-frame-portal" 
+          id="frames-portal" 
           className="fixed pointer-events-none"
           style={{ 
             zIndex: 30,
@@ -920,6 +856,7 @@ export default function TimelinePage() {
             overflow: 'visible'
           }}
         >
+          {/* Marco del carrusel */}
           <img
             id="carousel-frame-image"
             src="/marco_floral.png"
@@ -934,6 +871,24 @@ export default function TimelinePage() {
               transition: 'opacity 0.3s ease'
             }}
           />
+          {/* Marcos de imágenes individuales */}
+          {['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10'].map(imageId => (
+            <img
+              key={imageId}
+              id={`image-frame-${imageId}`}
+              src="/marco_floral.png"
+              alt=""
+              className="absolute pointer-events-none"
+              style={{ 
+                width: '0px',
+                height: '0px',
+                objectFit: 'cover',
+                transform: 'scale(1.5) translateX(-3px)',
+                opacity: 0,
+                transition: 'opacity 0.3s ease'
+              }}
+            />
+          ))}
         </div>
       </div>
 
