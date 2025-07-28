@@ -1,0 +1,1818 @@
+Datos de chat extraídos el 2025-07-28 15:22:40.125971
+================================================================================
+
+CLAVE: workbench.panel.aichat.d469b899-a7b9-4bf7-bfaa-0e123ed0f094.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: interactive.sessions
+--------------------------------------------------
+[]
+================================================================================
+
+CLAVE: chat.editing.autosaveDisabled
+--------------------------------------------------
+[]
+================================================================================
+
+CLAVE: workbench.panel.aichat.bf08b02c-e7c3-4305-87e0-7624421d066c.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: workbench.panel.aichat.3ee17683-defd-404b-a9ab-a1c22e998826.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.bf08b02c-e7c3-4305-87e0-7624421d066c
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.47f501b9-c02f-48a8-935b-1731d4caedee": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.9ddce3fc-4e54-4221-a04f-447652c0fd0f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.303c08dd-849d-465d-9bc7-e100d5fa009c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.44b4dcd0-213f-4885-a939-eff4aac7fd40": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f1a95607-4908-470f-9cf7-50239216b96d": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.adef8c02-c56e-438a-87ba-3f8179f1f3ff": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c34fec7c-3129-43f0-b9be-38b3d6aa1b4c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b77a4093-0dad-46ad-8027-52c3d3046bb3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.beda4661-03a1-422e-8747-dffa000703a7": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c657c551-c49b-4889-8c73-bc1921292fdd": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.0df47063-8d00-4ef1-85f1-c4435d115448": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  }
+}
+================================================================================
+
+CLAVE: workbench.panel.aichat.0e93bf00-4ca7-490e-af9f-893e40440f72.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.d469b899-a7b9-4bf7-bfaa-0e123ed0f094
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.cbc193b1-0999-412e-a40a-a18e283a5b08": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c6fd3c88-b379-46b5-b496-58c66d500bf3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.38dedaa1-19f8-41c6-8bc8-6885901f53fe": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b5f10bf1-9711-4a95-a866-d2971dcfde7b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.32ffd380-91a7-4335-b224-c77e1a7ae558": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d2c5923f-7dcb-4cda-88b6-eee8a37c26d3": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.febec65b-9aab-46ca-8f61-582e862a8a5a": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.cbc56e4d-2ef9-4084-8e88-167c350fa1c6": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.66d52717-e642-47b2-a94d-e1e4a22d9869": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.b9a88f62-58ae-4357-afbf-99c6f4aea26a": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.c044417b-1139-44b3-b5ab-1ac30199c921": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.9266dcd2-1b86-4093-854e-9d79187d4d0d": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.33ba4836-c2a5-49eb-a12c-2227ee37a13c": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3c07998c-6243-439e-8768-2785c9cce449": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3c280b02-c2df-4f65-a456-e08881858b48": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.76558216-2339-4bdd-94c2-ebcfbbf98f0f": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.08135194-735f-41a6-950a-aef3f73b86ae": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3d4c3866-6d9f-42ca-a00a-f787c954cbdd": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.7d40d304-6583-4b68-80d3-f86a7968204d": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.fd3b0765-e3ac-4644-b749-f26ca4c5f229": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.b246a398-b2a1-43de-ac7b-c22a54380960": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.2b1dbe0b-749d-4258-bc15-e4f780168bd1": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.540bb2c6-0c60-4dbb-8bbb-acd3e552e1a2": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.f9586828-d72f-4fd7-af59-15041d8cb093": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.594be380-9529-404c-8026-6d5ef09f991e": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.f0c4b5fb-5019-4c45-b97e-a9181e4e0cf8": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.4489fd42-dfd2-4d03-b48e-f67cce3e0fbb": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.64764527-5b3b-4e73-ae83-60a8aaf90528": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.ddf53aaf-4d43-407d-930d-c89ef1ef1ea1": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.79fadbd4-9a49-4d4b-8ba2-b67d64ec296b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ede9946b-6ff6-4fa7-a1f1-db3babc7496f": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.c9da105a-2e8e-4c4a-bd29-c67cfbc4f2a5": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.9aae3658-1d28-47a2-9f0d-1dae6a428d9f": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.cb4a6092-e716-43b8-b82a-aa4f0927abad": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.af1abc19-8749-48e7-b337-0792de4f64a7": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.0dc9f844-b1f8-48be-8a92-795a774757f3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f70d15fd-fc03-4328-91e5-69b3cee775ac": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.2f2656ba-6c45-4a01-a9e8-58116571d0d6": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.85000ee7-21e9-423e-83d7-ec6183cb6f3d": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.32a664d2-b25e-47bf-abd2-0dc97067b063": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.52fe65e9-759b-483f-a205-54cbecfcbad5": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.65dcb1e5-3aba-406b-a700-26fdf681a5c5": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.515454af-3b35-4a1a-99a4-4e0ee3a2a803": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.090e4623-4f3d-4ca1-8dd9-01df7fa1c185": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.1d4828ba-6756-4204-9a4d-ed56993143d2": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.6462f009-fbf0-4758-a08c-9081183ba0f3": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.7966b362-6295-4f5b-9755-c3e5de4873d8": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.26e0feb6-6844-407d-a368-0cc7ba85831e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.369d4b3d-b039-46de-88fd-166d169834c5": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c75e0d7c-a909-43a8-867f-3d73a3ec00ab": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.90eacdba-a3ca-4500-804a-efbe95ac3491": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.5ac2c5cb-5559-4276-a59e-964cf6ad8e02": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8e518390-982e-4b41-b601-83e4322fa5eb": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.89f49ceb-add5-4471-8bfb-d8d820012a2e": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.4330775b-0331-4ffb-abf5-b1bd533830bd": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.f5d38473-0b21-4892-b30f-0e4b39588ba9": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.01f2fd3a-57ee-4991-b2ee-0d2a5e42ac3c": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.876f26ad-ea40-487b-a251-ece317716a76": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.26ea3917-b6ab-4d4e-b8c9-667cf1341fa6": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.5e283549-0a4a-4cf6-8fd7-cb1dca63402b": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3908b233-090e-4ba4-823b-680d715064dc": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.c47500a6-dab5-42d2-a533-9ddbfbaa65c7": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.98f82927-b69d-4b18-a6f4-54752003c562": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.9d42998c-9bb8-49ba-aa74-5e5cb3377881": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e86fac8d-0002-4b77-98de-f47f72ed90d2": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.af5c4ee9-95aa-42f6-b3c9-2bfee3f35ac7": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.48673c91-477f-42c8-93ad-1bbe3aecb5f9": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.981e6976-194e-4d1b-8cf8-d4df73b727bd": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.09265a23-d0b0-45a9-890b-2ed9b92bb3fe": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.c94004d6-dcd4-46a5-bdcf-94b8303547d7": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.4a85370e-6fc3-4792-a285-1919c35cdc56": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.481f219e-26f5-41df-b5e6-fcedaedf58b8": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.cd9f675d-dfd2-480c-b464-f637996d259f": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.702f6643-a8fe-4d09-b313-617807ad1b99": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.c86ce54d-e160-40c5-8b12-cc5c4ab229b1": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.c3a29dd0-2e63-4110-aa3b-b2be240846ed": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.224918f2-6dba-488f-9a91-a37a0e854473": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.212c269b-6aa5-4fe3-b79b-d584ce524ef4": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.4ac93bbb-9c3e-48b6-8ce6-adb6148c094c": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.582bdd9e-c732-43dd-8e9c-60c484b6ef2c": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.2275773a-942e-47cc-8706-4712ac22b190": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.9ddce3fc-4e54-4221-a04f-447652c0fd0f": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3dbd7c2b-d2b5-46b9-a235-63771c450771": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.6e6997a4-cd78-48d6-b208-dd9292466007": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.e4c99481-b46e-454f-8ed3-e3933e365b88": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.bc548320-a93a-48be-8bed-5b441d96cea3": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.d7af01da-f089-4611-9851-e31d936b239d": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.0d964cf2-051c-49bd-950d-a174f8890e9b": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.cb4c1de8-ad00-4c9d-87cb-95821e9d8a56": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.adef8c02-c56e-438a-87ba-3f8179f1f3ff": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.31250d2f-fd1e-4950-bef1-7fd21ec22143": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  }
+}
+================================================================================
+
+CLAVE: workbench.panel.aichat.209074ca-0f3a-48bb-bf63-63ff9b323d65.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.3ee17683-defd-404b-a9ab-a1c22e998826
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.f11d108b-a945-4ef6-9b4c-7ab7a37fdb27": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.adef8c02-c56e-438a-87ba-3f8179f1f3ff": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e4c7c8d9-1fe9-4f04-85c1-b11ac39bfe65": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.83eda1b8-a7b3-4df5-b357-65fd626bb2dd": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d6e67e26-aa07-437b-a792-dd31413cbd5a": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  }
+}
+================================================================================
+
+CLAVE: workbench.panel.aichat.a8fea476-ca94-46fc-9f82-29a409c8c1c7.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.0e93bf00-4ca7-490e-af9f-893e40440f72
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.eb7b051a-b3b2-4070-b2f0-f6eb5be2ad29": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e4c7c8d9-1fe9-4f04-85c1-b11ac39bfe65": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.77a12244-1063-4ad8-bc96-4494088a6714": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3dbd7c2b-d2b5-46b9-a235-63771c450771": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.7153e6d3-b4b0-49b9-898d-cbd60f0b40fc": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f32bc68b-cd6f-4804-a697-796d60918427": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1c8ec61d-3ff8-44c0-968a-96ac9faa68a8": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.47bb1041-b5e3-4b9e-a918-e6445ebcdd00": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e5d6da92-60c8-4c8f-90f3-8ad959ba2de6": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.44133dc1-3ad5-4379-bc6a-aa176a9187ae": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8f16f3fc-835e-47fe-aa92-2c710f125063": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.babf11a4-e7a2-4c41-a53f-1a526bb2fc7a": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b6e3d0af-f7f3-4016-a3a4-68532762f225": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c68c607d-5739-4a7c-8212-86e63caf141a": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1a77ef8b-87fc-48a1-a499-d5bc68ad2f0f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e98b24bd-9cbf-487b-9708-d23aabfb5dd0": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.56e3522f-ca3b-4b34-a562-9e29ad5a9f0b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8b95ba9b-8d7d-4531-a041-9162358ff8ec": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.80a407cd-8336-4d5f-b7c9-9f4581079530": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e4c9752b-6594-48d7-bb84-a3a5fbb193bf": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b4d23c3a-4e73-4b7c-b016-f7b338fd4608": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.11c4e9f3-1e91-4282-83db-b99128d2dbeb": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.03591b06-782b-40b8-912e-8d252783c1f5": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.74502721-0692-43fe-9d9e-fcddef5858b7": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  }
+}
+================================================================================
+
+CLAVE: workbench.panel.aichat.cf80d1da-b2e8-4d05-804b-3ef6c509ea7b.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.cf80d1da-b2e8-4d05-804b-3ef6c509ea7b
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.e84fd288-5f7a-4580-ac50-bebfdd9a9bc2": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ee7445dd-a1fd-481b-a0d6-62ce8ba952ac": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.65117760-ed43-4cc6-8881-d2796047f0e8": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.9bc8e7d4-41cd-4a79-aa1a-517e164f4c29": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.5063eb83-3134-4b34-bf34-016cfd8ab142": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d3947305-ad41-468c-91b9-90e112bbaf10": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.54fec8d9-0966-464d-aee5-d784a9bcec4b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8030f978-cdd2-4ed1-908b-8f02d91fe4e3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3da17e66-14f0-423b-beaa-051e5c4c7f34": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.244af5a3-682a-4d3c-b0f9-961f33537b2f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.351b2ce8-7181-4e8d-9912-f3549b209ea8": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.69fee774-5ed2-471f-b70c-90423697b960": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.14674a99-6733-40a8-869c-12e174eb2cdf": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c3df089f-88b8-461f-bc04-29eaa05dedaf": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.4bcfeaea-ca3b-48cb-9c7b-8538f81b8b09": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e9a6e0ac-cca8-4bdc-8ce5-c2c45bdbac86": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.0bee99a9-a3b3-4a56-a765-3a91c20356a5": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ec475e10-b7f8-4cca-a248-1e62907daaac": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.52bbdbf9-ef57-4689-b9b0-f9b1e54c79ec": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.72d93139-113a-4758-b7cd-e5f49dce40f8": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ba1d155f-b43e-4820-81c5-61dcc71d6061": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.9e424608-6f8e-4d36-965d-17c995b7342e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c4559851-f54f-44c4-a3ee-d3fa0aa50616": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.7a69c9c1-c83a-48fe-b2a9-cc53d219909e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.142ad5bb-70be-4e05-aca9-d8a8156d3f6b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d4f3e545-23bb-46ce-9da6-dd490da6ca90": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8254b5b1-ad0b-49b8-9169-a9f335dc6fa3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.92bfe257-2d33-47ed-b071-8d44541549c2": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.67dc64f8-0c92-4b55-99cb-2f6203a59e6c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.704f1142-7d87-45aa-b1d1-a46b2998c8d2": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.35957954-7138-4958-b4ab-e032132d52da": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.707987ad-45bd-4736-a587-6901bce01ef3": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.ce454f3b-bae6-4457-a64c-34ad283c7079": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.abb8fe5a-b36c-4462-b42b-bbfd3292ca78": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.7d8ca7d9-9117-407d-9dae-17e220d6e1a9": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3d95d6c4-19bb-4fe1-ad28-6b4e827ecd15": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.16e3ac36-5d53-4c0c-8e2e-64c95445a344": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.a64a0fa8-49cb-4cce-8340-7faa59afd7e9": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c73f5b67-b5fb-4028-84ca-d0664779d3fe": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.df51e86a-3623-4c2d-917e-938e0f9b9044": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d113f809-8204-4f3e-a438-921224128b05": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.29d230f9-5934-4876-83f9-ff1a71c0ba02": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3ebbeb1a-3b42-4f4b-8d9e-fdcc346005ee": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c4f165a9-c39e-4970-a875-c9bcf54161ae": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.dc0df021-5b4d-4cae-90bb-ce0ac2fa14ad": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.2284a02d-c615-4730-b1e1-10ea92da2b15": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.17a579e9-7128-4827-9fc7-c5de58d8c296": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ee7bb233-9535-4295-98b5-f23e1f0531af": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b2e34c3b-87a8-475b-b420-aa9b1e5c1be5": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.18057201-0f43-4061-95b5-3b45e72e8541": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.55f40202-a7a2-4993-a631-1703700c1a9d": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.f07a8b1c-2762-4fcf-9a00-155f9c6aff93": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1155303a-2eb5-4d43-98f5-640c99205a28": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f10134c9-ef91-4c2f-a2b9-f5e1958a5f1a": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.2b466d32-af17-473e-9814-3d61d06accdf": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.213452a8-2733-402d-a1fa-6e4bc54e85a3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.bdcbf695-c03e-4679-a80d-9e16b3fbe30f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.a8042445-d283-49e7-b531-df0f31a6de92": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8ad35dbe-2ee2-464f-a0c3-c8c265a4908c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  }
+}
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.a8fea476-ca94-46fc-9f82-29a409c8c1c7
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.8c5d928a-7198-4129-84ee-9f3bf6273306": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d6e67e26-aa07-437b-a792-dd31413cbd5a": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.17277eaa-94fa-4c6c-bf01-63a227e7f504": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.56ce1e0c-2f69-4f61-ba6b-10020875bea5": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.abebc8be-85cd-45e5-8337-c76fe07c48e7": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.a3f8f993-8ba5-4825-aad0-84215dcea1bb": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c903e2b1-7b4e-46b4-a35f-61bf760e3036": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.35ecc22d-2942-44d1-8f3b-673ad1d4377f": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.d16d4457-5dd1-4788-b684-1c9156eac12e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.69d04059-9ad2-4783-868f-abcf7ff1bbfe": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1a598741-e730-45e9-9623-5d1701e54eb8": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.fbbbd6fd-a043-44e7-893d-240fd7b654f6": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d90486d5-29e0-4c9d-bbbd-fa30f907f8f1": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.58106c1c-20be-48e4-8cea-384e693a2037": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.b60f2994-e049-4974-bcc1-78ddec0332db": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f1112804-f9f3-4378-b3ed-dc1ad1257c9a": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.6ba02e16-8621-4b1c-bdca-70fa01a194ed": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.50aa7b49-f2a3-465d-ace2-3168ce18a2cc": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1d2e4db7-7958-4039-a4e0-4787ea72647f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1a77ef8b-87fc-48a1-a499-d5bc68ad2f0f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.0e3302cb-a034-4497-a61d-d9db7cc58f29": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.dccd3cc8-37fd-4006-b454-777ed5472520": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3dda32d5-ff07-4635-a6ee-74793a9c23da": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.29ca6d1a-c5b2-4bc2-94f6-0628c7fc7842": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.768aa3fe-1f7b-4620-906e-b155fca7112e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8e21ba5d-b9b7-46b8-a83c-d62811ca48a4": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.5c1a98fd-f0b1-40ff-a920-3d0cc1385e8c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e9cfa21b-6b55-4656-9a41-d44096d2d711": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f05c83f6-ca39-4a65-8a0d-a8e669f6fa2c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.a0a11912-09fe-424e-a679-4a9d960dfd86": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.72236a4d-25e0-430f-92c8-f77db0b25e7b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.2c801256-2502-477b-ba2f-b5aa98fb28b8": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.91cda435-da89-47c6-8f5d-fe5f29a8c133": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f49f1eb3-8707-4e28-84f8-2cbf0a3de2e5": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.41bbed8f-c785-4596-aa9b-3e3bdf705857": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e84fd288-5f7a-4580-ac50-bebfdd9a9bc2": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.93672ece-c7cc-4ec1-99ca-23bef0ab7b5b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.07b1315a-5a7e-4e80-9b70-e9d8635ad4fe": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.a319ad10-cbc3-4858-a038-1a179ae9ad9a": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.79955feb-b8f4-47c4-8381-86a003b2f7e9": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.910503c9-8fb0-4689-a445-e5a1d9f663c6": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.244af5a3-682a-4d3c-b0f9-961f33537b2f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.33e044fc-cad5-4eb4-a8b5-8efcfe59768c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d02a756f-633f-4cfc-ad5a-ea1a727d669d": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.772e6f9e-79b4-4ca7-8a15-67c40a9a104c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.7a69c9c1-c83a-48fe-b2a9-cc53d219909e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1380887f-d184-41c7-a21c-e44691740088": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.004f75e5-f568-4c03-8297-26dac0ecdae3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.5830c4b2-065e-4da6-8fe7-33b2d9dfd3b6": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.de28ad1e-8209-4561-9ec4-bbfb5ad5c21e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.95adf70d-93ec-480e-b7a0-e52c0664ab0c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c4f165a9-c39e-4970-a875-c9bcf54161ae": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.24e907e2-a914-4811-9b69-908c2ec89ef5": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.efa9e234-61ed-4428-8f2f-1c767b89ec01": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.17686e76-e68c-499a-8823-8baa5a556060": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.21bb1379-0e3b-4c9c-a971-11f7a1116252": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.e4bf9006-269d-4f9d-bc8e-4fca919da416": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.017a7978-0cd7-45fc-ae85-7d8a63aba8ab": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.c79b7a33-ab72-4ec2-8574-40a09cb4b199": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8fcfc986-c171-4c21-bb50-315ff707e278": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3dc63567-aea2-4f7a-9e9b-6168fc446e10": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.4dd98953-3063-436b-8766-086d610f4b3b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.da0025f9-cfda-4d9e-b54f-3b2d4d76d899": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.1ee77e57-44c5-4473-a200-eb85d084af90": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.58d3263a-98c3-4e9b-b501-549312b3f1d3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.7cd1f0c7-a321-47f2-8e39-399d84880bb4": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.5c063f3b-d384-4f92-a9ed-8b899f8f0280": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.48c85129-1a1a-43de-abbd-efd3c9af4f5d": {
+    "collapsed": false,
+    "isHidden": false
+  }
+}
+================================================================================
+
+CLAVE: workbench.panel.aichat.1fc1b00d-ae42-458d-85f7-6c6e90ccba82.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: workbench.panel.aichat.7734bad8-e3f0-43e7-9433-46c4574a2f42.numberOfVisibleViews
+--------------------------------------------------
+1
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.1fc1b00d-ae42-458d-85f7-6c6e90ccba82
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.b803dc04-ae38-411c-82c8-e1238696c602": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.6e3f71e0-fd13-46b6-bf26-233b382e1f04": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.74f16f3c-cbaa-478f-acb7-1fe1468961cd": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8ae21a99-03aa-4d7b-8167-c0618aa8f023": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ecf807ef-6d89-4085-99a3-11428d87d0a0": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.2816852d-6e2f-4ab6-b32e-4175ae02fffe": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.40c352b1-5496-4055-b92f-833ba8504487": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  }
+}
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.209074ca-0f3a-48bb-bf63-63ff9b323d65
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.518f2d3c-e09b-4b00-9869-cc4617b57d34": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3dbd7c2b-d2b5-46b9-a235-63771c450771": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.eea32366-5394-4b6d-82eb-8a17e70ab643": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.83eda1b8-a7b3-4df5-b357-65fd626bb2dd": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.bdaf867b-5698-46b3-906a-5ebb1bf9bfd4": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.4957c064-f7c4-4f04-bb16-f94a44ea19dd": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b875732a-8b9f-4605-b5ce-2c1d6c0ed307": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.864ee364-1f0c-4690-8f3f-69064a2aca75": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3f14f2a8-5682-4ae9-a4a6-c16112093882": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1c8ec61d-3ff8-44c0-968a-96ac9faa68a8": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.7e9147e5-5fda-4e3a-8c25-99706154f435": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.341194c1-0387-46ed-a2d3-1f0aace0c52e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.6327cb21-4807-4302-b831-a50019855460": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3474e787-13d3-49ba-a5c1-fbf493abcbd9": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.a8c24f31-1877-4bee-b7f5-f2d9e9cb994e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.4c677023-3f84-4e2f-a621-998e7e813c7b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.107f3f87-aa4d-4bcf-910f-5aeb093ac3ac": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8972fb2f-2060-41e9-b1d0-0683cf2eaf8f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1a644e89-20e8-467e-9bee-2a4aeffb47f8": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.9fbd44c4-240f-440e-bbea-d799447ea8f2": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8a7bc5c9-1cb2-42c6-871f-646ba6f3a2ec": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f810fc03-6fa6-4ce6-a208-81242539c116": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.e33709b7-1e4e-4462-9fab-53b60b21e1fc": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3dda32d5-ff07-4635-a6ee-74793a9c23da": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b4d23c3a-4e73-4b7c-b016-f7b338fd4608": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f626ab1e-4838-4534-af7e-bda3a5917358": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.7b6a836d-fcbc-41f0-8bbf-779bcdb2d272": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8e21ba5d-b9b7-46b8-a83c-d62811ca48a4": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.a47b303f-afd2-49c1-acbd-08feddb42c46": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.5c1a98fd-f0b1-40ff-a920-3d0cc1385e8c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.948d5a40-2f98-4074-8a46-3e4e4ff21b8f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.768aa3fe-1f7b-4620-906e-b155fca7112e": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.74502721-0692-43fe-9d9e-fcddef5858b7": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3dfc8164-6dc0-4167-b7dc-7adf56f6d3c5": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b953d921-21a7-44d0-a1d3-1468366f0a7b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.9ac6aea6-b7b4-43ea-a91f-8741e30e3033": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.dc6bfcb9-7116-4e3d-b61e-db24f6201ee0": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.fb124726-f27b-456b-af75-66c1fc41bb4a": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.0ce33884-4793-4d2b-9be1-db5905a8fa44": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.72236a4d-25e0-430f-92c8-f77db0b25e7b": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.8c67e89d-784f-4977-957a-5f702967376d": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1f885d33-4b4b-4f8d-95c9-beeee3986b28": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ec475e10-b7f8-4cca-a248-1e62907daaac": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.71000cf8-749f-49d7-8ce7-9576e563a73e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.93127609-3aad-43d4-b846-b0af0e8f52dc": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.479db38c-5bae-46ea-9373-1c56c9e21cec": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.0edec47a-f142-44ac-9945-32af40f74ca8": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.54fec8d9-0966-464d-aee5-d784a9bcec4b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.2bc19c2d-d4fa-45a3-a807-3272d8e9923c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.6e8e478b-faef-4280-94de-be54f36d17a2": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.59d949d0-ab4d-4146-82fd-567baa7204d1": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d3a5d22a-d5dc-41f3-9faa-c4eab31a50f6": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.d02a756f-633f-4cfc-ad5a-ea1a727d669d": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.7a69c9c1-c83a-48fe-b2a9-cc53d219909e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.a69091eb-050e-4cdb-af27-48f6c3d6073c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.7e7e152e-642c-4aef-a389-595f22e62b9f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.413068e8-da25-4afc-983f-7137f9b36edc": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.d276af8d-e69f-478b-8ad0-c0905fb92ccf": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.6637f98a-bd14-4a0d-a081-0c110ca9d97f": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.4a78d582-b466-4964-ba08-dad42026a2f0": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.7cf10e09-9612-4454-af85-be984cb139ec": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.eb957299-3784-4337-a8c3-2c86f9ac62e0": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.b1c4250d-e2a1-4549-be26-24792e92f442": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.2284a02d-c615-4730-b1e1-10ea92da2b15": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.3ebbeb1a-3b42-4f4b-8d9e-fdcc346005ee": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.28bf8015-44a1-4d88-8e50-ff9acd23193c": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.4e20452c-dce9-4e0a-b780-8ac9b50ce56d": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.a355e969-c478-4d63-9298-934ecfb3c2d5": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3f43c70e-4d2f-4f14-bca8-d1acb7e97307": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.da0025f9-cfda-4d9e-b54f-3b2d4d76d899": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ac101983-4aeb-47e1-abfd-77ec1bba7edd": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.e38163e9-d80f-47c9-b631-6f41927aab8c": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.8644c218-c3f4-4180-beb1-2f2b73e00973": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.ca17019f-854e-4041-9cd2-b6ffcfc5b6d3": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.0c17af1d-f510-4889-9745-3f296aa8e0bc": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.c9012497-7a13-4819-b176-838f9286a412": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.b5656dbc-d71a-4d43-b36c-2ca914e8b0b0": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.4fc1bcf2-1894-480a-9355-57398b552627": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.3e3208ec-50f0-457f-af9a-bef33ebfc88e": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.5c10cd53-d67e-41fc-9560-c00f1010b3c7": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.4b7baaa4-cc82-49cf-8a54-e538a6454388": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.c1be1b2a-3925-462f-83f7-d3a99683e9c5": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.928b4c2a-6498-47df-9f93-4d9ee192174e": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.826fa6fb-a4c7-4472-ace3-93b54fb07be6": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.6417e7fd-465c-4fce-9b42-0de2aea5ec2b": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.eb4a083c-944e-48fd-a9ed-2e5c2955df7f": {
+    "collapsed": false,
+    "isHidden": false
+  },
+  "workbench.panel.aichat.view.66d74ecb-e9ef-4248-a7f6-a17d31fda692": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f6f7f164-75e9-486a-8329-6786060f57db": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.32b6a3c7-fd3c-479b-9c73-fc36fe1a4ecf": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.fe6896aa-79c5-491d-8554-4f7eae3e9415": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.94bf8449-65f2-4e9d-844f-6190ecc38daa": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  }
+}
+================================================================================
+
+CLAVE: workbench.panel.composerChatViewPane.7734bad8-e3f0-43e7-9433-46c4574a2f42
+--------------------------------------------------
+{
+  "workbench.panel.aichat.view.5aca0a4b-b5f8-4660-8bab-3c698348d85e": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.fccb575e-0829-42eb-a6f1-211f58e53014": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.29577fdb-068b-4375-87f0-78a9c887bbfe": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.4fd9f1b8-f393-4217-8a4a-280101eb293d": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.5598f6f9-31f5-44c3-9cae-112848a5358b": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.1278b5ca-901b-4870-9101-01c535b59e08": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.dde757ea-2fdc-407e-9731-4e2b3b9dc5e6": {
+    "collapsed": false,
+    "isHidden": false,
+    "size": 724
+  },
+  "workbench.panel.aichat.view.f50c49dc-6e4d-4ab8-9041-00f851058199": {
+    "collapsed": false,
+    "isHidden": false
+  }
+}
+================================================================================
+

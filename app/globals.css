@@ -66,6 +66,23 @@
   .font-serif {
     font-family: "Times New Roman", Times, serif;
   }
+  
+  .font-elegant {
+    font-family: "Playfair Display", serif;
+  }
+  
+  .font-script {
+    font-family: "Pinyon Script", cursive;
+  }
+  
+  .font-manuscript {
+    font-family: "Cormorant", serif;
+    font-weight: normal;
+  }
+  
+  .font-garamond {
+    font-family: "Garamond", "Times New Roman", serif;
+  }
 }
 
 @layer components {

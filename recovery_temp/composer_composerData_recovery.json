@@ -1,0 +1,2655 @@
+{
+  "allComposers": [
+    {
+      "type": "head",
+      "composerId": "f50c49dc-6e4d-4ab8-9041-00f851058199",
+      "name": "Recuperar cambios perdidos en Cursor",
+      "lastUpdatedAt": 1753708776838,
+      "createdAt": 1753708669970,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "dde757ea-2fdc-407e-9731-4e2b3b9dc5e6",
+      "name": "Aplicar tipografía en textos de historias",
+      "lastUpdatedAt": 1753706488272,
+      "createdAt": 1753704691833,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "94bf8449-65f2-4e9d-844f-6190ecc38daa",
+      "name": "Qué fondo y color de papel usar",
+      "lastUpdatedAt": 1753706092943,
+      "createdAt": 1753481052277,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "40c352b1-5496-4055-b92f-833ba8504487",
+      "name": "Agregar imágenes en las esquinas de la historia",
+      "lastUpdatedAt": 1753480919300,
+      "createdAt": 1753478505331,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "1278b5ca-901b-4870-9101-01c535b59e08",
+      "name": "Color hexadecimal del fondo de la historia",
+      "lastUpdatedAt": 1753473018185,
+      "createdAt": 1753471846347,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "5598f6f9-31f5-44c3-9cae-112848a5358b",
+      "name": "Poner imagen de fondo en historias",
+      "lastUpdatedAt": 1753393491486,
+      "createdAt": 1753390895929,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "fe6896aa-79c5-491d-8554-4f7eae3e9415",
+      "name": "Consistencia de estilos en diferentes dispositivos",
+      "lastUpdatedAt": 1753480442638,
+      "createdAt": 1753391927670,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "2816852d-6e2f-4ab6-b32e-4175ae02fffe",
+      "name": "Justificar textos de las historias",
+      "lastUpdatedAt": 1753392108194,
+      "createdAt": 1753391752147,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "ecf807ef-6d89-4085-99a3-11428d87d0a0",
+      "name": "Cambio de texto sobre inicios de amistad",
+      "lastUpdatedAt": 1753391556181,
+      "createdAt": 1753391466271,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "4fd9f1b8-f393-4217-8a4a-280101eb293d",
+      "name": "Ajustar altura de imágenes en carrusel",
+      "lastUpdatedAt": 1753390579692,
+      "createdAt": 1753372722897,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "32b6a3c7-fd3c-479b-9c73-fc36fe1a4ecf",
+      "name": "Añadir imagen a Primeras escapadas",
+      "lastUpdatedAt": 1753388420827,
+      "createdAt": 1753371476532,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "8ae21a99-03aa-4d7b-8167-c0618aa8f023",
+      "name": "Cambiar menciones de pareja3 a pareja4",
+      "lastUpdatedAt": 1753387170240,
+      "createdAt": 1753373250283,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "29577fdb-068b-4375-87f0-78a9c887bbfe",
+      "name": "Cambiar referencias de pareja2 a pareja3",
+      "lastUpdatedAt": 1753372423792,
+      "createdAt": 1753372363541,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "fccb575e-0829-42eb-a6f1-211f58e53014",
+      "name": "Actualizar texto de primeras escapadas",
+      "lastUpdatedAt": 1753372018789,
+      "createdAt": 1753368445015,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "74f16f3c-cbaa-478f-acb7-1fe1468961cd",
+      "name": "Analizar y limpiar el codebase",
+      "lastUpdatedAt": 1753371955995,
+      "createdAt": 1753371666251,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "6e3f71e0-fd13-46b6-bf26-233b382e1f04",
+      "name": "Modificar globos de mensajes en tuenti",
+      "lastUpdatedAt": 1753370604107,
+      "createdAt": 1753292813916,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "f6f7f164-75e9-486a-8329-6786060f57db",
+      "name": "Quitar texto de la parte inicial",
+      "lastUpdatedAt": 1753368143772,
+      "createdAt": 1753367911255,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "5aca0a4b-b5f8-4660-8bab-3c698348d85e",
+      "name": "Mejorar sombras de imágenes en Tuenti",
+      "lastUpdatedAt": 1753293582728,
+      "createdAt": 1753292814649,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "b803dc04-ae38-411c-82c8-e1238696c602",
+      "name": "Arreglar la estructura del chat en Tuenti",
+      "lastUpdatedAt": 1753292789665,
+      "createdAt": 1753290304414,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "66d74ecb-e9ef-4248-a7f6-a17d31fda692",
+      "name": "Clonar chat clásico de Tuenti",
+      "lastUpdatedAt": 1753292174982,
+      "createdAt": 1753286625329,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "eb4a083c-944e-48fd-a9ed-2e5c2955df7f",
+      "name": "Cambiar texto del hero para regalo",
+      "lastUpdatedAt": 1753221312558,
+      "createdAt": 1753217098236,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "6417e7fd-465c-4fce-9b42-0de2aea5ec2b",
+      "name": "Configurar build y export en Next.js",
+      "lastUpdatedAt": 1751751730386,
+      "createdAt": 1751751148401,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "826fa6fb-a4c7-4472-ace3-93b54fb07be6",
+      "name": "Actualizar textos y añadir imágenes a la boda",
+      "lastUpdatedAt": 1751750731303,
+      "createdAt": 1751665527602,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "928b4c2a-6498-47df-9f93-4d9ee192174e",
+      "createdAt": 1751663927670,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false,
+      "lastUpdatedAt": 1751665087607,
+      "name": "Preparar proyecto boda1 en localhost 3002"
+    },
+    {
+      "type": "head",
+      "composerId": "c9012497-7a13-4819-b176-838f9286a412",
+      "name": "Cómo abrir carpeta boda en localhost",
+      "lastUpdatedAt": 1751663744754,
+      "createdAt": 1751662811877,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "0c17af1d-f510-4889-9745-3f296aa8e0bc",
+      "name": "### Concepto general\r",
+      "lastUpdatedAt": 1751662121866,
+      "createdAt": 1751660336988,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "hasUnreadMessages": false
+    },
+    {
+      "type": "head",
+      "composerId": "48c85129-1a1a-43de-abbd-efd3c9af4f5d",
+      "name": "Just a friendly hello",
+      "lastUpdatedAt": 1751653964285,
+      "createdAt": 1751653768519,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "5c063f3b-d384-4f92-a9ed-8b899f8f0280",
+      "name": "Agregar borde azul a inputs de texto",
+      "lastUpdatedAt": 1751527716544,
+      "createdAt": 1751494730002,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8ad35dbe-2ee2-464f-a0c3-c8c265a4908c",
+      "name": "Qué librería usar para gráficos",
+      "lastUpdatedAt": 1751526833832,
+      "createdAt": 1751526803209,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "ca17019f-854e-4041-9cd2-b6ffcfc5b6d3",
+      "name": "Solucionar problemas de carga de formularios de pago",
+      "lastUpdatedAt": 1751494458928,
+      "createdAt": 1751484589345,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7cd1f0c7-a321-47f2-8e39-399d84880bb4",
+      "name": "Errores de CORS y problemas de build",
+      "lastUpdatedAt": 1751492291859,
+      "createdAt": 1751489816772,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "213452a8-2733-402d-a1fa-6e4bc54e85a3",
+      "name": "Fixing payment method integration error",
+      "lastUpdatedAt": 1751484587369,
+      "createdAt": 1751368245176,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8644c218-c3f4-4180-beb1-2f2b73e00973",
+      "name": "Quitar el botón debug de user.tsx",
+      "lastUpdatedAt": 1751481914965,
+      "createdAt": 1751481806800,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e38163e9-d80f-47c9-b631-6f41927aab8c",
+      "name": "Implementación de Circuit Breaker y pool MySQL",
+      "lastUpdatedAt": 1751451286246,
+      "createdAt": 1751449102216,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "58d3263a-98c3-4e9b-b501-549312b3f1d3",
+      "name": "Agregar total mensual en compra y confirmación",
+      "lastUpdatedAt": 1751396715624,
+      "createdAt": 1751384527306,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "da0025f9-cfda-4d9e-b54f-3b2d4d76d899",
+      "name": "Cambiar modal de edición en Programas Inscritos",
+      "lastUpdatedAt": 1751367839361,
+      "createdAt": 1751295801304,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4dd98953-3063-436b-8766-086d610f4b3b",
+      "name": "Arreglar botón de anunciate en móviles",
+      "lastUpdatedAt": 1751366905447,
+      "createdAt": 1751291508657,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "ac101983-4aeb-47e1-abfd-77ec1bba7edd",
+      "name": "Mejoras en compra.tsx y opciones de pago",
+      "lastUpdatedAt": 1751307177460,
+      "createdAt": 1751307088003,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "2b466d32-af17-473e-9814-3d61d06accdf",
+      "name": "Crítica del código de Express.js y PostgreSQL",
+      "lastUpdatedAt": 1751306600785,
+      "createdAt": 1751303008125,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f10134c9-ef91-4c2f-a2b9-f5e1958a5f1a",
+      "name": "Crear imagen mermaid con modificaciones",
+      "lastUpdatedAt": 1751301438076,
+      "createdAt": 1751300393647,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3f43c70e-4d2f-4f14-bca8-d1acb7e97307",
+      "name": "Eliminar pestaña de eventos del header",
+      "lastUpdatedAt": 1751295795151,
+      "createdAt": 1751285380738,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3dc63567-aea2-4f7a-9e9b-6168fc446e10",
+      "name": "Veracidad de métricas en health-checks",
+      "lastUpdatedAt": 1751291171800,
+      "createdAt": 1751291142895,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "1155303a-2eb5-4d43-98f5-640c99205a28",
+      "name": "Ajustar logo en la sección hero",
+      "lastUpdatedAt": 1751290035639,
+      "createdAt": 1751288012956,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8fcfc986-c171-4c21-bb50-315ff707e278",
+      "name": "Eliminar contraseña de acceso a la página",
+      "lastUpdatedAt": 1751287444217,
+      "createdAt": 1751286669158,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "a355e969-c478-4d63-9298-934ecfb3c2d5",
+      "name": "Aspectos destacados de NFR y críticas",
+      "lastUpdatedAt": 1750969283426,
+      "createdAt": 1750969268623,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4e20452c-dce9-4e0a-b780-8ac9b50ce56d",
+      "name": "Reescribiendo historias de gestión de proyectos",
+      "lastUpdatedAt": 1750957051442,
+      "createdAt": 1750956881643,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "28bf8015-44a1-4d88-8e50-ff9acd23193c",
+      "name": "Crea un README para el TFG",
+      "lastUpdatedAt": 1750924629426,
+      "createdAt": 1750924395407,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3ebbeb1a-3b42-4f4b-8d9e-fdcc346005ee",
+      "name": "¿Está implementado el testing automatizado?",
+      "lastUpdatedAt": 1750875087249,
+      "createdAt": 1750709488547,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f07a8b1c-2762-4fcf-9a00-155f9c6aff93",
+      "name": "Illustrating technical points with code snippets",
+      "lastUpdatedAt": 1750874370369,
+      "createdAt": 1750873709879,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "55f40202-a7a2-4993-a631-1703700c1a9d",
+      "name": "Consulta sobre implementación de pool de conexiones",
+      "lastUpdatedAt": 1750873337539,
+      "createdAt": 1750873228614,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "18057201-0f43-4061-95b5-3b45e72e8541",
+      "name": "Implementación de soluciones críticas",
+      "lastUpdatedAt": 1750862570016,
+      "createdAt": 1750860581206,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b2e34c3b-87a8-475b-b420-aa9b1e5c1be5",
+      "name": "Revisar problemas y soluciones del codebase",
+      "lastUpdatedAt": 1750858436865,
+      "createdAt": 1750858413071,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "ee7bb233-9535-4295-98b5-f23e1f0531af",
+      "name": "Error en inicio de sesión con código 400",
+      "lastUpdatedAt": 1750851438330,
+      "createdAt": 1750850538827,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c79b7a33-ab72-4ec2-8574-40a09cb4b199",
+      "name": "Remove frontend logs API endpoint",
+      "lastUpdatedAt": 1750850364659,
+      "createdAt": 1750800227649,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "17a579e9-7128-4827-9fc7-c5de58d8c296",
+      "name": "Plan profesional para mejorar el rendimiento",
+      "lastUpdatedAt": 1750850048442,
+      "createdAt": 1750791287167,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "017a7978-0cd7-45fc-ae85-7d8a63aba8ab",
+      "name": "HTTP Observatory report for garaiona.com",
+      "lastUpdatedAt": 1750799021332,
+      "createdAt": 1750798958343,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e4bf9006-269d-4f9d-bc8e-4fca919da416",
+      "name": "Evaluación de legibilidad de correos electrónicos",
+      "lastUpdatedAt": 1750791875249,
+      "createdAt": 1750767776788,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "2284a02d-c615-4730-b1e1-10ea92da2b15",
+      "name": "Introduction to the audit",
+      "lastUpdatedAt": 1750791143350,
+      "createdAt": 1750776904624,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "dc0df021-5b4d-4cae-90bb-ce0ac2fa14ad",
+      "name": "Auditoría de seguridad y mejoras necesarias",
+      "lastUpdatedAt": 1750781682451,
+      "createdAt": 1750779519697,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b1c4250d-e2a1-4549-be26-24792e92f442",
+      "name": "Completar tabla para cuentas delegadas",
+      "lastUpdatedAt": 1750774782805,
+      "createdAt": 1750769743343,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "21bb1379-0e3b-4c9c-a971-11f7a1116252",
+      "name": "Revisión de diagrama de secuencia",
+      "lastUpdatedAt": 1750763572883,
+      "createdAt": 1750763417375,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c4f165a9-c39e-4970-a875-c9bcf54161ae",
+      "name": "Auditoría de gestión del proyecto en el repositorio",
+      "lastUpdatedAt": 1750757952742,
+      "createdAt": 1750701510059,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "eb957299-3784-4337-a8c3-2c86f9ac62e0",
+      "name": "Revisión de texto sobre CTA con efecto Glow",
+      "lastUpdatedAt": 1750754116969,
+      "createdAt": 1750754098416,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "17686e76-e68c-499a-8823-8baa5a556060",
+      "name": "Reorganizar el codebase con DDD",
+      "lastUpdatedAt": 1750716195078,
+      "createdAt": 1750713890820,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "efa9e234-61ed-4428-8f2f-1c767b89ec01",
+      "name": "Actualizar tarifas publicitarias en el sitio",
+      "lastUpdatedAt": 1750713730820,
+      "createdAt": 1750713161874,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7cf10e09-9612-4454-af85-be984cb139ec",
+      "name": "Plan de limpieza profunda del repositorio",
+      "lastUpdatedAt": 1750713072510,
+      "createdAt": 1750709785318,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "24e907e2-a914-4811-9b69-908c2ec89ef5",
+      "name": "Verificación de información del proyecto",
+      "lastUpdatedAt": 1750709329261,
+      "createdAt": 1750708453712,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "29d230f9-5934-4876-83f9-ff1a71c0ba02",
+      "name": "Revisión de la internacionalización en react-i18next",
+      "lastUpdatedAt": 1750701452568,
+      "createdAt": 1750701436332,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "df51e86a-3623-4c2d-917e-938e0f9b9044",
+      "name": "Evaluación crítica de métricas Lighthouse",
+      "lastUpdatedAt": 1750700699056,
+      "createdAt": 1750690156594,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "d113f809-8204-4f3e-a438-921224128b05",
+      "name": "Hemos utilizado Grafana en el proyecto",
+      "lastUpdatedAt": 1750699934198,
+      "createdAt": 1750699919217,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c73f5b67-b5fb-4028-84ca-d0664779d3fe",
+      "name": "Desarrollo del diseño de seguridad para tesis",
+      "lastUpdatedAt": 1750687368200,
+      "createdAt": 1750681907494,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "a64a0fa8-49cb-4cce-8340-7faa59afd7e9",
+      "name": "Generación de modelo de datos y persistencia",
+      "lastUpdatedAt": 1750676115046,
+      "createdAt": 1750676076413,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "16e3ac36-5d53-4c0c-8e2e-64c95445a344",
+      "name": "Informe detallado de UX/UI y accesibilidad",
+      "lastUpdatedAt": 1750629107531,
+      "createdAt": 1750628340308,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "95adf70d-93ec-480e-b7a0-e52c0664ab0c",
+      "name": "Add txt file to document root",
+      "lastUpdatedAt": 1750625043570,
+      "createdAt": 1750624908985,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3d95d6c4-19bb-4fe1-ad28-6b4e827ecd15",
+      "name": "Optimizing codebase for performance improvements",
+      "lastUpdatedAt": 1750621915469,
+      "createdAt": 1750620297980,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7d8ca7d9-9117-407d-9dae-17e220d6e1a9",
+      "name": "Desactivar temporalmente la contraseña",
+      "lastUpdatedAt": 1750619510933,
+      "createdAt": 1750619369660,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "abb8fe5a-b36c-4462-b42b-bbfd3292ca78",
+      "name": "Documentación de la API RESTful para Garaiona",
+      "lastUpdatedAt": 1750617626999,
+      "createdAt": 1750617624210,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "ce454f3b-bae6-4457-a64c-34ad283c7079",
+      "name": "Modelo de datos y persistencia para plataforma online",
+      "lastUpdatedAt": 1750616567067,
+      "createdAt": 1750616093605,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "707987ad-45bd-4736-a587-6901bce01ef3",
+      "name": "Revisión de gestión de datos y almacenamiento",
+      "lastUpdatedAt": 1750615345718,
+      "createdAt": 1750614791353,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "35957954-7138-4958-b4ab-e032132d52da",
+      "name": "Agregar enlace en el header",
+      "lastUpdatedAt": 1750450283584,
+      "createdAt": 1750450002850,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "de28ad1e-8209-4561-9ec4-bbfb5ad5c21e",
+      "name": "Investigating user registration name issue",
+      "lastUpdatedAt": 1750449965149,
+      "createdAt": 1750417553486,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4a78d582-b466-4964-ba08-dad42026a2f0",
+      "name": "Compile functional requirements from repository",
+      "lastUpdatedAt": 1750435200001,
+      "createdAt": 1750432662445,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "704f1142-7d87-45aa-b1d1-a46b2998c8d2",
+      "name": "Extract functional requirements from repository",
+      "lastUpdatedAt": 1750434924184,
+      "createdAt": 1750434739493,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "67dc64f8-0c92-4b55-99cb-2f6203a59e6c",
+      "name": "Analyze upload error in biblioteca",
+      "lastUpdatedAt": 1750432511196,
+      "createdAt": 1750431046820,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "6637f98a-bd14-4a0d-a081-0c110ca9d97f",
+      "name": "Revisión de tecnologías del proyecto",
+      "lastUpdatedAt": 1750427934897,
+      "createdAt": 1750427905552,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "92bfe257-2d33-47ed-b071-8d44541549c2",
+      "name": "Analizar errores de carga de archivos",
+      "lastUpdatedAt": 1750417527677,
+      "createdAt": 1750417395367,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7a69c9c1-c83a-48fe-b2a9-cc53d219909e",
+      "name": "Revisar error en la suscripción",
+      "lastUpdatedAt": 1750417396369,
+      "createdAt": 1750177655917,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "d276af8d-e69f-478b-8ad0-c0905fb92ccf",
+      "name": "Cambiar diseño de QUIÉNES SOMOS",
+      "lastUpdatedAt": 1750416320352,
+      "createdAt": 1750415887052,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "413068e8-da25-4afc-983f-7137f9b36edc",
+      "name": "Eliminar botón de editar en gestión de usuarios",
+      "lastUpdatedAt": 1750368049548,
+      "createdAt": 1750367966176,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8254b5b1-ad0b-49b8-9169-a9f335dc6fa3",
+      "name": "Revisar animación en registro de usuario",
+      "lastUpdatedAt": 1750362420521,
+      "createdAt": 1750357315225,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "004f75e5-f568-4c03-8297-26dac0ecdae3",
+      "name": "Revisión de arquitectura y despliegue del TFG",
+      "lastUpdatedAt": 1750354561935,
+      "createdAt": 1750350789369,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "d4f3e545-23bb-46ce-9da6-dd490da6ca90",
+      "name": "Auditoría de archivos y limpieza segura",
+      "lastUpdatedAt": 1750350922031,
+      "createdAt": 1750348172078,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "1380887f-d184-41c7-a21c-e44691740088",
+      "name": "Revisión de arquitectura lógica de la aplicación",
+      "lastUpdatedAt": 1750348018357,
+      "createdAt": 1750348011450,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "142ad5bb-70be-4e05-aca9-d8a8156d3f6b",
+      "name": "Fix user information display issue",
+      "lastUpdatedAt": 1750343341703,
+      "createdAt": 1750329363941,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "772e6f9e-79b4-4ca7-8a15-67c40a9a104c",
+      "name": "Fix video display issue on mobile",
+      "lastUpdatedAt": 1750330723781,
+      "createdAt": 1750244044219,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c4559851-f54f-44c4-a3ee-d3fa0aa50616",
+      "name": "Auditoría completa y pruebas para producción",
+      "lastUpdatedAt": 1750258170275,
+      "createdAt": 1750257979320,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7e7e152e-642c-4aef-a389-595f22e62b9f",
+      "name": "Auditoría de seguridad sin impacto funcional",
+      "lastUpdatedAt": 1750257928044,
+      "createdAt": 1750257641709,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "9e424608-6f8e-4d36-965d-17c995b7342e",
+      "name": "Generate package diagram for repository",
+      "lastUpdatedAt": 1750244305594,
+      "createdAt": 1750148932734,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "a69091eb-050e-4cdb-af27-48f6c3d6073c",
+      "name": "Reemplazo de imagen en el header",
+      "lastUpdatedAt": 1750244166634,
+      "createdAt": 1750243923392,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "d02a756f-633f-4cfc-ad5a-ea1a727d669d",
+      "name": "Modificar visualización de cartas en carrusel",
+      "lastUpdatedAt": 1750183842369,
+      "createdAt": 1750176971513,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "33e044fc-cad5-4eb4-a8b5-8efcfe59768c",
+      "name": "Debugging banner upload errors",
+      "lastUpdatedAt": 1750174085640,
+      "createdAt": 1750173188233,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "d3a5d22a-d5dc-41f3-9faa-c4eab31a50f6",
+      "name": "Fixing build errors in railway deployment",
+      "lastUpdatedAt": 1750150982722,
+      "createdAt": 1750147490407,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "59d949d0-ab4d-4146-82fd-567baa7204d1",
+      "name": "Auditoría de seguridad sin impacto funcional",
+      "lastUpdatedAt": 1750148149923,
+      "createdAt": 1750076132860,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "ba1d155f-b43e-4820-81c5-61dcc71d6061",
+      "name": "Extract functional requirements from backend",
+      "lastUpdatedAt": 1750100609918,
+      "createdAt": 1750099026783,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "72d93139-113a-4758-b7cd-e5f49dce40f8",
+      "name": "Organizar carpeta de objetivos en public",
+      "lastUpdatedAt": 1750094547992,
+      "createdAt": 1750093866995,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "52bbdbf9-ef57-4689-b9b0-f9b1e54c79ec",
+      "name": "Versiones de Spring Boot y frameworks frontend",
+      "lastUpdatedAt": 1750091627416,
+      "createdAt": 1750091614337,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "ec475e10-b7f8-4cca-a248-1e62907daaac",
+      "name": "Error in user account deletion process",
+      "lastUpdatedAt": 1750089672805,
+      "createdAt": 1749814931953,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "244af5a3-682a-4d3c-b0f9-961f33537b2f",
+      "name": "Modificar notificación de donaciones",
+      "lastUpdatedAt": 1750088160665,
+      "createdAt": 1750060594730,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "910503c9-8fb0-4689-a445-e5a1d9f663c6",
+      "createdAt": 1750087860342,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "0bee99a9-a3b3-4a56-a765-3a91c20356a5",
+      "name": "Translate user.tsx to euskera and english",
+      "lastUpdatedAt": 1750087603157,
+      "createdAt": 1750086876917,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "a319ad10-cbc3-4858-a038-1a179ae9ad9a",
+      "name": "Ejecutar pruebas y gestionar logs",
+      "lastUpdatedAt": 1750087014588,
+      "createdAt": 1749982518981,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e9a6e0ac-cca8-4bdc-8ce5-c2c45bdbac86",
+      "name": "Logros verificables del proyecto",
+      "lastUpdatedAt": 1750085880560,
+      "createdAt": 1750085647418,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "54fec8d9-0966-464d-aee5-d784a9bcec4b",
+      "name": "Corregir gráfico de distribución de motivos",
+      "lastUpdatedAt": 1750082457507,
+      "createdAt": 1749925779529,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4bcfeaea-ca3b-48cb-9c7b-8538f81b8b09",
+      "name": "Error al cambiar la contraseña",
+      "lastUpdatedAt": 1750075941896,
+      "createdAt": 1750075350082,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "2bc19c2d-d4fa-45a3-a807-3272d8e9923c",
+      "name": "Error al actualizar tema en biblioteca",
+      "lastUpdatedAt": 1750075784361,
+      "createdAt": 1750073122660,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "14674a99-6733-40a8-869c-12e174eb2cdf",
+      "name": "Hacer girar el banner inferior",
+      "lastUpdatedAt": 1750075193803,
+      "createdAt": 1750072951646,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "69fee774-5ed2-471f-b70c-90423697b960",
+      "name": "Error in date format for matriculas",
+      "lastUpdatedAt": 1750071092960,
+      "createdAt": 1750070950385,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "351b2ce8-7181-4e8d-9912-f3549b209ea8",
+      "name": "Unify loading modals and improve animations",
+      "lastUpdatedAt": 1750070101658,
+      "createdAt": 1750068595697,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "93127609-3aad-43d4-b846-b0af0e8f52dc",
+      "name": "Detección y traducción de cadenas faltantes",
+      "lastUpdatedAt": 1750068330886,
+      "createdAt": 1749901673301,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "79955feb-b8f4-47c4-8381-86a003b2f7e9",
+      "name": "Implementación de aviso contractual en registro",
+      "lastUpdatedAt": 1750068047223,
+      "createdAt": 1750066726783,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8030f978-cdd2-4ed1-908b-8f02d91fe4e3",
+      "name": "Cambiar iconos en el header y footer",
+      "lastUpdatedAt": 1750066607154,
+      "createdAt": 1749927101211,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "0edec47a-f142-44ac-9945-32af40f74ca8",
+      "name": "Formato del título en la biblioteca",
+      "lastUpdatedAt": 1750061023477,
+      "createdAt": 1750060986315,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3da17e66-14f0-423b-beaa-051e5c4c7f34",
+      "name": "Detalles técnicos del proyecto",
+      "lastUpdatedAt": 1749982267105,
+      "createdAt": 1749982246429,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "07b1315a-5a7e-4e80-9b70-e9d8635ad4fe",
+      "name": "Problemas con la gestión de banners",
+      "lastUpdatedAt": 1749925919267,
+      "createdAt": 1749924140847,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "93672ece-c7cc-4ec1-99ca-23bef0ab7b5b",
+      "name": "Ajustar margen y texto de ubicación",
+      "lastUpdatedAt": 1749923329908,
+      "createdAt": 1749923281631,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "d3947305-ad41-468c-91b9-90e112bbaf10",
+      "name": "Analizar error 401 en inscripción",
+      "lastUpdatedAt": 1749922876964,
+      "createdAt": 1749922164877,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e84fd288-5f7a-4580-ac50-bebfdd9a9bc2",
+      "name": "Desarrollo de la pantalla biblioteca",
+      "lastUpdatedAt": 1749922014498,
+      "createdAt": 1749555446539,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "5063eb83-3134-4b34-bf34-016cfd8ab142",
+      "name": "Investigating donation payment error",
+      "lastUpdatedAt": 1749921372097,
+      "createdAt": 1749906613015,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "479db38c-5bae-46ea-9373-1c56c9e21cec",
+      "name": "Uso de la tabla stripe_webhook_events",
+      "lastUpdatedAt": 1749908572411,
+      "createdAt": 1749908562608,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "9bc8e7d4-41cd-4a79-aa1a-517e164f4c29",
+      "name": "Investigating donation payment error",
+      "lastUpdatedAt": 1749906593527,
+      "createdAt": 1749903484773,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "41bbed8f-c785-4596-aa9b-3e3bdf705857",
+      "name": "Revisar endpoint de facturas en server",
+      "lastUpdatedAt": 1749903399177,
+      "createdAt": 1749903156662,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f49f1eb3-8707-4e28-84f8-2cbf0a3de2e5",
+      "name": "Error in user signup phone number",
+      "lastUpdatedAt": 1749902694561,
+      "createdAt": 1749902565650,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "91cda435-da89-47c6-8f5d-fe5f29a8c133",
+      "name": "Problemas con el webhook de Stripe",
+      "lastUpdatedAt": 1749898093621,
+      "createdAt": 1749813277484,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "74502721-0692-43fe-9d9e-fcddef5858b7",
+      "name": "Optimizing banner database and image storage",
+      "lastUpdatedAt": 1749813168490,
+      "createdAt": 1749287380880,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "1f885d33-4b4b-4f8d-95c9-beeee3986b28",
+      "name": "Evaluación de imágenes del header",
+      "lastUpdatedAt": 1749668435021,
+      "createdAt": 1749668141559,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "2c801256-2502-477b-ba2f-b5aa98fb28b8",
+      "name": "Cambios en el tamaño de archivos y seguridad",
+      "lastUpdatedAt": 1749664315872,
+      "createdAt": 1749662699700,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8c67e89d-784f-4977-957a-5f702967376d",
+      "name": "Modificar estilos de títulos en pantallas",
+      "lastUpdatedAt": 1749664017760,
+      "createdAt": 1749663877162,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "72236a4d-25e0-430f-92c8-f77db0b25e7b",
+      "name": "Agregar efecto de glow en componentes",
+      "lastUpdatedAt": 1749659592802,
+      "createdAt": 1749653841510,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "a0a11912-09fe-424e-a679-4a9d960dfd86",
+      "name": "Analyze user.tsx error and logs",
+      "lastUpdatedAt": 1749589518232,
+      "createdAt": 1749576568323,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "0ce33884-4793-4d2b-9be1-db5905a8fa44",
+      "name": "Integrate marketing video into site",
+      "lastUpdatedAt": 1749577865145,
+      "createdAt": 1749554851968,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "65117760-ed43-4cc6-8881-d2796047f0e8",
+      "name": "Auditing server.js for endpoint restoration",
+      "lastUpdatedAt": 1749568110618,
+      "createdAt": 1749567399836,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e9cfa21b-6b55-4656-9a41-d44096d2d711",
+      "name": "Re-execute tests for full pass rate",
+      "lastUpdatedAt": 1749555751669,
+      "createdAt": 1749481456296,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f05c83f6-ca39-4a65-8a0d-a8e669f6fa2c",
+      "name": "Restore lost endpoints in server.js",
+      "lastUpdatedAt": 1749505808893,
+      "createdAt": 1749505217477,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "fb124726-f27b-456b-af75-66c1fc41bb4a",
+      "name": "Analizar errores de perfil y banner",
+      "lastUpdatedAt": 1749505212766,
+      "createdAt": 1749504468223,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "dc6bfcb9-7116-4e3d-b61e-db24f6201ee0",
+      "name": "Mejorar seguridad y funcionalidad del modal",
+      "lastUpdatedAt": 1749500349264,
+      "createdAt": 1749500249529,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "9ac6aea6-b7b4-43ea-a91f-8741e30e3033",
+      "name": "Ajustar brillo del botón de donación",
+      "lastUpdatedAt": 1749497663263,
+      "createdAt": 1749497623638,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b953d921-21a7-44d0-a1d3-1468366f0a7b",
+      "name": "Fix SetupIntent return_url error",
+      "lastUpdatedAt": 1749486082819,
+      "createdAt": 1749485881578,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "5c1a98fd-f0b1-40ff-a920-3d0cc1385e8c",
+      "name": "Critical audit of purchase and subscription pipeline",
+      "lastUpdatedAt": 1749480392761,
+      "createdAt": 1749405569462,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3dfc8164-6dc0-4167-b7dc-7adf56f6d3c5",
+      "name": "Errores al iniciar sesión de usuarios",
+      "lastUpdatedAt": 1749473610453,
+      "createdAt": 1749472340392,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "768aa3fe-1f7b-4620-906e-b155fca7112e",
+      "name": "Stripe payment flow audit and recommendations",
+      "lastUpdatedAt": 1749404773247,
+      "createdAt": 1749379941912,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8e21ba5d-b9b7-46b8-a83c-d62811ca48a4",
+      "name": "Eliminating test theatre in quality engineering",
+      "lastUpdatedAt": 1749404615723,
+      "createdAt": 1749230043809,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "03591b06-782b-40b8-912e-8d252783c1f5",
+      "name": "Optimización de carga de imágenes web",
+      "lastUpdatedAt": 1749238665405,
+      "createdAt": 1749231910996,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "29ca6d1a-c5b2-4bc2-94f6-0628c7fc7842",
+      "name": "Problemas de inicio de sesión y registro",
+      "lastUpdatedAt": 1749235354530,
+      "createdAt": 1749233336209,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3dda32d5-ff07-4635-a6ee-74793a9c23da",
+      "name": "Implementación de la capa de edición en user.tsx",
+      "lastUpdatedAt": 1749231049770,
+      "createdAt": 1749146752109,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7b6a836d-fcbc-41f0-8bbf-779bcdb2d272",
+      "name": "Confusión sobre tests de proceso de compra",
+      "lastUpdatedAt": 1749229587453,
+      "createdAt": 1749220530512,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f626ab1e-4838-4534-af7e-bda3a5917358",
+      "name": "Quitar emoji del botón de eliminar cuenta",
+      "lastUpdatedAt": 1749218417850,
+      "createdAt": 1749217575291,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "11c4e9f3-1e91-4282-83db-b99128d2dbeb",
+      "name": "Desuscripción y lógica de cobro mensual",
+      "lastUpdatedAt": 1749218343889,
+      "createdAt": 1749149080595,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b4d23c3a-4e73-4b7c-b016-f7b338fd4608",
+      "name": "Improve login and signup with Google auth",
+      "lastUpdatedAt": 1749209868270,
+      "createdAt": 1749148888915,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "dccd3cc8-37fd-4006-b454-777ed5472520",
+      "name": "Revisar y recuperar código en server.js",
+      "lastUpdatedAt": 1749209112994,
+      "createdAt": 1749135616829,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e4c9752b-6594-48d7-bb84-a3a5fbb193bf",
+      "name": "Conducting a security audit of the codebase",
+      "lastUpdatedAt": 1749148540105,
+      "createdAt": 1749147888235,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "80a407cd-8336-4d5f-b7c9-9f4581079530",
+      "name": "Revisar colores de texto en confirmationpage",
+      "lastUpdatedAt": 1749145463547,
+      "createdAt": 1749145355213,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8b95ba9b-8d7d-4531-a041-9162358ff8ec",
+      "name": "Quitar mensajes de depuración de scroll",
+      "lastUpdatedAt": 1749142368964,
+      "createdAt": 1749142348709,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e33709b7-1e4e-4462-9fab-53b60b21e1fc",
+      "name": "Debugging server issues and CSP policies",
+      "lastUpdatedAt": 1749140577573,
+      "createdAt": 1749140392448,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "56e3522f-ca3b-4b34-a562-9e29ad5a9f0b",
+      "name": "Arreglar arrastre en carrusel de userreviews",
+      "lastUpdatedAt": 1749139236037,
+      "createdAt": 1749138464035,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "9fbd44c4-240f-440e-bbea-d799447ea8f2",
+      "name": "Analizar y solucionar errores del componente",
+      "lastUpdatedAt": 1749139143466,
+      "createdAt": 1748974800680,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e98b24bd-9cbf-487b-9708-d23aabfb5dd0",
+      "name": "Cambiar borde hover a amarillo",
+      "lastUpdatedAt": 1749138168368,
+      "createdAt": 1749138107719,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "1a77ef8b-87fc-48a1-a499-d5bc68ad2f0f",
+      "name": "Mejorar el glow del botón apuntate",
+      "lastUpdatedAt": 1749137345383,
+      "createdAt": 1749132735382,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "0e3302cb-a034-4497-a61d-d9db7cc58f29",
+      "name": "Configuración de verificación en Google Search Console",
+      "lastUpdatedAt": 1749133141778,
+      "createdAt": 1749132937211,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "1d2e4db7-7958-4039-a4e0-4787ea72647f",
+      "name": "Problemas al cambiar la contraseña",
+      "lastUpdatedAt": 1749128885610,
+      "createdAt": 1749128802777,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c68c607d-5739-4a7c-8212-86e63caf141a",
+      "name": "Solucionar problemas de interactividad en móviles",
+      "lastUpdatedAt": 1749127238169,
+      "createdAt": 1749127165810,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f1112804-f9f3-4378-b3ed-dc1ad1257c9a",
+      "name": "Implement delete button for user data",
+      "lastUpdatedAt": 1749127147900,
+      "createdAt": 1749049162302,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f810fc03-6fa6-4ce6-a208-81242539c116",
+      "createdAt": 1749057870303,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8a7bc5c9-1cb2-42c6-871f-646ba6f3a2ec",
+      "name": "Error al cambiar la contraseña",
+      "lastUpdatedAt": 1749057339450,
+      "createdAt": 1749056596967,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b6e3d0af-f7f3-4016-a3a4-68532762f225",
+      "name": "Analizar y solucionar error de matriculación",
+      "lastUpdatedAt": 1749057282575,
+      "createdAt": 1749055626088,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "6ba02e16-8621-4b1c-bdca-70fa01a194ed",
+      "name": "Recuperar código perdido de server.js",
+      "lastUpdatedAt": 1749057117304,
+      "createdAt": 1749057050921,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b60f2994-e049-4974-bcc1-78ddec0332db",
+      "name": "Problemas con el carrusel en móvil",
+      "lastUpdatedAt": 1749039415252,
+      "createdAt": 1749039317142,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "babf11a4-e7a2-4c41-a53f-1a526bb2fc7a",
+      "name": "Modificar user.tsx para gestión de matrículas",
+      "lastUpdatedAt": 1749034771887,
+      "createdAt": 1748962352643,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "d90486d5-29e0-4c9d-bbbd-fa30f907f8f1",
+      "name": "Cambios en confirmationpage y compra",
+      "lastUpdatedAt": 1748974206484,
+      "createdAt": 1748965243627,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "1a644e89-20e8-467e-9bee-2a4aeffb47f8",
+      "name": "Troubleshooting registration duplicate check",
+      "lastUpdatedAt": 1748974079581,
+      "createdAt": 1748973973912,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8972fb2f-2060-41e9-b1d0-0683cf2eaf8f",
+      "name": "Mejorar diseño y contenido de emails",
+      "lastUpdatedAt": 1748968453240,
+      "createdAt": 1748967004594,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "fbbbd6fd-a043-44e7-893d-240fd7b654f6",
+      "name": "Modificar campos de formulario y asteriscos",
+      "lastUpdatedAt": 1748965096933,
+      "createdAt": 1748963148936,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "69d04059-9ad2-4783-868f-abcf7ff1bbfe",
+      "name": "Cambiar inscripción de usuario actual",
+      "lastUpdatedAt": 1748961836014,
+      "createdAt": 1748942795331,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "107f3f87-aa4d-4bcf-910f-5aeb093ac3ac",
+      "name": "Analizar error de pago en suscripción",
+      "lastUpdatedAt": 1748950168207,
+      "createdAt": 1748948574666,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "1a598741-e730-45e9-9623-5d1701e54eb8",
+      "name": "Agregar ubicación con enlace a Google Maps",
+      "lastUpdatedAt": 1748947322998,
+      "createdAt": 1748947170842,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8f16f3fc-835e-47fe-aa92-2c710f125063",
+      "name": "Igualar diseño hover de botones",
+      "lastUpdatedAt": 1748945984199,
+      "createdAt": 1748945934445,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4c677023-3f84-4e2f-a621-998e7e813c7b",
+      "name": "Corregir diseño del botón y márgenes",
+      "lastUpdatedAt": 1748944729926,
+      "createdAt": 1748944626779,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "a8c24f31-1877-4bee-b7f5-f2d9e9cb994e",
+      "name": "Fix button visibility for non-admin users",
+      "lastUpdatedAt": 1748944339498,
+      "createdAt": 1748943534260,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c903e2b1-7b4e-46b4-a35f-61bf760e3036",
+      "name": "Solución al problema de scroll en textinput",
+      "lastUpdatedAt": 1748882049771,
+      "createdAt": 1748621240757,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "35ecc22d-2942-44d1-8f3b-673ad1d4377f",
+      "name": "Analizar error en input de texto",
+      "lastUpdatedAt": 1748643783812,
+      "createdAt": 1748643709635,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "44133dc1-3ad5-4379-bc6a-aa176a9187ae",
+      "name": "Modificar diseño y funcionalidad de user.tsx",
+      "lastUpdatedAt": 1748642777070,
+      "createdAt": 1748604698237,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "a3f8f993-8ba5-4825-aad0-84215dcea1bb",
+      "name": "Solucionar errores en confirmationPage",
+      "lastUpdatedAt": 1748614628350,
+      "createdAt": 1748525846481,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3474e787-13d3-49ba-a5c1-fbf493abcbd9",
+      "name": "Analizar y solucionar errores en el programa",
+      "lastUpdatedAt": 1748602020309,
+      "createdAt": 1748528051686,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e5d6da92-60c8-4c8f-90f3-8ad959ba2de6",
+      "name": "Banner Advertising Implementation Plan",
+      "lastUpdatedAt": 1748525782511,
+      "createdAt": 1748169961636,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "6327cb21-4807-4302-b831-a50019855460",
+      "name": "Mejoras en la gestión de usuarios",
+      "lastUpdatedAt": 1748525759851,
+      "createdAt": 1748513469239,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "abebc8be-85cd-45e5-8337-c76fe07c48e7",
+      "name": "Optimizar carga de pantallas y base de datos",
+      "lastUpdatedAt": 1748515695729,
+      "createdAt": 1748514786190,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "56ce1e0c-2f69-4f61-ba6b-10020875bea5",
+      "name": "Resolución de problemas de inicio de sesión y errores UI",
+      "lastUpdatedAt": 1748514099972,
+      "createdAt": 1748095037571,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "341194c1-0387-46ed-a2d3-1f0aace0c52e",
+      "name": "Plan de implementación para User.tsx",
+      "lastUpdatedAt": 1748201295622,
+      "createdAt": 1748192818960,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7e9147e5-5fda-4e3a-8c25-99706154f435",
+      "name": "Comparing User.tsx Versions for Updates",
+      "lastUpdatedAt": 1748182371879,
+      "createdAt": 1748176851554,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3f14f2a8-5682-4ae9-a4a6-c16112093882",
+      "name": "Resolución de error en cambio de contraseña",
+      "lastUpdatedAt": 1748175924758,
+      "createdAt": 1748083764493,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "47bb1041-b5e3-4b9e-a918-e6445ebcdd00",
+      "createdAt": 1748094668419,
+      "unifiedMode": "agent",
+      "forceMode": "edit",
+      "lastUpdatedAt": 1748113013386,
+      "name": "Modificación de base de datos para inscripción"
+    },
+    {
+      "type": "head",
+      "composerId": "d6e67e26-aa07-437b-a792-dd31413cbd5a",
+      "name": "Optimización de Rendimiento y Animaciones",
+      "lastUpdatedAt": 1748095008937,
+      "createdAt": 1747931616678,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b875732a-8b9f-4605-b5ce-2c1d6c0ed307",
+      "name": "Problemas de inicio de sesión con Google",
+      "lastUpdatedAt": 1748082894900,
+      "createdAt": 1748021153882,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8c5d928a-7198-4129-84ee-9f3bf6273306",
+      "name": "Ubicación de la Asociación y Peio Martínez",
+      "lastUpdatedAt": 1748080700451,
+      "createdAt": 1748080622374,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "1c8ec61d-3ff8-44c0-968a-96ac9faa68a8",
+      "name": "Recuperación y fusión de código en user.tsx",
+      "lastUpdatedAt": 1748018941540,
+      "createdAt": 1747999026301,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f32bc68b-cd6f-4804-a697-796d60918427",
+      "name": "Actualización de correos electrónicos de inscripción",
+      "lastUpdatedAt": 1747998620359,
+      "createdAt": 1747997960331,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4957c064-f7c4-4f04-bb16-f94a44ea19dd",
+      "name": "Errores en el Build",
+      "lastUpdatedAt": 1747998347739,
+      "createdAt": 1747998333295,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "bdaf867b-5698-46b3-906a-5ebb1bf9bfd4",
+      "name": "Mejoras en el flujo de compra y cancelación",
+      "lastUpdatedAt": 1747997615824,
+      "createdAt": 1747946962037,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7153e6d3-b4b0-49b9-898d-cbd60f0b40fc",
+      "name": "Uniformidad de Botones de Inscripción",
+      "lastUpdatedAt": 1747996983108,
+      "createdAt": 1747995066100,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3dbd7c2b-d2b5-46b9-a235-63771c450771",
+      "name": "Corrección de errores en correos de baja",
+      "lastUpdatedAt": 1747988289402,
+      "createdAt": 1747733106303,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "77a12244-1063-4ad8-bc96-4494088a6714",
+      "name": "Approach to Implementing Error Handling",
+      "lastUpdatedAt": 1747986783549,
+      "createdAt": 1747986696080,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e4c7c8d9-1fe9-4f04-85c1-b11ac39bfe65",
+      "name": "Rediseño de la página de confirmación",
+      "lastUpdatedAt": 1747931032068,
+      "createdAt": 1747925240259,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "83eda1b8-a7b3-4df5-b357-65fd626bb2dd",
+      "name": "Optimización de Rendimiento y Análisis de Carga",
+      "lastUpdatedAt": 1747929791116,
+      "createdAt": 1747927569257,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "31250d2f-fd1e-4950-bef1-7fd21ec22143",
+      "name": "Optimización de Rendimiento en Aplicaciones Web",
+      "lastUpdatedAt": 1747927329783,
+      "createdAt": 1747927324322,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "0df47063-8d00-4ef1-85f1-c4435d115448",
+      "name": "Optimización de Rendimiento en Aplicaciones Web",
+      "lastUpdatedAt": 1747927313754,
+      "createdAt": 1747926953112,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c657c551-c49b-4889-8c73-bc1921292fdd",
+      "name": "Professional Translation of User Interface",
+      "lastUpdatedAt": 1747925172893,
+      "createdAt": 1747917024044,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "adef8c02-c56e-438a-87ba-3f8179f1f3ff",
+      "name": "Pruebas de escenarios de pago en Stripe",
+      "lastUpdatedAt": 1747924240356,
+      "createdAt": 1747909004757,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "beda4661-03a1-422e-8747-dffa000703a7",
+      "name": "Errores en notificación de baja y gestión de idioma",
+      "lastUpdatedAt": 1747916637917,
+      "createdAt": 1747914127809,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b77a4093-0dad-46ad-8027-52c3d3046bb3",
+      "name": "Restricción de Inscripción Duplicada",
+      "lastUpdatedAt": 1747912957277,
+      "createdAt": 1747912335212,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c34fec7c-3129-43f0-b9be-38b3d6aa1b4c",
+      "name": "Problemas con la función de traducción",
+      "lastUpdatedAt": 1747911861584,
+      "createdAt": 1747910084186,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "44b4dcd0-213f-4885-a939-eff4aac7fd40",
+      "name": "Resolución de error en donación",
+      "lastUpdatedAt": 1747905058364,
+      "createdAt": 1747820201156,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f1a95607-4908-470f-9cf7-50239216b96d",
+      "name": "Modificación de texto y espacio en botón",
+      "lastUpdatedAt": 1747865553963,
+      "createdAt": 1747863516974,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "bc548320-a93a-48be-8bed-5b441d96cea3",
+      "name": "Reubicación del texto de pago seguro",
+      "lastUpdatedAt": 1747838124439,
+      "createdAt": 1747838094319,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e4c99481-b46e-454f-8ed3-e3933e365b88",
+      "name": "Implementation Strategy Discussion",
+      "lastUpdatedAt": 1747824555228,
+      "createdAt": 1747824390327,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "303c08dd-849d-465d-9bc7-e100d5fa009c",
+      "name": "Restaurar restricción de reinscripción",
+      "lastUpdatedAt": 1747763436454,
+      "createdAt": 1747763340712,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "9ddce3fc-4e54-4221-a04f-447652c0fd0f",
+      "name": "Confirmación de suscripciones y manejo de errores en Stripe",
+      "lastUpdatedAt": 1747762761635,
+      "createdAt": 1747666978789,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "6e6997a4-cd78-48d6-b208-dd9292466007",
+      "name": "Búsqueda de componente de cancelación de suscripción",
+      "lastUpdatedAt": 1747758009967,
+      "createdAt": 1747757981330,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "2275773a-942e-47cc-8706-4712ac22b190",
+      "name": "Confirmación de cancelación de suscripciones",
+      "lastUpdatedAt": 1747666669788,
+      "createdAt": 1747666202097,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4ac93bbb-9c3e-48b6-8ce6-adb6148c094c",
+      "name": "Cambiar color de fondo de confirmación",
+      "lastUpdatedAt": 1747666077278,
+      "createdAt": 1747662938015,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "582bdd9e-c732-43dd-8e9c-60c484b6ef2c",
+      "name": "Corrección de lógica de suscripciones en Stripe",
+      "lastUpdatedAt": 1747665771308,
+      "createdAt": 1747664965022,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "224918f2-6dba-488f-9a91-a37a0e854473",
+      "name": "Problemas de UI y cancelación de suscripción",
+      "lastUpdatedAt": 1747664823162,
+      "createdAt": 1747658193595,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "212c269b-6aa5-4fe3-b79b-d584ce524ef4",
+      "name": "Reorganización de botones en la página de confirmación",
+      "lastUpdatedAt": 1747661151793,
+      "createdAt": 1747661069049,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c86ce54d-e160-40c5-8b12-cc5c4ab229b1",
+      "name": "Traducción de textos en pantallas de carga",
+      "lastUpdatedAt": 1747657524650,
+      "createdAt": 1747654891042,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "48673c91-477f-42c8-93ad-1bbe3aecb5f9",
+      "name": "Resolving Purchase Display Issues in App",
+      "lastUpdatedAt": 1747656898540,
+      "createdAt": 1747392487594,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "cd9f675d-dfd2-480c-b464-f637996d259f",
+      "name": "Problemas con la pantalla de confirmación de suscripción",
+      "lastUpdatedAt": 1747654139521,
+      "createdAt": 1747653741916,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "481f219e-26f5-41df-b5e6-fcedaedf58b8",
+      "name": "Problema de traducción en verificación de dos factores",
+      "lastUpdatedAt": 1747653685060,
+      "createdAt": 1747653556969,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4a85370e-6fc3-4792-a285-1919c35cdc56",
+      "name": "Revisión y corrección de enlaces en el proyecto",
+      "lastUpdatedAt": 1747653151627,
+      "createdAt": 1747652388901,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c94004d6-dcd4-46a5-bdcf-94b8303547d7",
+      "name": "Corrección de textos no traducidos en carga",
+      "lastUpdatedAt": 1747652303233,
+      "createdAt": 1747652229842,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "09265a23-d0b0-45a9-890b-2ed9b92bb3fe",
+      "name": "Problema de ruta en autenticación de dos factores",
+      "lastUpdatedAt": 1747651889677,
+      "createdAt": 1747651531098,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "e86fac8d-0002-4b77-98de-f47f72ed90d2",
+      "name": "Multilingual Fitness Slogan Creation",
+      "lastUpdatedAt": 1747651113510,
+      "createdAt": 1747324951522,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "9d42998c-9bb8-49ba-aa74-5e5cb3377881",
+      "name": "Resolución de error 404 en Stripe",
+      "lastUpdatedAt": 1747388016797,
+      "createdAt": 1747316400410,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "98f82927-b69d-4b18-a6f4-54752003c562",
+      "name": "Cambios en archivos y diseño de compra",
+      "lastUpdatedAt": 1747314771014,
+      "createdAt": 1747306495807,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "26ea3917-b6ab-4d4e-b8c9-667cf1341fa6",
+      "name": "Problemas de inicio de sesión y gestión de sesiones",
+      "lastUpdatedAt": 1747306454902,
+      "createdAt": 1747239793093,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3908b233-090e-4ba4-823b-680d715064dc",
+      "name": "Problemas de autenticación y acceso de administrador",
+      "lastUpdatedAt": 1747303277379,
+      "createdAt": 1747302761603,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "5e283549-0a4a-4cf6-8fd7-cb1dca63402b",
+      "name": "Solución de error en pantalla de verificación",
+      "lastUpdatedAt": 1747302240462,
+      "createdAt": 1747302178078,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "01f2fd3a-57ee-4991-b2ee-0d2a5e42ac3c",
+      "name": "Reglas de Estructura y i18n para TSX",
+      "lastUpdatedAt": 1747239089883,
+      "createdAt": 1747219151827,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "876f26ad-ea40-487b-a251-ece317716a76",
+      "name": "Diagnóstico y Plan de Autenticación 2FA",
+      "lastUpdatedAt": 1747238874706,
+      "createdAt": 1747237935111,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "90eacdba-a3ca-4500-804a-efbe95ac3491",
+      "name": "TSX Structure and i18n Best Practices",
+      "lastUpdatedAt": 1747216291323,
+      "createdAt": 1746798379307,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4330775b-0331-4ffb-abf5-b1bd533830bd",
+      "name": "Optimización de Archivos en Bot de Bolsa",
+      "lastUpdatedAt": 1747084503186,
+      "createdAt": 1747084293423,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "89f49ceb-add5-4471-8bfb-d8d820012a2e",
+      "name": "Reorganización de carpetas en BotDeBolsa",
+      "lastUpdatedAt": 1747052713363,
+      "createdAt": 1747051570087,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "5ac2c5cb-5559-4276-a59e-964cf6ad8e02",
+      "name": "Reglas de Uso y Planificación de Cursor",
+      "lastUpdatedAt": 1747050647927,
+      "createdAt": 1746897464331,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "8e518390-982e-4b41-b601-83e4322fa5eb",
+      "name": "Gráfico MACD con Señales de Compra y Venta",
+      "lastUpdatedAt": 1746987680404,
+      "createdAt": 1746987063445,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "369d4b3d-b039-46de-88fd-166d169834c5",
+      "name": "Analizando VitoLove2 y llamadas a Firebase",
+      "lastUpdatedAt": 1746715178276,
+      "createdAt": 1746715063383,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "26e0feb6-6844-407d-a368-0cc7ba85831e",
+      "name": "Análisis y Gestión de Notificaciones",
+      "lastUpdatedAt": 1746714901540,
+      "createdAt": 1746713331002,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7966b362-6295-4f5b-9755-c3e5de4873d8",
+      "name": "Resolución de error de carga de programa",
+      "lastUpdatedAt": 1746655325375,
+      "createdAt": 1746648880109,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "6462f009-fbf0-4758-a08c-9081183ba0f3",
+      "name": "Problemas de inicio de sesión y generación de QR",
+      "lastUpdatedAt": 1746649429608,
+      "createdAt": 1746645181893,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "32a664d2-b25e-47bf-abd2-0dc97067b063",
+      "name": "Solución de errores de autenticación y CSP",
+      "lastUpdatedAt": 1746529052920,
+      "createdAt": 1746268885922,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "090e4623-4f3d-4ca1-8dd9-01df7fa1c185",
+      "name": "Agregar scrollTo en archivos .tsx",
+      "lastUpdatedAt": 1746482752126,
+      "createdAt": 1746482623526,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "52fe65e9-759b-483f-a205-54cbecfcbad5",
+      "name": "Mejorar diseño botón de pagar",
+      "lastUpdatedAt": 1746282729030,
+      "createdAt": 1746282658472,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "85000ee7-21e9-423e-83d7-ec6183cb6f3d",
+      "name": "Recuperación y limpieza de archivos backend",
+      "lastUpdatedAt": 1746266276827,
+      "createdAt": 1746265980968,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f70d15fd-fc03-4328-91e5-69b3cee775ac",
+      "name": "Problemas de inicio de sesión y errores de CSP",
+      "lastUpdatedAt": 1746225942664,
+      "createdAt": 1746214988658,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "2f2656ba-6c45-4a01-a9e8-58116571d0d6",
+      "createdAt": 1746225179407,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "0dc9f844-b1f8-48be-8a92-795a774757f3",
+      "name": "Reescritura de Documentos Legales",
+      "lastUpdatedAt": 1746214601989,
+      "createdAt": 1746214292237,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "af1abc19-8749-48e7-b337-0792de4f64a7",
+      "name": "Fixing Module Import Error in Code",
+      "lastUpdatedAt": 1746214102643,
+      "createdAt": 1746211383212,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "cb4a6092-e716-43b8-b82a-aa4f0927abad",
+      "name": "Organización de archivos en el backend",
+      "lastUpdatedAt": 1746211280417,
+      "createdAt": 1746210590822,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "9aae3658-1d28-47a2-9f0d-1dae6a428d9f",
+      "name": "Errores en el procesamiento de pagos",
+      "lastUpdatedAt": 1746210003165,
+      "createdAt": 1746205493622,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "ede9946b-6ff6-4fa7-a1f1-db3babc7496f",
+      "name": "Corrección de configuración de sesiones en server.js",
+      "lastUpdatedAt": 1746204843545,
+      "createdAt": 1746185434299,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "79fadbd4-9a49-4d4b-8ba2-b67d64ec296b",
+      "name": "Reestructuración y Análisis de server.js",
+      "lastUpdatedAt": 1746185323350,
+      "createdAt": 1746178275595,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "64764527-5b3b-4e73-ae83-60a8aaf90528",
+      "name": "Implementación de Login Seguro y Registro con Google",
+      "lastUpdatedAt": 1746178239061,
+      "createdAt": 1746118213964,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "2b1dbe0b-749d-4258-bc15-e4f780168bd1",
+      "name": "Revisión Crítica de Ciberseguridad del Proyecto",
+      "lastUpdatedAt": 1746118903136,
+      "createdAt": 1746009902166,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "4489fd42-dfd2-4d03-b48e-f67cce3e0fbb",
+      "name": "Implementación de Login Seguro con Google",
+      "lastUpdatedAt": 1746118182065,
+      "createdAt": 1746117662357,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "f0c4b5fb-5019-4c45-b97e-a9181e4e0cf8",
+      "name": "Error 404: Problemas con la API",
+      "lastUpdatedAt": 1746116162125,
+      "createdAt": 1746115911380,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b9a88f62-58ae-4357-afbf-99c6f4aea26a",
+      "name": "Mejoras en Precios de Programas",
+      "lastUpdatedAt": 1746113039618,
+      "createdAt": 1745771680149,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "540bb2c6-0c60-4dbb-8bbb-acd3e552e1a2",
+      "name": "Optimización y Simplificación de Base de Datos",
+      "lastUpdatedAt": 1746021058145,
+      "createdAt": 1746010800227,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "fd3b0765-e3ac-4644-b749-f26ca4c5f229",
+      "name": "Errores de autenticación y conexión en proyecto web",
+      "lastUpdatedAt": 1746009401662,
+      "createdAt": 1745941361901,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b246a398-b2a1-43de-ac7b-c22a54380960",
+      "name": "Resumen de Archivos",
+      "lastUpdatedAt": 1745960771876,
+      "createdAt": 1745960123185,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "7d40d304-6583-4b68-80d3-f86a7968204d",
+      "name": "Errores de autenticación y conexión en proyecto web",
+      "lastUpdatedAt": 1745941120988,
+      "createdAt": 1745941079684,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3d4c3866-6d9f-42ca-a00a-f787c954cbdd",
+      "name": "Ajustar ancho del botón de donación",
+      "lastUpdatedAt": 1745941028143,
+      "createdAt": 1745940992709,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "08135194-735f-41a6-950a-aef3f73b86ae",
+      "name": "Mejorar Diseño de Página Web",
+      "lastUpdatedAt": 1745940698641,
+      "createdAt": 1745939171454,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "33ba4836-c2a5-49eb-a12c-2227ee37a13c",
+      "name": "Mejoras en el diseño móvil de la página",
+      "lastUpdatedAt": 1745935537959,
+      "createdAt": 1745773735106,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3c280b02-c2df-4f65-a456-e08881858b48",
+      "name": "Correcciones en el footer y rutas",
+      "lastUpdatedAt": 1745875984347,
+      "createdAt": 1745850368794,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "3c07998c-6243-439e-8768-2785c9cce449",
+      "createdAt": 1745774366006,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "9266dcd2-1b86-4093-854e-9d79187d4d0d",
+      "name": "Validaciones en Ruta de Registro con Express",
+      "lastUpdatedAt": 1745773559684,
+      "createdAt": 1745773438541,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "66d52717-e642-47b2-a94d-e1e4a22d9869",
+      "name": "Evaluación del Estado Actual de Requisitos Legales",
+      "lastUpdatedAt": 1745771573627,
+      "createdAt": 1745769242834,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "cbc56e4d-2ef9-4084-8e88-167c350fa1c6",
+      "name": "Revisión crítica del plan maestro del proyecto",
+      "lastUpdatedAt": 1745767986207,
+      "createdAt": 1745764576279,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "febec65b-9aab-46ca-8f61-582e862a8a5a",
+      "name": "Problema con el código QR de autenticación",
+      "lastUpdatedAt": 1745754499658,
+      "createdAt": 1745660662415,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "d2c5923f-7dcb-4cda-88b6-eee8a37c26d3",
+      "name": "Revisión de código y requisitos funcionales",
+      "lastUpdatedAt": 1745611352830,
+      "createdAt": 1745606554849,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "32ffd380-91a7-4335-b224-c77e1a7ae558",
+      "name": "Solución de notificaciones en app de citas",
+      "lastUpdatedAt": 1745604641414,
+      "createdAt": 1745590799907,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "b5f10bf1-9711-4a95-a866-d2971dcfde7b",
+      "name": "Implementación de búsqueda por geolocalización en VitoLove",
+      "lastUpdatedAt": 1745590758979,
+      "createdAt": 1745576896760,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "38dedaa1-19f8-41c6-8bc8-6885901f53fe",
+      "name": "Firebase Database Error Analysis",
+      "lastUpdatedAt": 1745575642750,
+      "createdAt": 1745575144496,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "c6fd3c88-b379-46b5-b496-58c66d500bf3",
+      "name": "Solución de problemas en VitoLove2",
+      "lastUpdatedAt": 1745574741372,
+      "createdAt": 1745526176604,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "cbc193b1-0999-412e-a40a-a18e283a5b08",
+      "name": "Resolución de problemas de Google Sign-In",
+      "lastUpdatedAt": 1745526159864,
+      "createdAt": 1745168826629,
+      "unifiedMode": "agent",
+      "forceMode": "edit"
+    },
+    {
+      "type": "head",
+      "composerId": "62289e6f-18a6-40cf-882a-a17beb14b1c7",
+      "createdAt": 1745168826629,
+      "unifiedMode": "chat",
+      "forceMode": "edit"
+    }
+  ],
+  "selectedComposerIds": [
+    "94bf8449-65f2-4e9d-844f-6190ecc38daa",
+    "40c352b1-5496-4055-b92f-833ba8504487",
+    "f50c49dc-6e4d-4ab8-9041-00f851058199"
+  ],
+  "hasMigratedComposerData": true,
+  "hasMigratedMultipleComposers": true
+}

@@ -61,6 +61,26 @@ export default function TimelinePage() {
   }, [showVideo])
 
   useEffect(() => {
+    // Position carousel frame dynamically
+    const positionCarouselFrame = () => {
+      const anchor = document.getElementById('carousel-frame-anchor')
+      const frameImage = document.getElementById('carousel-frame-image')
+      
+      if (anchor && frameImage) {
+        const rect = anchor.getBoundingClientRect()
+        frameImage.style.left = `${rect.left}px`
+        frameImage.style.top = `${rect.top}px`
+        frameImage.style.width = `${rect.width}px`
+        frameImage.style.height = `${rect.height + 2}px`
+        frameImage.style.opacity = '1'
+      }
+    }
+
+    // Position on load and scroll
+    positionCarouselFrame()
+    window.addEventListener('scroll', positionCarouselFrame)
+    window.addEventListener('resize', positionCarouselFrame)
+
     // Initialize scroll animations
     const observerOptions = {
       threshold: 0.1,
@@ -109,6 +129,8 @@ export default function TimelinePage() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("scroll", positionCarouselFrame)
+      window.removeEventListener("resize", positionCarouselFrame)
       observer.disconnect()
     }
   }, [])
@@ -329,7 +351,7 @@ export default function TimelinePage() {
       {/* Image Modal */}
       {selectedImage.src && (
         <div 
-          className={`fixed inset-0 bg-black z-50 transition-opacity duration-300 ${isAnimating && !isClosing ? 'bg-opacity-75' : 'bg-opacity-0'}`}
+          className={`fixed inset-0 bg-black z-[60] transition-opacity duration-300 ${isAnimating && !isClosing ? 'bg-opacity-75' : 'bg-opacity-0'}`}
           onClick={closeImage}
         >
           <div className="relative w-full h-full">
@@ -394,8 +416,8 @@ export default function TimelinePage() {
           <div className="mb-8">
             <Heart className="w-16 h-16 mx-auto mb-4 animate-pulse" />
           </div>
-          <h1 className="text-6xl md:text-8xl font-bold mb-4 font-serif">Julen & Maitane</h1>
-          <p className="text-xl md:text-2xl font-light mb-8 max-w-2xl mx-auto mt-2">
+          <h1 className="text-6xl md:text-8xl font-bold mb-4 font-elegant">Julen & Maitane</h1>
+          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto mt-2 font-manuscript">
             Con toda la ilusion del mundo hemos tejido este pequeño regalo: un mosaico de risas y recuerdos para agradeceros el amor, la alegría y la inspiración que sembrais en cada uno de nosotros. Que estos pedacitos de vuestra vida os devuelvan multiplicado el cariño que hoy nos une para celebrar vuestra historia.
           </p>
         </div>
@@ -409,9 +431,23 @@ export default function TimelinePage() {
           backgroundImage: 'url("https://www.transparenttextures.com/patterns/sandpaper.png")',
           backgroundRepeat: 'repeat',
           backgroundSize: '35%',
-          backgroundAttachment: 'local'
+          backgroundAttachment: 'local',
+          opacity: 1
         }}
       >
+        {/* Paper texture overlay - solo textura sin color */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-50"
+          style={{
+            backgroundImage: 'url("https://www.transparenttextures.com/patterns/sandpaper.png")',
+            backgroundRepeat: 'repeat',
+            backgroundSize: '35%',
+            backgroundAttachment: 'local',
+            opacity: 0.4,
+            mixBlendMode: 'luminosity'
+          }}
+        />
+        
         {/* Flores decorativas en las esquinas */}
         <img 
           src="/flores/sup_izq.png" 
@@ -464,9 +500,9 @@ export default function TimelinePage() {
                         fill="white"/>
                 </svg>
               </div>
-              <h3 className="text-3xl font-serif font-bold text-terracotta">Los inicios... · 2009</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Los inicios... · 2009</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Todo empezó con un reto entre amigas, donde Maitane se fijó en Julen y se armó de valor para hablarle por Tuenti. Después de varios intentos, finalmente acabaron quedando y cuando ya estaban frente a frente Maitane pensó: "¿y ahora que?" 😨 Y a partir de aquel 17 de enero de 2009 comenzó todo….
             </p>
           </div>
@@ -479,27 +515,33 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center mr-4">
                 <img src="/pareja4.svg" alt="Pareja" className="w-8 h-8" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-sage">Primeras escapadas</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-sage">Primeras escapadas</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Al principio mantenían la relación en secreto y cuando quedaban tenían que mentir a sus padres, con tan mala suerte, que en una ocasión les pillaron… ¡y tuvieron que dar la cara! Poco a poco, la relación se fue consolidando, a pesar de existir alguna crisis…. 
               y empezaron los primeros viajes: cuando Julen se sacó el carnet y pedía el coche a sus padres para ir a la playa con Maitane, después a Noja y  luego su primer viaje en avión a Mallorca 🏝️. Julen viajó hasta Málaga sin que Maitane lo supiera, y se plantó ahí para darle una sorpresa y pasar unos días juntos❤️.
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="p-6">
-              <ImageCarousel
-                images={[
-                  "/experiences/experience-02/primeras-escapadas-01.jpg",
-                  "/experiences/experience-02/primeras-escapadas-02.jpg",
-                  "/experiences/experience-02/primeras-escapadas-03.jpg"
-                ]}
-                alt="Primeras escapadas"
-                experienceId="02"
-                onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
-                  openImageCarousel(imageSrc, imageArray, currentIndex, rect)
-                }}
-              />
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <ImageCarousel
+                    images={[
+                      "/experiences/experience-02/primeras-escapadas-01.jpg",
+                      "/experiences/experience-02/primeras-escapadas-02.jpg",
+                      "/experiences/experience-02/primeras-escapadas-03.jpg"
+                    ]}
+                    alt="Primeras escapadas"
+                    experienceId="02"
+                    onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                      openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
+                  />
+                </div>
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="carousel-frame-anchor" className="absolute inset-0 pointer-events-none"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -507,13 +549,26 @@ export default function TimelinePage() {
         {/* 2013 - Primera aventura */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a3.jpg"
+                      alt="Primera aventura"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a3.jpg"
-                    alt="Primera aventura"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -523,9 +578,9 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
                 <Ship className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-terracotta">Primera aventura · 2013</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Primera aventura · 2013</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Con sus ahorros de verano, se apuntan a un campamento de kayak por el Sella, la primera experiencia lejos de casa. Amanecen en tienda de campaña con café soluble y nervios compartidos. Aprenden a remar sincronizados: cuando ella canta, él esquiva rocas; cuando él cede, ella lo anima. Sin saberlo, descubren que llevan años remando hacia el mismo destino.
             </p>
           </div>
@@ -538,20 +593,33 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-midnight rounded-full flex items-center justify-center mr-4">
                 <Heart className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-midnight">Primer beso · 2014</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-midnight">Primer beso · 2014</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               La feria de San Antón enciende Bilbao con neones y olor a algodón de azúcar. Tras una vuelta en la noria, Julen regala a Maitane un peluche ganado en el tiro al blanco. En medio de risas y música estridente, se atreven a cerrar la distancia con un beso inolvidable. Ese instante fugaz marca un antes y un después en su historia.
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a4.jpg"
+                      alt="Primer beso"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a4.jpg"
-                    alt="Primer beso"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -561,13 +629,26 @@ export default function TimelinePage() {
         {/* 2015 - A distancia */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a5.jpg"
+                      alt="A distancia"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a5.jpg"
-                    alt="A distancia"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -577,9 +658,9 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center mr-4">
                 <Plane className="w-6 h-6 text-midnight" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-sage">A distancia · 2015</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-sage">A distancia · 2015</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               La universidad los separa entre Madrid y Bilbao, pero las videollamadas se convierten en su nuevo ritual. Entre trenes nocturnos y cartas perfumadas de salvia, aprenden a medir la nostalgia en megas y husos horarios. Cada "buenas noches" incluye un "falta un día menos" que acorta kilómetros. La distancia demuestra que su amor es, más que un lugar, un lazo irrompible.
             </p>
           </div>
@@ -592,20 +673,33 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
                 <Camera className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-terracotta">Reencuentro en París · 2017</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Reencuentro en París · 2017</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Maitane sorprende a Julen en el Trocadéro durante su Erasmus y la Torre Eiffel cobra un brillo especial. Caminan abrazados junto al Sena, olvidando el frío invernal. Dejan un candado en el Pont des Arts con la promesa tácita de nunca separarse tanto. La magia de esa sorpresa consolida su compromiso sin fecha de caducidad.
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a6.jpg"
+                      alt="Reencuentro en París"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a6.jpg"
-                    alt="Reencuentro en París"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -615,13 +709,26 @@ export default function TimelinePage() {
         {/* 2019 - Vuelta al mundo */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a7.jpg"
+                      alt="Vuelta al mundo"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a7.jpg"
-                    alt="Vuelta al mundo"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -631,9 +738,9 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
                 <MapPin className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-terracotta">Vuelta al mundo · 2019</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Vuelta al mundo · 2019</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Con pasaportes en mano y mochilas al hombro, abandonan el mapa convencional rumbo a Bangkok, Sydney y Ciudad de México. Cada Polaroid pegada en su diario capta motos atestadas, surf en Bondi y luchadores de lucha libre. Aprenden a pedir menú vegetariano en cinco idiomas y a reírse de vuelos retrasados. Descubren que su hogar es inseparable de su compañía mutua.
             </p>
           </div>
@@ -646,20 +753,33 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center mr-4">
                 <PawPrint className="w-6 h-6 text-midnight" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-sage">Adopción de Ilun · 2020</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-sage">Adopción de Ilun · 2020</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Un refugio local les presentó a Ilun, una bola de pelo negro con ojos color miel que necesitaba un hogar. La conexión fue instantánea. Sus días se llenaron de ladridos de bienvenida, paseos por el monte y siestas en el sofá. Ilun no solo se convirtió en su compañero fiel, sino en el corazón de su nueva familia, enseñándoles que el amor más puro a veces viene en cuatro patas.
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a11.jpg"
+                      alt="Adopción de Ilun"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a11.jpg"
-                    alt="Adopción de Ilun"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -669,13 +789,26 @@ export default function TimelinePage() {
         {/* 2022 - Propuesta */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a8.png"
+                      alt="Propuesta"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a8.png"
-                    alt="Propuesta"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -685,9 +818,9 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-midnight rounded-full flex items-center justify-center mr-4">
                 <Ring className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-midnight">Propuesta · 2022</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-midnight">Propuesta · 2022</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Suben al amanecer los 241 peldaños de Gaztelugatxe sin imaginar lo que les espera. En la cima, Julen se arrodilla con un anillo grabado "Kontuan izan nauzu" bajo el rugido del Cantábrico. Las lágrimas de Maitane mezclan sal y felicidad mientras la campana repica por segunda vez. Ese momento sella el inicio de un nuevo capítulo en su viaje conjunto.
             </p>
           </div>
@@ -700,20 +833,33 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
                 <BookOpen className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-terracotta">Preparativos · 2024</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Preparativos · 2024</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Su sala se llena de muestrarios de flores, listas de invitados y tarjetas terracota dispuestas sobre la mesa. Debaten menú, música e invitaciones, aprendiendo a escuchar y ceder en cada detalle. Cada decisión refleja su complicidad y el deseo de celebrar no solo un día, sino todo lo vivido. El proceso revela que el verdadero regalo es planificar juntos su futuro.
             </p>
           </div>
           <div className="lg:col-span-6">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a9.png"
+                      alt="Preparativos"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a9.png"
-                    alt="Preparativos"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -723,13 +869,26 @@ export default function TimelinePage() {
         {/* 2025 - La boda */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="p-6">
-              <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500">
+            <div className="p-6 flex justify-center">
+              <div className="relative" style={{ width: '96%' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                  <img
+                      src="/a10.jpg"
+                      alt="La boda"
+                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      onClick={openImage}
+                  />
+                </div>
+                {/* Marco floral */}
                 <img
-                    src="/a10.jpg"
-                    alt="La boda"
-                    className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                    onClick={openImage}
+                  src="/marco_floral.png"
+                  alt=""
+                  className="absolute inset-0 w-full pointer-events-none z-10"
+                  style={{ 
+                    height: 'calc(384px + 2px)',
+                    objectFit: 'cover',
+                    transform: 'scale(1.5) translateX(-3px)' 
+                  }}
                 />
               </div>
             </div>
@@ -739,13 +898,42 @@ export default function TimelinePage() {
               <div className="w-12 h-12 bg-midnight rounded-full flex items-center justify-center mr-4">
                 <PartyPopper className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-3xl font-serif font-bold text-midnight">La boda · 2025</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-midnight">La boda · 2025</h3>
             </div>
-            <p className="text-lg leading-relaxed text-midnight/80 text-justify">
+            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Entre encinas centenarias, sillas blancas y guirnaldas de eucalipto, los invitados se reúnen en un campo iluminado por el último rayo dorado. Julen espera con traje azul medianoche y Maitane avanza con velo ligero, sellando su historia con una promesa de amor eterno. Al confeti elevarse, cada aplauso celebra no un final, sino el prólogo de su vida en común.
             </p>
           </div>
         </section>
+        </div>
+        
+        {/* Marco floral del carrusel - renderizado fuera del max-w-7xl */}
+        <div 
+          id="carousel-frame-portal" 
+          className="fixed pointer-events-none"
+          style={{ 
+            zIndex: 30,
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            overflow: 'visible'
+          }}
+        >
+          <img
+            id="carousel-frame-image"
+            src="/marco_floral.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease'
+            }}
+          />
         </div>
       </div>
 
@@ -766,10 +954,10 @@ export default function TimelinePage() {
         <div className={`relative z-10 text-ivory px-4 max-w-4xl w-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${showVideo ? 'py-20' : ''}`}>
           <div className="text-center">
             <div className="flex items-center justify-center mb-8">
-              <h2 className="text-5xl md:text-7xl font-serif font-bold">Nuestro Video</h2>
+              <h2 className="text-5xl md:text-7xl font-script">Nuestro Video</h2>
               <Heart className="w-10 h-10 ml-4 text-ivory" />
             </div>
-            <p className={`text-xl md:text-2xl leading-relaxed transition-all duration-700 ease-in-out ${showVideo ? 'mb-[44px]' : 'mb-12'}`}>
+            <p className={`text-xl md:text-2xl leading-relaxed transition-all duration-700 ease-in-out font-manuscript ${showVideo ? 'mb-[44px]' : 'mb-12'}`}>
               Un pequeño resumen de un día inolvidable. Gracias por formar parte de él.
             </p>
           </div>

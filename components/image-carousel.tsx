@@ -36,17 +36,17 @@ export default function ImageCarousel({ images, alt, onImageClick, experienceId 
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500 ${!isMobile ? 'cursor-pointer' : ''}`}
+      className={`relative w-full h-full ${!isMobile ? 'cursor-pointer' : ''}`}
       onClick={handleContainerClick}
-      style={{ height: '384px' }} // 24rem = h-96
     >
+      <div className="overflow-hidden w-full h-full">
       {images.map((image, index) => (
         <img
           key={`${image}-${index}`}
           src={image}
           alt={`${alt} - Imagen ${index + 1}`}
           draggable={false}
-          className={`${!isMobile && index === activeIndex ? 'hover:scale-105' : ''} transition-transform duration-500 ease-in-out`}
+          className={`transition-transform duration-500 ease-in-out ${!isMobile ? 'hover:scale-105' : ''}`}
           style={{
             position: 'absolute',
             top: 0,
@@ -60,6 +60,7 @@ export default function ImageCarousel({ images, alt, onImageClick, experienceId 
           }}
         />
       ))}
+      </div>
     </div>
   )
 } 
