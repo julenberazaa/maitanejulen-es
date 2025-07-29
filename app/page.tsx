@@ -61,42 +61,77 @@ export default function TimelinePage() {
   }, [showVideo])
 
   useEffect(() => {
-    // Position all frames dynamically
+    // Lista de nuevos marcos florales disponibles
+    const availableFrames = [
+      '/frames/frame-01.png',
+      '/frames/frame-02.png', 
+      '/frames/frame-03.png',
+      '/frames/frame-04.png',
+      '/frames/frame-05.png',
+      '/frames/frame-06.png',
+      '/frames/frame-07.png',
+      '/frames/frame-08.png',
+      '/frames/frame-09.png',
+      '/frames/frame-10.png'
+    ]
+
+    let animationFrameId: number | null = null
+    let isPositioning = false
+
+    // Position all frames dynamically using transforms (GPU-accelerated)
     const positionAllFrames = () => {
+      if (isPositioning) return
+      isPositioning = true
+
       // Position carousel frame
       const carouselAnchor = document.getElementById('carousel-frame-anchor')
       const carouselFrame = document.getElementById('carousel-frame-image')
       
       if (carouselAnchor && carouselFrame) {
         const rect = carouselAnchor.getBoundingClientRect()
-        carouselFrame.style.left = `${rect.left}px`
-        carouselFrame.style.top = `${rect.top}px`
+        carouselFrame.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1.5) translateX(-3px)`
         carouselFrame.style.width = `${rect.width}px`
         carouselFrame.style.height = `${rect.height + 2}px`
         carouselFrame.style.opacity = '1'
       }
 
-      // Position individual image frames
+      // Position individual image frames with different frame for each image
       const imageIds = ['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
-      imageIds.forEach(imageId => {
+      imageIds.forEach((imageId, index) => {
         const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
         const frame = document.getElementById(`image-frame-${imageId}`)
         
         if (anchor && frame) {
           const rect = anchor.getBoundingClientRect()
-          frame.style.left = `${rect.left}px`
-          frame.style.top = `${rect.top}px`
+          frame.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1.5) translateX(-3px)`
           frame.style.width = `${rect.width}px`
           frame.style.height = `${rect.height + 2}px`
           frame.style.opacity = '1'
+          // Asignar marco diferente a cada imagen, repitiendo si es necesario
+          const frameIndex = index % availableFrames.length
+          ;(frame as HTMLImageElement).src = availableFrames[frameIndex]
         }
+      })
+
+      isPositioning = false
+    }
+
+    // Smooth positioning with requestAnimationFrame
+    const smoothPositionFrames = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId)
+      }
+      
+      animationFrameId = requestAnimationFrame(() => {
+        positionAllFrames()
+        animationFrameId = null
       })
     }
 
     // Position on load and scroll
     positionAllFrames()
-    window.addEventListener('scroll', positionAllFrames)
-    window.addEventListener('resize', positionAllFrames)
+    window.addEventListener('scroll', smoothPositionFrames, { passive: true })
+    window.addEventListener('resize', smoothPositionFrames, { passive: true })
 
     // Initialize scroll animations
     const observerOptions = {
@@ -146,8 +181,11 @@ export default function TimelinePage() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll)
-      window.removeEventListener("scroll", positionAllFrames)
-      window.removeEventListener("resize", positionAllFrames)
+      window.removeEventListener("scroll", smoothPositionFrames)
+      window.removeEventListener("resize", smoothPositionFrames)
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId)
+      }
       observer.disconnect()
     }
   }, [])
@@ -856,39 +894,58 @@ export default function TimelinePage() {
             overflow: 'visible'
           }}
         >
-          {/* Marco del carrusel */}
+          {/* Marco del carrusel - usar segundo marco */}
           <img
             id="carousel-frame-image"
-            src="/marco_floral.png"
+            src="/frames/frame-02.png"
             alt=""
             className="absolute pointer-events-none"
             style={{ 
               width: '0px',
               height: '0px',
               objectFit: 'cover',
-              transform: 'scale(1.5) translateX(-3px)',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
               opacity: 0,
-              transition: 'opacity 0.3s ease'
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
             }}
           />
-          {/* Marcos de imágenes individuales */}
-          {['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10'].map(imageId => (
-            <img
-              key={imageId}
-              id={`image-frame-${imageId}`}
-              src="/marco_floral.png"
-              alt=""
-              className="absolute pointer-events-none"
-              style={{ 
-                width: '0px',
-                height: '0px',
-                objectFit: 'cover',
-                transform: 'scale(1.5) translateX(-3px)',
-                opacity: 0,
-                transition: 'opacity 0.3s ease'
-              }}
-            />
-          ))}
+          {/* Marcos de imágenes individuales con marcos diferentes */}
+          {['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10'].map((imageId, index) => {
+            const availableFrames = [
+              '/frames/frame-01.png',
+              '/frames/frame-02.png', 
+              '/frames/frame-03.png',
+              '/frames/frame-04.png',
+              '/frames/frame-05.png',
+              '/frames/frame-06.png',
+              '/frames/frame-07.png',
+              '/frames/frame-08.png',
+              '/frames/frame-09.png',
+              '/frames/frame-10.png'
+            ]
+            const frameIndex = index % availableFrames.length
+            return (
+              <img
+                key={imageId}
+                id={`image-frame-${imageId}`}
+                src={availableFrames[frameIndex]}
+                alt=""
+                className="absolute pointer-events-none"
+                style={{ 
+                  width: '0px',
+                  height: '0px',
+                  objectFit: 'cover',
+                  transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+                  opacity: 0,
+                  transition: 'opacity 0.3s ease',
+                  left: '0px',
+                  top: '0px'
+                }}
+              />
+            )
+          })}
         </div>
       </div>
 
