@@ -101,8 +101,20 @@ export default function TimelinePage() {
         carouselFrame.style.opacity = '1'
       }
 
+      // Position carousel frame for oposiciones
+      const oposicionesAnchor = document.getElementById('carousel-frame-anchor-oposiciones')
+      const oposicionesFrame = document.getElementById('carousel-frame-oposiciones')
+      
+      if (oposicionesAnchor && oposicionesFrame) {
+        const rect = oposicionesAnchor.getBoundingClientRect()
+        oposicionesFrame.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1.5) translateX(-3px)`
+        oposicionesFrame.style.width = `${rect.width}px`
+        oposicionesFrame.style.height = `${rect.height + 2}px`
+        oposicionesFrame.style.opacity = '1'
+      }
+
       // Position individual image frames with different frame for each image
-      const imageIds = ['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
+      const imageIds = ['a3', 'medicina-graduacion', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
       imageIds.forEach((imageId, index) => {
         const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
         const frame = document.getElementById(`image-frame-${imageId}`)
@@ -156,8 +168,28 @@ export default function TimelinePage() {
         })
       }
 
+      // Capture carousel frame for oposiciones (already correctly positioned)
+      const oposicionesAnchor = document.getElementById('carousel-frame-anchor-oposiciones')
+      const oposicionesFrame = document.getElementById('carousel-frame-oposiciones')
+      if (oposicionesAnchor && oposicionesFrame) {
+        const anchorRect = oposicionesAnchor.getBoundingClientRect()
+        const currentFrameRect = oposicionesFrame.getBoundingClientRect()
+        
+        console.log(`🎯 Oposiciones anchor at: (${anchorRect.left}, ${anchorRect.top})`)
+        console.log(`🖼️ Oposiciones frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
+        console.log(`🔥 Using frame position instead of anchor position`)
+        
+        staticPositions.push({
+          element: oposicionesFrame,
+          translateX: currentFrameRect.left,
+          translateY: currentFrameRect.top,
+          width: currentFrameRect.width,
+          height: currentFrameRect.height
+        })
+      }
+
       // Capture individual frame's current positions (already correctly positioned)
-      const imageIds = ['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
+      const imageIds = ['a3', 'medicina-graduacion', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
       imageIds.forEach((imageId) => {
         const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
         const frame = document.getElementById(`image-frame-${imageId}`)
@@ -191,30 +223,69 @@ export default function TimelinePage() {
         console.log(`🔄 Converted frames-portal to absolute positioning`)
       }
 
-      // Apply captured positions but compensate for the fixed→absolute context change
+      // Manual adjustments for specific frames (in pixels)
+      const manualAdjustments = {
+        'carousel-frame-image': { x: -10, y: -30 }, // Primeras escapadas
+        'carousel-frame-oposiciones': { x: -10, y: -30 }, // Oposiciones de policía
+        'image-frame-a3': { x: -12, y: -30 }, // Estudios universitarios
+        'image-frame-medicina-graduacion': { x: -12, y: -30 }, // MIR y vida en común
+      }
+
+      // Apply captured positions with individual offset calculation for each element
       staticPositions.forEach(({element, translateX, translateY, width, height}) => {
         const elementId = element.id || 'unknown'
         
-        // The offset comes from the hero section + padding - calculate it from logs
-        const calculatedOffset = 2162.7 - 1433.1 // From carousel logs: actual - expected
-        const compensatedY = translateY - calculatedOffset
-        
-        console.log(`🔧 Applying compensated position to ${elementId}:`)
-        console.log(`🔧 Original Y: ${translateY}, Compensated Y: ${compensatedY} (offset: -${calculatedOffset})`)
-        
+        // Test without compensation to see where it would naturally appear
         element.style.position = 'absolute'
         element.style.left = '0px'
         element.style.top = '0px'
-        element.style.transform = `translate(${translateX}px, ${compensatedY}px)`
+        element.style.transform = `translate(${translateX}px, ${translateY}px)`
         element.style.width = `${width}px`
         element.style.height = `${height}px`
         element.style.opacity = '1'
+        
+        // Measure where it actually appears
+        const testRect = element.getBoundingClientRect()
+        const individualOffset = testRect.top - translateY
+        let compensatedY = translateY - individualOffset
+        let compensatedX = translateX
+        
+        // Apply manual adjustments if they exist for this element
+        const manualAdjust = manualAdjustments[elementId as keyof typeof manualAdjustments]
+        if (manualAdjust) {
+          compensatedX += manualAdjust.x
+          compensatedY += manualAdjust.y
+          console.log(`🎨 Manual adjustment for ${elementId}: +${manualAdjust.x}px X, +${manualAdjust.y}px Y`)
+        }
+        
+        console.log(`🔧 Calculating individual offset for ${elementId}:`)
+        console.log(`🔧 Expected Y: ${translateY}, Test position: ${testRect.top}`)
+        console.log(`🔧 Individual offset: ${individualOffset}, Compensated Y: ${compensatedY}`)
+        
+        // Apply the individually calculated compensation with forced rendering
+        element.style.transform = `translate(${compensatedX}px, ${compensatedY}px)`
+        element.style.zIndex = '30' // Ensure frames are above other content
+        element.style.pointerEvents = 'none' // Maintain non-interactive
+        element.style.willChange = 'auto' // Stop any ongoing GPU optimizations that might interfere
         element.setAttribute('data-static', 'true')
         
-        // Verify position after applying
+        // Force reflow to ensure styles are applied
+        element.offsetHeight
+        
+        // Verify final position and visibility
         const finalRect = element.getBoundingClientRect()
+        const computedStyle = window.getComputedStyle(element)
+        
         console.log(`✅ ${elementId} final position: (${finalRect.left}, ${finalRect.top})`)
         console.log(`🎯 Target: (${translateX}, ${translateY}) vs Actual: (${finalRect.left}, ${finalRect.top})`)
+        console.log(`👁️ ${elementId} visibility - opacity: ${computedStyle.opacity}, zIndex: ${computedStyle.zIndex}`)
+        console.log(`📏 ${elementId} dimensions: ${finalRect.width}x${finalRect.height}`)
+        
+        // Additional check for very small positioning errors
+        const positionAccuracy = Math.abs(finalRect.top - translateY)
+        if (positionAccuracy > 1) {
+          console.warn(`⚠️ ${elementId} position inaccuracy: ${positionAccuracy}px`)
+        }
       })
       
       // Remove scroll listeners - frames now have fixed positions in document
@@ -736,7 +807,7 @@ export default function TimelinePage() {
           </div>
         </section>
 
-        {/* 2013 - Primera aventura */}
+        {/* 2015-2018 - Estudios universitarios */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
@@ -744,7 +815,7 @@ export default function TimelinePage() {
                 <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a3.jpg"
-                      alt="Primera aventura"
+                      alt="Estudios universitarios"
                       className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
                       onClick={openImage}
                   />
@@ -757,74 +828,81 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
-                <Ship className="w-6 h-6 text-ivory" />
+                <BookOpen className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Primera aventura · 2013</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Estudios universitarios · 2015-2018</h3>
             </div>
             <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Con sus ahorros de verano, se apuntan a un campamento de kayak por el Sella, la primera experiencia lejos de casa. Amanecen en tienda de campaña con café soluble y nervios compartidos. Aprenden a remar sincronizados: cuando ella canta, él esquiva rocas; cuando él cede, ella lo anima. Sin saberlo, descubren que llevan años remando hacia el mismo destino.
+              Julen terminó sus años de estudio en la ikastola Kirikiño, donde había comenzado su historia con Maitane, y comenzó su grado en Publicidad y recursos humanos. Maitane, con una clara vocación por ser médico, insistió y perseveró como una campeona hasta llegar a acceder a la carrera de medicina. En su primera prueba no consiguió esa súper nota que necesitan los futuros doctores y accedió al grado en odontología. Pero su perseverancia y su trabajo de un nuevo año le dio el paso para comenzar la carrera de sus sueños. Años duros para la pareja, ya no se podían ver tanto como antes. La responsabilidad de los estudios hacía que tuvieran que sacar ratitos de encuentros con esfuerzo.
             </p>
           </div>
         </section>
 
-        {/* 2014 - Primer beso */}
+        {/* 2019-2022 - Oposiciones de policía */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 lg:pr-12">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-midnight rounded-full flex items-center justify-center mr-4">
-                <Heart className="w-6 h-6 text-ivory" />
+                <Star className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-midnight">Primer beso · 2014</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-midnight">Oposiciones de policía · 2019-2022</h3>
             </div>
             <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              La feria de San Antón enciende Bilbao con neones y olor a algodón de azúcar. Tras una vuelta en la noria, Julen regala a Maitane un peluche ganado en el tiro al blanco. En medio de risas y música estridente, se atreven a cerrar la distancia con un beso inolvidable. Ese instante fugaz marca un antes y un después en su historia.
+              Cuando Julen terminó su grado nos sorprendió a todos apuntándose a una convocatoria para participar en las oposiciones para Policía local de Bilbao. Ni siquiera su aita, en ese puesto durante muchos años, supo de este deseo antes de que lo comunicara después de apuntarse. En ese tiempo de preparación, Julen metió más horas que nunca delante de los libros. Maitane, que de eso sabía mucho, le ayudó a organizar sus tiempos para llegar a desarrollar todos los temas. Pateaba las calles de Bilbao memorizando todos los nombres y situaciones. ¡Y mira que hay calles en Bilbao! Iba al gimnasio para prepararse físicamente y se lo tomó tan en serio que dejó su pasión desde muy niño, el fútbol, para evitar lesiones. Su esfuerzo mereció la pena: aprobó las oposiciones y después de 7 meses de academia, comenzó a trabajar con 24 añitos.
             </p>
           </div>
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/a4.jpg"
-                      alt="Primer beso"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
-                      onClick={openImage}
+                <div className="custom-shadow-right-bottom" style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
+                  <ImageCarousel
+                    images={[
+                      "/estudios-oposiciones-01.jpg",
+                      "/estudios-oposiciones-02.jpg",
+                      "/estudios-oposiciones-03.jpg",
+                      "/estudios-oposiciones-04.jpg"
+                    ]}
+                    alt="Oposiciones de policía"
+                    experienceId="03"
+                    onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                      openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
                   />
                 </div>
                 {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a4" className="absolute inset-0 pointer-events-none"></div>
+                <div id="carousel-frame-anchor-oposiciones" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 2015 - A distancia */}
+        {/* 2020-2023 - MIR y vida en común */}
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
-                      src="/a5.jpg"
-                      alt="A distancia"
+                      src="/medicina-graduacion.jpg"
+                      alt="MIR y vida en común"
                       className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
                       onClick={openImage}
                   />
                 </div>
                 {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a5" className="absolute inset-0 pointer-events-none"></div>
+                <div id="image-frame-anchor-medicina-graduacion" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center mr-4">
-                <Plane className="w-6 h-6 text-midnight" />
+                <Heart className="w-6 h-6 text-midnight" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-sage">A distancia · 2015</h3>
+              <h3 className="text-4xl md:text-5xl font-script text-sage">MIR y vida en común · 2020-2023</h3>
             </div>
             <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              La universidad los separa entre Madrid y Bilbao, pero las videollamadas se convierten en su nuevo ritual. Entre trenes nocturnos y cartas perfumadas de salvia, aprenden a medir la nostalgia en megas y husos horarios. Cada "buenas noches" incluye un "falta un día menos" que acorta kilómetros. La distancia demuestra que su amor es, más que un lugar, un lazo irrompible.
+              Maitane, por su parte, se dedicaba en cuerpo y alma a superar cada dura asignatura de la carrera de medicina. Pero tuvo que continuar estudiando para poder desarrollar su vocación en la medicina pública. Si quería seguir junto a Julen, tenía que lograr una nota suficiente para implementar sus años de residente en algún hospital cerca de Bilbao. En un año tenía que preparar su examen MIR y aquí no había tiempo ni para parar a comer más de lo imprescindible. Una verdadera prueba de amor para la pareja. Julen, cuando no trabajaba, esperaba en casa la llamada de Maitane comunicándole que se tomaba un descansito para alimentarse o para coger aire y corría a su lado para compartir unos minutos. Como en el primer examen no pudo ser, esas rutinas se repitieron un nuevo año, aunque mucho más llevaderas, porque sus ganas de estar juntos les empujó a compartir un piso donde podían disfrutar de muchos más minutos de mutua compañía, añadiendo además un nuevo miembro a la familia. ¿Ayudó su perrito Ilun a que Maitane consiguiera su plaza de residente en Basurto?
             </p>
           </div>
         </section>
@@ -1046,8 +1124,25 @@ export default function TimelinePage() {
               top: '0px'
             }}
           />
+          {/* Marco del carrusel de oposiciones */}
+          <img
+            id="carousel-frame-oposiciones"
+            src="/frames/frame-03.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
+            }}
+          />
           {/* Marcos de imágenes individuales con marcos diferentes */}
-          {['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10'].map((imageId, index) => {
+          {['a3', 'medicina-graduacion', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10'].map((imageId, index) => {
             const availableFrames = [
               '/frames/frame-01.png',
               '/frames/frame-02.png', 
