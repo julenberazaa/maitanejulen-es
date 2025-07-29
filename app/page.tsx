@@ -77,10 +77,16 @@ export default function TimelinePage() {
 
     let animationFrameId: number | null = null
     let isPositioning = false
+    let isDynamicMode = true
+    let captureTimer: NodeJS.Timeout | null = null
+
+    // Block scrolling initially to capture clean positions
+    document.body.style.overflow = 'hidden'
+    console.log('🚫 Scroll blocked for clean position capture')
 
     // Position all frames dynamically using transforms (GPU-accelerated)
     const positionAllFrames = () => {
-      if (isPositioning) return
+      if (isPositioning || !isDynamicMode) return
       isPositioning = true
 
       // Position carousel frame
@@ -102,7 +108,7 @@ export default function TimelinePage() {
         const frame = document.getElementById(`image-frame-${imageId}`)
         
         if (anchor && frame) {
-          const rect = anchor.getBoundingClientRect()
+        const rect = anchor.getBoundingClientRect()
           frame.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1.5) translateX(-3px)`
           frame.style.width = `${rect.width}px`
           frame.style.height = `${rect.height + 2}px`
@@ -116,8 +122,114 @@ export default function TimelinePage() {
       isPositioning = false
     }
 
+    // Convert from dynamic to static positioning (clean capture with no scroll)
+    const convertToStaticMode = () => {
+      if (!isDynamicMode) return
+      
+      isDynamicMode = false
+      console.log('🔄 Capturing clean positions and converting to static mode')
+
+      // Execute final positioning update to ensure frames are correctly positioned
+      positionAllFrames()
+      console.log('📍 Final positioning update executed')
+
+      // Capture anchor positions while scroll is blocked (clean, accurate positions)
+      const staticPositions: Array<{element: HTMLElement, translateX: number, translateY: number, width: number, height: number}> = []
+
+      // Capture carousel frame's current position (already correctly positioned)
+      const carouselAnchor = document.getElementById('carousel-frame-anchor')
+      const carouselFrame = document.getElementById('carousel-frame-image')
+      if (carouselAnchor && carouselFrame) {
+        const anchorRect = carouselAnchor.getBoundingClientRect()
+        const currentFrameRect = carouselFrame.getBoundingClientRect()
+        
+        console.log(`🎯 Carousel anchor at: (${anchorRect.left}, ${anchorRect.top})`)
+        console.log(`🖼️ Carousel frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
+        console.log(`🔥 Using frame position instead of anchor position`)
+        
+        staticPositions.push({
+          element: carouselFrame,
+          translateX: currentFrameRect.left,
+          translateY: currentFrameRect.top,
+          width: currentFrameRect.width,
+          height: currentFrameRect.height
+        })
+      }
+
+      // Capture individual frame's current positions (already correctly positioned)
+      const imageIds = ['a3', 'a4', 'a5', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
+      imageIds.forEach((imageId) => {
+        const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
+        const frame = document.getElementById(`image-frame-${imageId}`)
+        if (anchor && frame) {
+          const anchorRect = anchor.getBoundingClientRect()
+          const currentFrameRect = frame.getBoundingClientRect()
+          
+          console.log(`🎯 ${imageId} anchor at: (${anchorRect.left}, ${anchorRect.top})`)
+          console.log(`🖼️ ${imageId} frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
+          console.log(`🔥 Using frame position instead of anchor position`)
+          
+          staticPositions.push({
+            element: frame,
+            translateX: currentFrameRect.left,
+            translateY: currentFrameRect.top,
+            width: currentFrameRect.width,
+            height: currentFrameRect.height
+          })
+        }
+      })
+
+      // Convert frames-portal to absolute but compensate for document offset
+      const framesPortal = document.getElementById('frames-portal')
+      if (framesPortal) {
+        framesPortal.style.position = 'absolute'
+        framesPortal.style.top = '0px'
+        framesPortal.style.left = '0px'
+        framesPortal.style.width = '100vw'
+        framesPortal.style.height = '100vh'
+        framesPortal.style.overflow = 'visible'
+        console.log(`🔄 Converted frames-portal to absolute positioning`)
+      }
+
+      // Apply captured positions but compensate for the fixed→absolute context change
+      staticPositions.forEach(({element, translateX, translateY, width, height}) => {
+        const elementId = element.id || 'unknown'
+        
+        // The offset comes from the hero section + padding - calculate it from logs
+        const calculatedOffset = 2162.7 - 1433.1 // From carousel logs: actual - expected
+        const compensatedY = translateY - calculatedOffset
+        
+        console.log(`🔧 Applying compensated position to ${elementId}:`)
+        console.log(`🔧 Original Y: ${translateY}, Compensated Y: ${compensatedY} (offset: -${calculatedOffset})`)
+        
+        element.style.position = 'absolute'
+        element.style.left = '0px'
+        element.style.top = '0px'
+        element.style.transform = `translate(${translateX}px, ${compensatedY}px)`
+        element.style.width = `${width}px`
+        element.style.height = `${height}px`
+        element.style.opacity = '1'
+        element.setAttribute('data-static', 'true')
+        
+        // Verify position after applying
+        const finalRect = element.getBoundingClientRect()
+        console.log(`✅ ${elementId} final position: (${finalRect.left}, ${finalRect.top})`)
+        console.log(`🎯 Target: (${translateX}, ${translateY}) vs Actual: (${finalRect.left}, ${finalRect.top})`)
+      })
+      
+      // Remove scroll listeners - frames now have fixed positions in document
+      window.removeEventListener('scroll', smoothPositionFrames)
+      window.removeEventListener('resize', smoothPositionFrames)
+      
+      // Re-enable scrolling after conversion is complete
+      document.body.style.overflow = 'auto'
+      console.log('✅ Static positioning activated and scroll re-enabled')
+    }
+
     // Smooth positioning with requestAnimationFrame
     const smoothPositionFrames = () => {
+      if (!isDynamicMode) return
+      
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId)
       }
@@ -128,10 +240,26 @@ export default function TimelinePage() {
       })
     }
 
-    // Position on load and scroll
+    // Position on load and scroll (dynamic mode)
     positionAllFrames()
+    console.log('🚀 Initial positioning executed')
+    
+    // Execute positioning periodically during the first second to ensure accuracy
+    const intervalId = setInterval(() => {
+      if (isDynamicMode) {
+        positionAllFrames()
+        console.log('⏱️ Periodic positioning update during blocked scroll')
+      }
+    }, 100) // Every 100ms during the first second
+    
     window.addEventListener('scroll', smoothPositionFrames, { passive: true })
     window.addEventListener('resize', smoothPositionFrames, { passive: true })
+
+    // Set timer to capture positions and switch to static mode
+    captureTimer = setTimeout(() => {
+      clearInterval(intervalId) // Stop periodic updates
+      convertToStaticMode()
+    }, 1000) // 1 second with blocked scroll for clean capture
 
     // Initialize scroll animations
     const observerOptions = {
@@ -181,11 +309,18 @@ export default function TimelinePage() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll)
-      window.removeEventListener("scroll", smoothPositionFrames)
-      window.removeEventListener("resize", smoothPositionFrames)
+      if (isDynamicMode) {
+        window.removeEventListener("scroll", smoothPositionFrames)
+        window.removeEventListener("resize", smoothPositionFrames)
+      }
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId)
       }
+      if (captureTimer) {
+        clearTimeout(captureTimer)
+      }
+      // Re-enable scroll if component unmounts before conversion
+      document.body.style.overflow = 'auto'
       observer.disconnect()
     }
   }, [])
@@ -578,7 +713,7 @@ export default function TimelinePage() {
             </p>
           </div>
           <div className="lg:col-span-6">
-                        <div className="p-6 flex justify-center">
+            <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="custom-shadow-right-bottom" style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
                   <ImageCarousel
@@ -606,7 +741,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a3.jpg"
                       alt="Primera aventura"
@@ -648,7 +783,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a4.jpg"
                       alt="Primer beso"
@@ -668,7 +803,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a5.jpg"
                       alt="A distancia"
@@ -710,7 +845,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a6.jpg"
                       alt="Reencuentro en París"
@@ -730,7 +865,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a7.jpg"
                       alt="Vuelta al mundo"
@@ -772,7 +907,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a11.jpg"
                       alt="Adopción de Ilun"
@@ -792,7 +927,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a8.png"
                       alt="Propuesta"
@@ -834,7 +969,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a9.png"
                       alt="Preparativos"
@@ -854,7 +989,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a10.jpg"
                       alt="La boda"
