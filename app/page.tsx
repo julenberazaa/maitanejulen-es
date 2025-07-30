@@ -755,7 +755,7 @@ export default function TimelinePage() {
           </div>
           <div className="lg:col-span-6 lg:pl-8">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-terracotta mr-4">
                 <svg className="w-6 h-6" viewBox="145.5 144.8 609 609.7" xmlns="http://www.w3.org/2000/svg">
                   <path d="m269.2 146.1c-64.7 6.2-109.9 47.5-121.4 111l-2.3 12.4v360l2.3 12.6c5.7 31.6 17.9 55 39.3 75.4 17.5 16.7 39.4 28 63.8 32.9 19.7 4 23.3 4.1 201.1 4.1 161 0 172.2-.1 183.5-1.8 36.1-5.5 60.5-17.3 81.6-39.4 19.1-20 29.9-42 35.2-71.7l2.2-12.1v-361l-2.3-12c-5.9-31-18.9-55.8-39.3-75-22-20.6-48.3-31.9-82.9-35.5-11.5-1.2-348.5-1.1-360.8.1zm262.8 129.6c5.9 2.7 8.6 5.3 14.7 13.8 21.3 30 37.8 73.7 44.4 117.5 3.1 21 3.2 56.1 0 78-5.6 39.6-17.9 74.3-38.3 108.6-11.4 19.2-19 25.3-32.3 26.2-17.5 1.1-32.2-11.8-33.3-29.2-.6-9.6.6-13.3 8.4-25.6 46.2-73.1 45.6-168.9-1.6-240-5.8-8.7-7.3-13.8-6.8-22.2.9-13.8 9.4-24.5 22.8-28.9 4.4-1.5 17.1-.4 22 1.8zm-135 37.7c32 6.9 42.9 47.6 18.8 70.2-20.4 19-53.1 12.9-65.5-12.4-3.6-7.2-3.8-8.1-3.8-17.1 0-12.9 2.5-19.7 10.7-28.5 10.5-11.6 23.8-15.6 39.8-12.2zm1.8 154.1c7.3 2.2 15 8.8 18.7 16 2.7 5.3 3 6.8 3 14.9v9.1l-7.2 14.5c-3.9 8-12.1 24.8-18.2 37.5-20.4 41.9-22.1 45.1-26.4 49.3-7.1 6.9-11.8 8.7-22.2 8.7-7.8 0-9.7-.4-14.7-2.8-6.3-3.1-11.5-8.5-15-15.6-1.8-3.7-2.2-6.3-2.3-13.1v-8.5l8.2-17c9.4-19.8 32.1-66.3 36.5-75 4.7-9.4 11.9-15.8 20.8-18.6 4.3-1.3 13.4-1 18.8.6z" 
                         fill="white"/>
@@ -773,7 +773,7 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 lg:pr-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-sage mr-4">
                 <img src="/pareja4.svg" alt="Pareja" className="w-8 h-8" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-sage">Primeras escapadas</h3>
@@ -827,7 +827,7 @@ export default function TimelinePage() {
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-terracotta mr-4">
                 <BookOpen className="w-6 h-6 text-ivory" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-terracotta">Estudios universitarios · 2015-2018</h3>
@@ -842,7 +842,7 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 lg:pr-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-midnight rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-midnight mr-4">
                 <Star className="w-6 h-6 text-ivory" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-midnight">Oposiciones de policía · 2019-2022</h3>
@@ -896,7 +896,7 @@ export default function TimelinePage() {
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-sage mr-4">
                 <Heart className="w-6 h-6 text-midnight" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-sage">MIR y vida en común · 2020-2023</h3>
@@ -911,7 +911,7 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 lg:pr-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-terracotta mr-4">
                 <Camera className="w-6 h-6 text-ivory" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-terracotta">Reencuentro en París · 2017</h3>
@@ -958,7 +958,7 @@ export default function TimelinePage() {
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-terracotta mr-4">
                 <MapPin className="w-6 h-6 text-ivory" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-terracotta">Vuelta al mundo · 2019</h3>
@@ -973,7 +973,7 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 lg:pr-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-sage rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-sage mr-4">
                 <PawPrint className="w-6 h-6 text-midnight" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-sage">Adopción de Ilun · 2020</h3>
@@ -1020,7 +1020,7 @@ export default function TimelinePage() {
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-midnight rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-midnight mr-4">
                 <Ring className="w-6 h-6 text-ivory" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-midnight">Propuesta · 2022</h3>
@@ -1035,7 +1035,7 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="lg:col-span-6 lg:pr-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-terracotta mr-4">
                 <BookOpen className="w-6 h-6 text-ivory" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-terracotta">Preparativos · 2024</h3>
@@ -1082,7 +1082,7 @@ export default function TimelinePage() {
           </div>
           <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-midnight rounded-full flex items-center justify-center mr-4">
+              <div className="timeline-icon-circle bg-midnight mr-4">
                 <PartyPopper className="w-6 h-6 text-ivory" />
               </div>
               <h3 className="text-4xl md:text-5xl font-script text-midnight">La boda · 2025</h3>

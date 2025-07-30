@@ -91,6 +91,20 @@
     transform: translateY(0) !important;
   }
 
+  /* Asegurar que los círculos de iconos mantengan su forma perfecta */
+  .timeline-icon-circle {
+    aspect-ratio: 1 / 1;
+    min-width: 3rem;
+    min-height: 3rem;
+    max-width: 3rem;
+    max-height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
   .confetti-piece {
     position: absolute;
     width: 10px;
