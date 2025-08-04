@@ -1,5 +1,5 @@
 import type React from "react"
-import { Plane, Heart, Camera, MapPin, Sparkles, Crown } from "lucide-react"
+import { Plane, Heart, Camera, MapPin, Sparkles, Crown, Shield, Stethoscope } from "lucide-react"
 
 export interface TimelineItem {
   id: number
@@ -113,6 +113,7 @@ export const timelineData: TimelineItem[] = [
     background: "bg-sage-green/20",
     icon: <Camera className="w-6 h-6 text-ivory" />,
   },
+
   {
     id: 8,
     year: 2022,

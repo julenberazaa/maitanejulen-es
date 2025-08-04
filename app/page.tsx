@@ -26,6 +26,19 @@ export default function TimelinePage() {
   const [modalImageIndex, setModalImageIndex] = useState(0)
   const isMobile = useMediaQuery('(max-width: 768px)')
 
+  // Forzar scroll al top en cada recarga de la página sin animación
+  useEffect(() => {
+    // Evitar que el navegador restaure la posición de scroll anterior
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual'
+    }
+    
+    // Forzar posición al top inmediatamente sin animación
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }, [])
+
   useEffect(() => {
     if (selectedImage.src) {
       const timer = setTimeout(() => {
@@ -80,6 +93,41 @@ export default function TimelinePage() {
     let isDynamicMode = true
     let captureTimer: NodeJS.Timeout | null = null
 
+    // =========================================
+    // CONFIGURACIÓN PERSONALIZADA DE MARCOS
+    // =========================================
+    
+    // MARCO DE POLICÍA (azul) - Sección: Oposiciones de policía · 2019-2022
+    const policiaFrameConfig = {
+      scaleX: 1.05,       // Ancho del marco (1.0 = normal, 0.8 = más estrecho, 1.3 = más ancho)
+      scaleY: 1.19,       // Alto del marco (1.0 = normal, 0.8 = más bajo, 1.3 = más alto)
+      offsetX: 2,        // Posición horizontal (-20 = 20px izquierda, +20 = 20px derecha)
+      offsetY: 10,        // Posición vertical (-30 = 30px arriba, +30 = 30px abajo)
+      rotation: 0,       // Rotación en grados (0 = sin rotación, 15 = girado 15°)
+      opacity: 1.0       // Transparencia (1.0 = opaco, 0.5 = semi-transparente)
+    }
+
+    // MARCO DE MEDICINA (beige) - Sección: MIR y vida en común · 2020-2023
+    const medicinaFrameConfig = {
+      scaleX: 1.05,       // Ancho del marco (1.0 = normal, 0.8 = más estrecho, 1.3 = más ancho)
+      scaleY: 1.19,       // Alto del marco (1.0 = normal, 0.8 = más bajo, 1.3 = más alto)
+      offsetX: 2,      // Posición horizontal (-20 = 20px izquierda, +20 = 20px derecha)
+      offsetY: 26,      // Posición vertical (-30 = 30px arriba, +30 = 30px abajo)
+      rotation: 0,       // Rotación en grados (0 = sin rotación, 15 = girado 15°)
+      opacity: 1.0       // Transparencia (1.0 = opaco, 0.5 = semi-transparente)
+    }
+
+    // MARCO DE PARÍS (pino) - Sección: Reencuentro en París · 2017
+    const parisFrameConfig = {
+      scaleX: 0.9,       // Ancho del marco (1.0 = normal, 0.8 = más estrecho, 1.3 = más ancho)
+      scaleY: 0.9,       // Alto del marco (1.0 = normal, 0.8 = más bajo, 1.3 = más alto)
+      offsetX: -15,      // Posición horizontal (-20 = 20px a la izquierda, +20 = 20px a la derecha)
+      offsetY: -25,      // Posición vertical (-40 = 40px arriba, +40 = 40px abajo)
+      rotation: 0,       // Rotación en grados (0 = sin rotación, 15 = girado 15°)
+      opacity: 1.0       // Transparencia (1.0 = opaco, 0.5 = semi-transparente)
+    }
+    // =========================================
+
     // Block scrolling initially to capture clean positions
     document.body.style.overflow = 'hidden'
     console.log('🚫 Scroll blocked for clean position capture')
@@ -99,22 +147,13 @@ export default function TimelinePage() {
         carouselFrame.style.width = `${rect.width}px`
         carouselFrame.style.height = `${rect.height + 2}px`
         carouselFrame.style.opacity = '1'
+        carouselFrame.className = 'absolute pointer-events-none frame-shadow'
       }
 
-      // Position carousel frame for oposiciones
-      const oposicionesAnchor = document.getElementById('carousel-frame-anchor-oposiciones')
-      const oposicionesFrame = document.getElementById('carousel-frame-oposiciones')
-      
-      if (oposicionesAnchor && oposicionesFrame) {
-        const rect = oposicionesAnchor.getBoundingClientRect()
-        oposicionesFrame.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1.5) translateX(-3px)`
-        oposicionesFrame.style.width = `${rect.width}px`
-        oposicionesFrame.style.height = `${rect.height + 2}px`
-        oposicionesFrame.style.opacity = '1'
-      }
+
 
       // Position individual image frames with different frame for each image
-      const imageIds = ['a3', 'medicina-graduacion', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
+      const imageIds = ['a3', 'a7', 'a11', 'a8', 'a9', 'a10']
       imageIds.forEach((imageId, index) => {
         const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
         const frame = document.getElementById(`image-frame-${imageId}`)
@@ -125,11 +164,58 @@ export default function TimelinePage() {
           frame.style.width = `${rect.width}px`
           frame.style.height = `${rect.height + 2}px`
           frame.style.opacity = '1'
+          frame.className = 'absolute pointer-events-none frame-shadow'
           // Asignar marco diferente a cada imagen, repitiendo si es necesario
           const frameIndex = index % availableFrames.length
           ;(frame as HTMLImageElement).src = availableFrames[frameIndex]
         }
       })
+
+      // Position custom frames for specific sections
+      const policiaAnchor = document.getElementById('frame-anchor-policia')
+      const policiaFrame = document.getElementById('custom-frame-policia')
+      
+      if (policiaAnchor && policiaFrame) {
+        const rect = policiaAnchor.getBoundingClientRect()
+        // Aplicar configuración personalizada del marco de policía
+        const finalX = rect.left + policiaFrameConfig.offsetX
+        const finalY = rect.top + policiaFrameConfig.offsetY
+        policiaFrame.style.transform = `translate(${finalX}px, ${finalY}px) scale(${policiaFrameConfig.scaleX}, ${policiaFrameConfig.scaleY}) rotate(${policiaFrameConfig.rotation}deg)`
+        policiaFrame.style.width = `${rect.width}px`
+        policiaFrame.style.height = `${rect.height + 2}px`
+        policiaFrame.style.opacity = policiaFrameConfig.opacity.toString()
+        policiaFrame.className = 'absolute pointer-events-none frame-shadow'
+      }
+
+      const medicinaAnchor = document.getElementById('frame-anchor-medicina')
+      const medicinaFrame = document.getElementById('custom-frame-medicina')
+      
+      if (medicinaAnchor && medicinaFrame) {
+        const rect = medicinaAnchor.getBoundingClientRect()
+        // Aplicar configuración personalizada del marco de medicina
+        const finalX = rect.left + medicinaFrameConfig.offsetX
+        const finalY = rect.top + medicinaFrameConfig.offsetY
+        medicinaFrame.style.transform = `translate(${finalX}px, ${finalY}px) scale(${medicinaFrameConfig.scaleX}, ${medicinaFrameConfig.scaleY}) rotate(${medicinaFrameConfig.rotation}deg)`
+        medicinaFrame.style.width = `${rect.width}px`
+        medicinaFrame.style.height = `${rect.height + 2}px`
+        medicinaFrame.style.opacity = medicinaFrameConfig.opacity.toString()
+        medicinaFrame.className = 'absolute pointer-events-none frame-shadow'
+      }
+
+      const parisAnchor = document.getElementById('frame-anchor-paris')
+      const parisFrame = document.getElementById('custom-frame-paris')
+      
+      if (parisAnchor && parisFrame) {
+        const rect = parisAnchor.getBoundingClientRect()
+        // Aplicar configuración personalizada del marco de París
+        const finalX = rect.left + parisFrameConfig.offsetX
+        const finalY = rect.top + parisFrameConfig.offsetY
+        parisFrame.style.transform = `translate(${finalX}px, ${finalY}px) scale(${parisFrameConfig.scaleX}, ${parisFrameConfig.scaleY}) rotate(${parisFrameConfig.rotation}deg)`
+        parisFrame.style.width = `${rect.width}px`
+        parisFrame.style.height = `${rect.height + 2}px`
+        parisFrame.style.opacity = parisFrameConfig.opacity.toString()
+        parisFrame.className = 'absolute pointer-events-none frame-shadow'
+      }
 
       isPositioning = false
     }
@@ -168,28 +254,10 @@ export default function TimelinePage() {
         })
       }
 
-      // Capture carousel frame for oposiciones (already correctly positioned)
-      const oposicionesAnchor = document.getElementById('carousel-frame-anchor-oposiciones')
-      const oposicionesFrame = document.getElementById('carousel-frame-oposiciones')
-      if (oposicionesAnchor && oposicionesFrame) {
-        const anchorRect = oposicionesAnchor.getBoundingClientRect()
-        const currentFrameRect = oposicionesFrame.getBoundingClientRect()
-        
-        console.log(`🎯 Oposiciones anchor at: (${anchorRect.left}, ${anchorRect.top})`)
-        console.log(`🖼️ Oposiciones frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
-        console.log(`🔥 Using frame position instead of anchor position`)
-        
-        staticPositions.push({
-          element: oposicionesFrame,
-          translateX: currentFrameRect.left,
-          translateY: currentFrameRect.top,
-          width: currentFrameRect.width,
-          height: currentFrameRect.height
-        })
-      }
+
 
       // Capture individual frame's current positions (already correctly positioned)
-      const imageIds = ['a3', 'medicina-graduacion', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10']
+      const imageIds = ['a3', 'a7', 'a11', 'a8', 'a9', 'a10']
       imageIds.forEach((imageId) => {
         const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
         const frame = document.getElementById(`image-frame-${imageId}`)
@@ -211,6 +279,58 @@ export default function TimelinePage() {
         }
       })
 
+      // Capture custom frames positions
+      const policiaAnchor = document.getElementById('frame-anchor-policia')
+      const policiaFrame = document.getElementById('custom-frame-policia')
+      if (policiaAnchor && policiaFrame) {
+        const currentFrameRect = policiaFrame.getBoundingClientRect()
+        
+        console.log(`🖼️ Policia frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
+        console.log(`👮 Policia frame config: scaleX=${policiaFrameConfig.scaleX}, scaleY=${policiaFrameConfig.scaleY}, offsetX=${policiaFrameConfig.offsetX}, offsetY=${policiaFrameConfig.offsetY}`)
+        
+        staticPositions.push({
+          element: policiaFrame,
+          translateX: currentFrameRect.left,
+          translateY: currentFrameRect.top,
+          width: currentFrameRect.width,
+          height: currentFrameRect.height
+        })
+      }
+
+      const medicinaAnchor = document.getElementById('frame-anchor-medicina')
+      const medicinaFrame = document.getElementById('custom-frame-medicina')
+      if (medicinaAnchor && medicinaFrame) {
+        const currentFrameRect = medicinaFrame.getBoundingClientRect()
+        
+        console.log(`🖼️ Medicina frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
+        console.log(`⚕️ Medicina frame config: scaleX=${medicinaFrameConfig.scaleX}, scaleY=${medicinaFrameConfig.scaleY}, offsetX=${medicinaFrameConfig.offsetX}, offsetY=${medicinaFrameConfig.offsetY}`)
+        
+        staticPositions.push({
+          element: medicinaFrame,
+          translateX: currentFrameRect.left,
+          translateY: currentFrameRect.top,
+          width: currentFrameRect.width,
+          height: currentFrameRect.height
+        })
+      }
+
+      const parisAnchor = document.getElementById('frame-anchor-paris')
+      const parisFrame = document.getElementById('custom-frame-paris')
+      if (parisAnchor && parisFrame) {
+        const currentFrameRect = parisFrame.getBoundingClientRect()
+        
+        console.log(`🖼️ Paris frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
+        console.log(`🎨 Paris frame config: scaleX=${parisFrameConfig.scaleX}, scaleY=${parisFrameConfig.scaleY}, offsetX=${parisFrameConfig.offsetX}, offsetY=${parisFrameConfig.offsetY}`)
+        
+        staticPositions.push({
+          element: parisFrame,
+          translateX: currentFrameRect.left,
+          translateY: currentFrameRect.top,
+          width: currentFrameRect.width,
+          height: currentFrameRect.height
+        })
+      }
+
       // Convert frames-portal to absolute but compensate for document offset
       const framesPortal = document.getElementById('frames-portal')
       if (framesPortal) {
@@ -226,9 +346,10 @@ export default function TimelinePage() {
       // Manual adjustments for specific frames (in pixels)
       const manualAdjustments = {
         'carousel-frame-image': { x: -10, y: -30 }, // Primeras escapadas
-        'carousel-frame-oposiciones': { x: -10, y: -30 }, // Oposiciones de policía
         'image-frame-a3': { x: -12, y: -30 }, // Estudios universitarios
-        'image-frame-medicina-graduacion': { x: -12, y: -30 }, // MIR y vida en común
+        'custom-frame-policia': { x: -12, y: -30 }, // Marco personalizado policía
+        'custom-frame-medicina': { x: -12, y: -30 }, // Marco personalizado medicina
+        'custom-frame-paris': { x: -12, y: -30 }, // Marco personalizado París
       }
 
       // Apply captured positions with individual offset calculation for each element
@@ -258,13 +379,52 @@ export default function TimelinePage() {
           console.log(`🎨 Manual adjustment for ${elementId}: +${manualAdjust.x}px X, +${manualAdjust.y}px Y`)
         }
         
+        // Aplicar configuraciones especiales para marcos personalizados
+        if (elementId === 'custom-frame-policia') {
+          compensatedX += policiaFrameConfig.offsetX
+          compensatedY += policiaFrameConfig.offsetY
+          console.log(`👮 Policia frame special config applied: scaleX=${policiaFrameConfig.scaleX}, scaleY=${policiaFrameConfig.scaleY}, offset=(${policiaFrameConfig.offsetX}, ${policiaFrameConfig.offsetY})`)
+        } else if (elementId === 'custom-frame-medicina') {
+          compensatedX += medicinaFrameConfig.offsetX
+          compensatedY += medicinaFrameConfig.offsetY
+          console.log(`⚕️ Medicina frame special config applied: scaleX=${medicinaFrameConfig.scaleX}, scaleY=${medicinaFrameConfig.scaleY}, offset=(${medicinaFrameConfig.offsetX}, ${medicinaFrameConfig.offsetY})`)
+        } else if (elementId === 'custom-frame-paris') {
+          compensatedX += parisFrameConfig.offsetX
+          compensatedY += parisFrameConfig.offsetY
+          console.log(`🌲 Paris frame special config applied: scaleX=${parisFrameConfig.scaleX}, scaleY=${parisFrameConfig.scaleY}, offset=(${parisFrameConfig.offsetX}, ${parisFrameConfig.offsetY})`)
+        }
+        
         console.log(`🔧 Calculating individual offset for ${elementId}:`)
         console.log(`🔧 Expected Y: ${translateY}, Test position: ${testRect.top}`)
         console.log(`🔧 Individual offset: ${individualOffset}, Compensated Y: ${compensatedY}`)
         
         // Apply the individually calculated compensation with forced rendering
-        element.style.transform = `translate(${compensatedX}px, ${compensatedY}px)`
-        element.style.zIndex = '30' // Ensure frames are above other content
+        if (elementId === 'custom-frame-policia') {
+          // Configuración especial para el marco de policía
+          element.style.transform = `translate(${compensatedX}px, ${compensatedY}px) scale(${policiaFrameConfig.scaleX}, ${policiaFrameConfig.scaleY}) rotate(${policiaFrameConfig.rotation}deg)`
+          element.style.opacity = policiaFrameConfig.opacity.toString()
+          element.className = 'absolute pointer-events-none frame-shadow'
+        } else if (elementId === 'custom-frame-medicina') {
+          // Configuración especial para el marco de medicina
+          element.style.transform = `translate(${compensatedX}px, ${compensatedY}px) scale(${medicinaFrameConfig.scaleX}, ${medicinaFrameConfig.scaleY}) rotate(${medicinaFrameConfig.rotation}deg)`
+          element.style.opacity = medicinaFrameConfig.opacity.toString()
+          element.className = 'absolute pointer-events-none frame-shadow'
+        } else if (elementId === 'custom-frame-paris') {
+          // Configuración especial para el marco de París
+          element.style.transform = `translate(${compensatedX}px, ${compensatedY}px) scale(${parisFrameConfig.scaleX}, ${parisFrameConfig.scaleY}) rotate(${parisFrameConfig.rotation}deg)`
+          element.style.opacity = parisFrameConfig.opacity.toString()
+          element.className = 'absolute pointer-events-none frame-shadow'
+        } else {
+          element.style.transform = `translate(${compensatedX}px, ${compensatedY}px)`
+          element.className = 'absolute pointer-events-none frame-shadow'
+        }
+        // Configurar z-index específico para cada tipo de marco
+        if (elementId === 'custom-frame-policia' || elementId === 'custom-frame-medicina') {
+          element.style.zIndex = '70' // Marcos de policía y medicina por encima de texturas
+          console.log(`🔝 ${elementId} z-index set to 70 (above textures)`)
+        } else {
+          element.style.zIndex = '30' // Otros marcos con z-index normal
+        }
         element.style.pointerEvents = 'none' // Maintain non-interactive
         element.style.willChange = 'auto' // Stop any ongoing GPU optimizations that might interfere
         element.setAttribute('data-static', 'true')
@@ -612,7 +772,7 @@ export default function TimelinePage() {
       {/* Image Modal */}
       {selectedImage.src && (
         <div 
-          className={`fixed inset-0 bg-black z-[60] transition-opacity duration-300 ${isAnimating && !isClosing ? 'bg-opacity-75' : 'bg-opacity-0'}`}
+          className={`fixed inset-0 bg-black z-[100] transition-opacity duration-300 ${isAnimating && !isClosing ? 'bg-opacity-75' : 'bg-opacity-0'}`}
           onClick={closeImage}
         >
           <div className="relative w-full h-full">
@@ -655,7 +815,7 @@ export default function TimelinePage() {
               className={`absolute w-12 h-12 bg-terracotta rounded-full flex items-center justify-center shadow-lg text-ivory transition-all duration-300 hover:scale-110 ${isAnimating && !isClosing ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
               style={{
                 ...getCloseButtonStyle(),
-                zIndex: 30
+                zIndex: 101
               }}
             >
               <X className="w-6 h-6" />
@@ -696,9 +856,9 @@ export default function TimelinePage() {
           opacity: 1
         }}
       >
-        {/* Paper texture overlay - solo textura sin color */}
+        {/* OVERLAY DE TEXTURA - Ahora con z-0 para que esté en el fondo */}
         <div 
-          className="absolute inset-0 pointer-events-none z-50"
+          className="absolute inset-0 pointer-events-none z-0"
           style={{
             backgroundImage: 'url("https://www.transparenttextures.com/patterns/sandpaper.png")',
             backgroundRepeat: 'repeat',
@@ -786,10 +946,10 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="custom-shadow-right-bottom" style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
+                <div style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
                   <ImageCarousel
                     images={[
-                      "/experiences/experience-02/primeras-escapadas-01.jpg",
+                      "/primeras-escapadas-01.png",
                       "/experiences/experience-02/primeras-escapadas-02.jpg",
                       "/experiences/experience-02/primeras-escapadas-03.jpg"
                     ]}
@@ -812,7 +972,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a3.jpg"
                       alt="Estudios universitarios"
@@ -833,7 +993,7 @@ export default function TimelinePage() {
               <h3 className="text-4xl md:text-5xl font-script text-terracotta">Estudios universitarios · 2015-2018</h3>
             </div>
             <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Julen terminó sus años de estudio en la ikastola Kirikiño, donde había comenzado su historia con Maitane, y comenzó su grado en Publicidad y recursos humanos. Maitane, con una clara vocación por ser médico, insistió y perseveró como una campeona hasta llegar a acceder a la carrera de medicina. En su primera prueba no consiguió esa súper nota que necesitan los futuros doctores y accedió al grado en odontología. Pero su perseverancia y su trabajo de un nuevo año le dio el paso para comenzar la carrera de sus sueños. Años duros para la pareja, ya no se podían ver tanto como antes. La responsabilidad de los estudios hacía que tuvieran que sacar ratitos de encuentros con esfuerzo.
+              Julen y Maitane comenzaron su historia en la ikastola Kirikiño, donde estudiaron juntos. Julen continuó su formación con un grado en Publicidad y Recursos Humanos, mientras que Maitane, con una clara vocación por la medicina, se enfrentó a un camino más exigente. Aunque en su primer intento no logró la nota necesaria para entrar en Medicina, accedió a Odontología y, tras un año más de esfuerzo, consiguió finalmente comenzar la carrera de sus sueños. Durante estos años, la pareja atravesó momentos duros: la distancia y la intensidad de los estudios hicieron que cada encuentro fuera un esfuerzo compartido. Maitane pasaba horas entre libros y Julen, además de sus estudios, mantenía un ritmo exigente con entrenamientos y partidos de fútbol.
             </p>
           </div>
         </section>
@@ -848,19 +1008,19 @@ export default function TimelinePage() {
               <h3 className="text-4xl md:text-5xl font-script text-midnight">Oposiciones de policía · 2019-2022</h3>
             </div>
             <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Cuando Julen terminó su grado nos sorprendió a todos apuntándose a una convocatoria para participar en las oposiciones para Policía local de Bilbao. Ni siquiera su aita, en ese puesto durante muchos años, supo de este deseo antes de que lo comunicara después de apuntarse. En ese tiempo de preparación, Julen metió más horas que nunca delante de los libros. Maitane, que de eso sabía mucho, le ayudó a organizar sus tiempos para llegar a desarrollar todos los temas. Pateaba las calles de Bilbao memorizando todos los nombres y situaciones. ¡Y mira que hay calles en Bilbao! Iba al gimnasio para prepararse físicamente y se lo tomó tan en serio que dejó su pasión desde muy niño, el fútbol, para evitar lesiones. Su esfuerzo mereció la pena: aprobó las oposiciones y después de 7 meses de academia, comenzó a trabajar con 24 añitos.
+              Al finalizar su grado, Julen sorprendió a todos inscribiéndose a las oposiciones para Policía Local de Bilbao, sin haberlo comentado ni siquiera con su padre, que había ocupado ese mismo puesto durante años. En su preparación, se volcó como nunca: horas de estudio, caminatas por Bilbao para memorizar calles, ayuda de Maitane en la organización del temario y entrenamiento físico riguroso. Incluso dejó el fútbol para evitar lesiones. El esfuerzo dio fruto: aprobó la oposición y, tras siete meses de academia, comenzó a trabajar como policía a los 24 años.
             </p>
           </div>
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="custom-shadow-right-bottom" style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
+                <div className="rounded-2xl" style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
                   <ImageCarousel
                     images={[
-                      "/estudios-oposiciones-01.jpg",
+                      "/estudios-oposiciones-01.png",
                       "/estudios-oposiciones-02.jpg",
-                      "/estudios-oposiciones-03.jpg",
-                      "/estudios-oposiciones-04.jpg"
+                      "/estudios-oposiciones-03.png",
+                      "/estudios-oposiciones-04.png"
                     ]}
                     alt="Oposiciones de policía"
                     experienceId="03"
@@ -869,8 +1029,9 @@ export default function TimelinePage() {
                     }}
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="carousel-frame-anchor-oposiciones" className="absolute inset-0 pointer-events-none"></div>
+                {/* Marcador invisible para posicionar el marco de policía */}
+                <div id="frame-anchor-policia" className="absolute inset-0 pointer-events-none"></div>
+
               </div>
             </div>
           </div>
@@ -881,16 +1042,16 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden rounded-2xl" style={{ height: 'calc(384px - 0px)' }}>
                   <img
-                      src="/medicina-graduacion.jpg"
+                      src="/medicina-graduacion.png"
                       alt="MIR y vida en común"
                       className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
                       onClick={openImage}
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-medicina-graduacion" className="absolute inset-0 pointer-events-none"></div>
+                {/* Marcador invisible para posicionar el marco de medicina */}
+                <div id="frame-anchor-medicina" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -902,7 +1063,7 @@ export default function TimelinePage() {
               <h3 className="text-4xl md:text-5xl font-script text-sage">MIR y vida en común · 2020-2023</h3>
             </div>
             <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Maitane, por su parte, se dedicaba en cuerpo y alma a superar cada dura asignatura de la carrera de medicina. Pero tuvo que continuar estudiando para poder desarrollar su vocación en la medicina pública. Si quería seguir junto a Julen, tenía que lograr una nota suficiente para implementar sus años de residente en algún hospital cerca de Bilbao. En un año tenía que preparar su examen MIR y aquí no había tiempo ni para parar a comer más de lo imprescindible. Una verdadera prueba de amor para la pareja. Julen, cuando no trabajaba, esperaba en casa la llamada de Maitane comunicándole que se tomaba un descansito para alimentarse o para coger aire y corría a su lado para compartir unos minutos. Como en el primer examen no pudo ser, esas rutinas se repitieron un nuevo año, aunque mucho más llevaderas, porque sus ganas de estar juntos les empujó a compartir un piso donde podían disfrutar de muchos más minutos de mutua compañía, añadiendo además un nuevo miembro a la familia. ¿Ayudó su perrito Ilun a que Maitane consiguiera su plaza de residente en Basurto?
+              Mientras tanto, Maitane seguía dedicada por completo a su carrera. La exigencia no acabó al obtener el título: para ejercer en la sanidad pública y poder quedarse cerca de Julen, necesitaba una buena nota en el examen MIR. Esto supuso un año de estudio intensivo, sin apenas pausas. Julen, cuando no trabajaba, aprovechaba cada respiro de Maitane para acompañarla unos minutos y apoyarla. Aunque no logró su objetivo en el primer intento, repitió el proceso un año más, esta vez con mayor serenidad. Toda esta etapa fue una verdadera prueba de amor y compromiso mutuo entre ambos.
             </p>
           </div>
         </section>
@@ -923,7 +1084,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a6.jpg"
                       alt="Reencuentro en París"
@@ -931,8 +1092,8 @@ export default function TimelinePage() {
                       onClick={openImage}
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a6" className="absolute inset-0 pointer-events-none"></div>
+                {/* Marcador invisible para posicionar el marco de París */}
+                <div id="frame-anchor-paris" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -943,7 +1104,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a7.jpg"
                       alt="Vuelta al mundo"
@@ -985,7 +1146,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a11.jpg"
                       alt="Adopción de Ilun"
@@ -1005,7 +1166,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a8.png"
                       alt="Propuesta"
@@ -1047,7 +1208,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a9.png"
                       alt="Preparativos"
@@ -1067,7 +1228,7 @@ export default function TimelinePage() {
           <div className="lg:col-span-6 order-2 lg:order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a10.jpg"
                       alt="La boda"
@@ -1099,7 +1260,7 @@ export default function TimelinePage() {
           id="frames-portal" 
           className="fixed pointer-events-none"
           style={{ 
-            zIndex: 30,
+            zIndex: 60,
             top: 0,
             left: 0,
             width: '100vw',
@@ -1124,25 +1285,9 @@ export default function TimelinePage() {
               top: '0px'
             }}
           />
-          {/* Marco del carrusel de oposiciones */}
-          <img
-            id="carousel-frame-oposiciones"
-            src="/frames/frame-03.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
+
           {/* Marcos de imágenes individuales con marcos diferentes */}
-          {['a3', 'medicina-graduacion', 'a6', 'a7', 'a11', 'a8', 'a9', 'a10'].map((imageId, index) => {
+          {['a3', 'a7', 'a11', 'a8', 'a9', 'a10'].map((imageId, index) => {
             const availableFrames = [
               '/frames/frame-01.png',
               '/frames/frame-02.png', 
@@ -1176,6 +1321,58 @@ export default function TimelinePage() {
               />
             )
           })}
+
+          {/* Marcos personalizados para secciones específicas */}
+          <img
+            id="custom-frame-policia"
+            src="/policia-marco.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px',
+              zIndex: 70
+            }}
+          />
+          <img
+            id="custom-frame-medicina"
+            src="/medicina-marco.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px',
+              zIndex: 70
+            }}
+          />
+          <img
+            id="custom-frame-paris"
+            src="/paris-marco.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
+            }}
+          />
         </div>
       </div>
 
