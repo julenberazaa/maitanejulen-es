@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint } from "lucide-react"
-import { useMediaQuery } from "@/hooks/useMediaQuery"
 import ImageCarousel from "@/components/image-carousel"
 
 interface ImageState {
@@ -24,7 +23,6 @@ export default function TimelinePage() {
   const [isClosing, setIsClosing] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
   const [modalImageIndex, setModalImageIndex] = useState(0)
-  const isMobile = useMediaQuery('(max-width: 768px)')
 
   // Forzar scroll al top en cada recarga de la página sin animación
   useEffect(() => {
@@ -74,424 +72,6 @@ export default function TimelinePage() {
   }, [showVideo])
 
   useEffect(() => {
-    // Lista de nuevos marcos florales disponibles
-    const availableFrames = [
-      '/frames/frame-01.png',
-      '/frames/frame-02.png', 
-      '/frames/frame-03.png',
-      '/frames/frame-04.png',
-      '/frames/frame-05.png',
-      '/frames/frame-06.png',
-      '/frames/frame-07.png',
-      '/frames/frame-08.png',
-      '/frames/frame-09.png',
-      '/frames/frame-10.png'
-    ]
-
-    let animationFrameId: number | null = null
-    let isPositioning = false
-    let isDynamicMode = true
-    let captureTimer: NodeJS.Timeout | null = null
-
-    // =========================================
-    // CONFIGURACIÓN PERSONALIZADA DE MARCOS
-    // =========================================
-    
-    // MARCO DE POLICÍA (azul) - Sección: Oposiciones de policía · 2019-2022
-    const policiaFrameConfig = {
-      scaleX: 1.05,       // Ancho del marco (1.0 = normal, 0.8 = más estrecho, 1.3 = más ancho)
-      scaleY: 1.19,       // Alto del marco (1.0 = normal, 0.8 = más bajo, 1.3 = más alto)
-      offsetX: 2,        // Posición horizontal (-20 = 20px izquierda, +20 = 20px derecha)
-      offsetY: 10,        // Posición vertical (-30 = 30px arriba, +30 = 30px abajo)
-      rotation: 0,       // Rotación en grados (0 = sin rotación, 15 = girado 15°)
-      opacity: 1.0       // Transparencia (1.0 = opaco, 0.5 = semi-transparente)
-    }
-
-    // MARCO DE MEDICINA (beige) - Sección: MIR y vida en común · 2020-2023
-    const medicinaFrameConfig = {
-      scaleX: 1.05,       // Ancho del marco (1.0 = normal, 0.8 = más estrecho, 1.3 = más ancho)
-      scaleY: 1.19,       // Alto del marco (1.0 = normal, 0.8 = más bajo, 1.3 = más alto)
-      offsetX: 2,      // Posición horizontal (-20 = 20px izquierda, +20 = 20px derecha)
-      offsetY: 26,      // Posición vertical (-30 = 30px arriba, +30 = 30px abajo)
-      rotation: 0,       // Rotación en grados (0 = sin rotación, 15 = girado 15°)
-      opacity: 1.0       // Transparencia (1.0 = opaco, 0.5 = semi-transparente)
-    }
-
-    // MARCO DE PARÍS (pino) - Sección: Reencuentro en París · 2017
-    const parisFrameConfig = {
-      scaleX: 0.9,       // Ancho del marco (1.0 = normal, 0.8 = más estrecho, 1.3 = más ancho)
-      scaleY: 0.9,       // Alto del marco (1.0 = normal, 0.8 = más bajo, 1.3 = más alto)
-      offsetX: -15,      // Posición horizontal (-20 = 20px a la izquierda, +20 = 20px a la derecha)
-      offsetY: -25,      // Posición vertical (-40 = 40px arriba, +40 = 40px abajo)
-      rotation: 0,       // Rotación en grados (0 = sin rotación, 15 = girado 15°)
-      opacity: 1.0       // Transparencia (1.0 = opaco, 0.5 = semi-transparente)
-    }
-    // =========================================
-
-    // Block scrolling initially to capture clean positions
-    document.body.style.overflow = 'hidden'
-    console.log('🚫 Scroll blocked for clean position capture')
-
-    // Position all frames dynamically using transforms (GPU-accelerated)
-    const positionAllFrames = () => {
-      if (isPositioning || !isDynamicMode) return
-      isPositioning = true
-
-      // Position carousel frame
-      const carouselAnchor = document.getElementById('carousel-frame-anchor')
-      const carouselFrame = document.getElementById('carousel-frame-image')
-      
-      if (carouselAnchor && carouselFrame) {
-        const rect = carouselAnchor.getBoundingClientRect()
-        carouselFrame.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1.5) translateX(-3px)`
-        carouselFrame.style.width = `${rect.width}px`
-        carouselFrame.style.height = `${rect.height + 2}px`
-        carouselFrame.style.opacity = '1'
-        carouselFrame.className = 'absolute pointer-events-none frame-shadow'
-      }
-
-
-
-      // Position individual image frames with different frame for each image
-      const imageIds = ['a3', 'a7', 'a11', 'a8', 'a9', 'a10']
-      imageIds.forEach((imageId, index) => {
-        const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
-        const frame = document.getElementById(`image-frame-${imageId}`)
-        
-        if (anchor && frame) {
-        const rect = anchor.getBoundingClientRect()
-          frame.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1.5) translateX(-3px)`
-          frame.style.width = `${rect.width}px`
-          frame.style.height = `${rect.height + 2}px`
-          frame.style.opacity = '1'
-          frame.className = 'absolute pointer-events-none frame-shadow'
-          // Asignar marco diferente a cada imagen, repitiendo si es necesario
-          const frameIndex = index % availableFrames.length
-          ;(frame as HTMLImageElement).src = availableFrames[frameIndex]
-        }
-      })
-
-      // Position custom frames for specific sections
-      const policiaAnchor = document.getElementById('frame-anchor-policia')
-      const policiaFrame = document.getElementById('custom-frame-policia')
-      
-      if (policiaAnchor && policiaFrame) {
-        const rect = policiaAnchor.getBoundingClientRect()
-        // Aplicar configuración personalizada del marco de policía
-        const finalX = rect.left + policiaFrameConfig.offsetX
-        const finalY = rect.top + policiaFrameConfig.offsetY
-        policiaFrame.style.transform = `translate(${finalX}px, ${finalY}px) scale(${policiaFrameConfig.scaleX}, ${policiaFrameConfig.scaleY}) rotate(${policiaFrameConfig.rotation}deg)`
-        policiaFrame.style.width = `${rect.width}px`
-        policiaFrame.style.height = `${rect.height + 2}px`
-        policiaFrame.style.opacity = policiaFrameConfig.opacity.toString()
-        policiaFrame.className = 'absolute pointer-events-none frame-shadow'
-      }
-
-      const medicinaAnchor = document.getElementById('frame-anchor-medicina')
-      const medicinaFrame = document.getElementById('custom-frame-medicina')
-      
-      if (medicinaAnchor && medicinaFrame) {
-        const rect = medicinaAnchor.getBoundingClientRect()
-        // Aplicar configuración personalizada del marco de medicina
-        const finalX = rect.left + medicinaFrameConfig.offsetX
-        const finalY = rect.top + medicinaFrameConfig.offsetY
-        medicinaFrame.style.transform = `translate(${finalX}px, ${finalY}px) scale(${medicinaFrameConfig.scaleX}, ${medicinaFrameConfig.scaleY}) rotate(${medicinaFrameConfig.rotation}deg)`
-        medicinaFrame.style.width = `${rect.width}px`
-        medicinaFrame.style.height = `${rect.height + 2}px`
-        medicinaFrame.style.opacity = medicinaFrameConfig.opacity.toString()
-        medicinaFrame.className = 'absolute pointer-events-none frame-shadow'
-      }
-
-      const parisAnchor = document.getElementById('frame-anchor-paris')
-      const parisFrame = document.getElementById('custom-frame-paris')
-      
-      if (parisAnchor && parisFrame) {
-        const rect = parisAnchor.getBoundingClientRect()
-        // Aplicar configuración personalizada del marco de París
-        const finalX = rect.left + parisFrameConfig.offsetX
-        const finalY = rect.top + parisFrameConfig.offsetY
-        parisFrame.style.transform = `translate(${finalX}px, ${finalY}px) scale(${parisFrameConfig.scaleX}, ${parisFrameConfig.scaleY}) rotate(${parisFrameConfig.rotation}deg)`
-        parisFrame.style.width = `${rect.width}px`
-        parisFrame.style.height = `${rect.height + 2}px`
-        parisFrame.style.opacity = parisFrameConfig.opacity.toString()
-        parisFrame.className = 'absolute pointer-events-none frame-shadow'
-      }
-
-      isPositioning = false
-    }
-
-    // Convert from dynamic to static positioning (clean capture with no scroll)
-    const convertToStaticMode = () => {
-      if (!isDynamicMode) return
-      
-      isDynamicMode = false
-      console.log('🔄 Capturing clean positions and converting to static mode')
-
-      // Execute final positioning update to ensure frames are correctly positioned
-      positionAllFrames()
-      console.log('📍 Final positioning update executed')
-
-      // Capture anchor positions while scroll is blocked (clean, accurate positions)
-      const staticPositions: Array<{element: HTMLElement, translateX: number, translateY: number, width: number, height: number}> = []
-
-      // Capture carousel frame's current position (already correctly positioned)
-      const carouselAnchor = document.getElementById('carousel-frame-anchor')
-      const carouselFrame = document.getElementById('carousel-frame-image')
-      if (carouselAnchor && carouselFrame) {
-        const anchorRect = carouselAnchor.getBoundingClientRect()
-        const currentFrameRect = carouselFrame.getBoundingClientRect()
-        
-        console.log(`🎯 Carousel anchor at: (${anchorRect.left}, ${anchorRect.top})`)
-        console.log(`🖼️ Carousel frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
-        console.log(`🔥 Using frame position instead of anchor position`)
-        
-        staticPositions.push({
-          element: carouselFrame,
-          translateX: currentFrameRect.left,
-          translateY: currentFrameRect.top,
-          width: currentFrameRect.width,
-          height: currentFrameRect.height
-        })
-      }
-
-
-
-      // Capture individual frame's current positions (already correctly positioned)
-      const imageIds = ['a3', 'a7', 'a11', 'a8', 'a9', 'a10']
-      imageIds.forEach((imageId) => {
-        const anchor = document.getElementById(`image-frame-anchor-${imageId}`)
-        const frame = document.getElementById(`image-frame-${imageId}`)
-        if (anchor && frame) {
-          const anchorRect = anchor.getBoundingClientRect()
-          const currentFrameRect = frame.getBoundingClientRect()
-          
-          console.log(`🎯 ${imageId} anchor at: (${anchorRect.left}, ${anchorRect.top})`)
-          console.log(`🖼️ ${imageId} frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
-          console.log(`🔥 Using frame position instead of anchor position`)
-          
-          staticPositions.push({
-            element: frame,
-            translateX: currentFrameRect.left,
-            translateY: currentFrameRect.top,
-            width: currentFrameRect.width,
-            height: currentFrameRect.height
-          })
-        }
-      })
-
-      // Capture custom frames positions
-      const policiaAnchor = document.getElementById('frame-anchor-policia')
-      const policiaFrame = document.getElementById('custom-frame-policia')
-      if (policiaAnchor && policiaFrame) {
-        const currentFrameRect = policiaFrame.getBoundingClientRect()
-        
-        console.log(`🖼️ Policia frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
-        console.log(`👮 Policia frame config: scaleX=${policiaFrameConfig.scaleX}, scaleY=${policiaFrameConfig.scaleY}, offsetX=${policiaFrameConfig.offsetX}, offsetY=${policiaFrameConfig.offsetY}`)
-        
-        staticPositions.push({
-          element: policiaFrame,
-          translateX: currentFrameRect.left,
-          translateY: currentFrameRect.top,
-          width: currentFrameRect.width,
-          height: currentFrameRect.height
-        })
-      }
-
-      const medicinaAnchor = document.getElementById('frame-anchor-medicina')
-      const medicinaFrame = document.getElementById('custom-frame-medicina')
-      if (medicinaAnchor && medicinaFrame) {
-        const currentFrameRect = medicinaFrame.getBoundingClientRect()
-        
-        console.log(`🖼️ Medicina frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
-        console.log(`⚕️ Medicina frame config: scaleX=${medicinaFrameConfig.scaleX}, scaleY=${medicinaFrameConfig.scaleY}, offsetX=${medicinaFrameConfig.offsetX}, offsetY=${medicinaFrameConfig.offsetY}`)
-        
-        staticPositions.push({
-          element: medicinaFrame,
-          translateX: currentFrameRect.left,
-          translateY: currentFrameRect.top,
-          width: currentFrameRect.width,
-          height: currentFrameRect.height
-        })
-      }
-
-      const parisAnchor = document.getElementById('frame-anchor-paris')
-      const parisFrame = document.getElementById('custom-frame-paris')
-      if (parisAnchor && parisFrame) {
-        const currentFrameRect = parisFrame.getBoundingClientRect()
-        
-        console.log(`🖼️ Paris frame currently at: (${currentFrameRect.left}, ${currentFrameRect.top})`)
-        console.log(`🎨 Paris frame config: scaleX=${parisFrameConfig.scaleX}, scaleY=${parisFrameConfig.scaleY}, offsetX=${parisFrameConfig.offsetX}, offsetY=${parisFrameConfig.offsetY}`)
-        
-        staticPositions.push({
-          element: parisFrame,
-          translateX: currentFrameRect.left,
-          translateY: currentFrameRect.top,
-          width: currentFrameRect.width,
-          height: currentFrameRect.height
-        })
-      }
-
-      // Convert frames-portal to absolute but compensate for document offset
-      const framesPortal = document.getElementById('frames-portal')
-      if (framesPortal) {
-        framesPortal.style.position = 'absolute'
-        framesPortal.style.top = '0px'
-        framesPortal.style.left = '0px'
-        framesPortal.style.width = '100vw'
-        framesPortal.style.height = '100vh'
-        framesPortal.style.overflow = 'visible'
-        console.log(`🔄 Converted frames-portal to absolute positioning`)
-      }
-
-      // Manual adjustments for specific frames (in pixels)
-      const manualAdjustments = {
-        'carousel-frame-image': { x: -10, y: -30 }, // Primeras escapadas
-        'image-frame-a3': { x: -12, y: -30 }, // Estudios universitarios
-        'custom-frame-policia': { x: -12, y: -30 }, // Marco personalizado policía
-        'custom-frame-medicina': { x: -12, y: -30 }, // Marco personalizado medicina
-        'custom-frame-paris': { x: -12, y: -30 }, // Marco personalizado París
-      }
-
-      // Apply captured positions with individual offset calculation for each element
-      staticPositions.forEach(({element, translateX, translateY, width, height}) => {
-        const elementId = element.id || 'unknown'
-        
-        // Test without compensation to see where it would naturally appear
-        element.style.position = 'absolute'
-        element.style.left = '0px'
-        element.style.top = '0px'
-        element.style.transform = `translate(${translateX}px, ${translateY}px)`
-        element.style.width = `${width}px`
-        element.style.height = `${height}px`
-        element.style.opacity = '1'
-        
-        // Measure where it actually appears
-        const testRect = element.getBoundingClientRect()
-        const individualOffset = testRect.top - translateY
-        let compensatedY = translateY - individualOffset
-        let compensatedX = translateX
-        
-        // Apply manual adjustments if they exist for this element
-        const manualAdjust = manualAdjustments[elementId as keyof typeof manualAdjustments]
-        if (manualAdjust) {
-          compensatedX += manualAdjust.x
-          compensatedY += manualAdjust.y
-          console.log(`🎨 Manual adjustment for ${elementId}: +${manualAdjust.x}px X, +${manualAdjust.y}px Y`)
-        }
-        
-        // Aplicar configuraciones especiales para marcos personalizados
-        if (elementId === 'custom-frame-policia') {
-          compensatedX += policiaFrameConfig.offsetX
-          compensatedY += policiaFrameConfig.offsetY
-          console.log(`👮 Policia frame special config applied: scaleX=${policiaFrameConfig.scaleX}, scaleY=${policiaFrameConfig.scaleY}, offset=(${policiaFrameConfig.offsetX}, ${policiaFrameConfig.offsetY})`)
-        } else if (elementId === 'custom-frame-medicina') {
-          compensatedX += medicinaFrameConfig.offsetX
-          compensatedY += medicinaFrameConfig.offsetY
-          console.log(`⚕️ Medicina frame special config applied: scaleX=${medicinaFrameConfig.scaleX}, scaleY=${medicinaFrameConfig.scaleY}, offset=(${medicinaFrameConfig.offsetX}, ${medicinaFrameConfig.offsetY})`)
-        } else if (elementId === 'custom-frame-paris') {
-          compensatedX += parisFrameConfig.offsetX
-          compensatedY += parisFrameConfig.offsetY
-          console.log(`🌲 Paris frame special config applied: scaleX=${parisFrameConfig.scaleX}, scaleY=${parisFrameConfig.scaleY}, offset=(${parisFrameConfig.offsetX}, ${parisFrameConfig.offsetY})`)
-        }
-        
-        console.log(`🔧 Calculating individual offset for ${elementId}:`)
-        console.log(`🔧 Expected Y: ${translateY}, Test position: ${testRect.top}`)
-        console.log(`🔧 Individual offset: ${individualOffset}, Compensated Y: ${compensatedY}`)
-        
-        // Apply the individually calculated compensation with forced rendering
-        if (elementId === 'custom-frame-policia') {
-          // Configuración especial para el marco de policía
-          element.style.transform = `translate(${compensatedX}px, ${compensatedY}px) scale(${policiaFrameConfig.scaleX}, ${policiaFrameConfig.scaleY}) rotate(${policiaFrameConfig.rotation}deg)`
-          element.style.opacity = policiaFrameConfig.opacity.toString()
-          element.className = 'absolute pointer-events-none frame-shadow'
-        } else if (elementId === 'custom-frame-medicina') {
-          // Configuración especial para el marco de medicina
-          element.style.transform = `translate(${compensatedX}px, ${compensatedY}px) scale(${medicinaFrameConfig.scaleX}, ${medicinaFrameConfig.scaleY}) rotate(${medicinaFrameConfig.rotation}deg)`
-          element.style.opacity = medicinaFrameConfig.opacity.toString()
-          element.className = 'absolute pointer-events-none frame-shadow'
-        } else if (elementId === 'custom-frame-paris') {
-          // Configuración especial para el marco de París
-          element.style.transform = `translate(${compensatedX}px, ${compensatedY}px) scale(${parisFrameConfig.scaleX}, ${parisFrameConfig.scaleY}) rotate(${parisFrameConfig.rotation}deg)`
-          element.style.opacity = parisFrameConfig.opacity.toString()
-          element.className = 'absolute pointer-events-none frame-shadow'
-        } else {
-          element.style.transform = `translate(${compensatedX}px, ${compensatedY}px)`
-          element.className = 'absolute pointer-events-none frame-shadow'
-        }
-        // Configurar z-index específico para cada tipo de marco
-        if (elementId === 'custom-frame-policia' || elementId === 'custom-frame-medicina') {
-          element.style.zIndex = '70' // Marcos de policía y medicina por encima de texturas
-          console.log(`🔝 ${elementId} z-index set to 70 (above textures)`)
-        } else {
-          element.style.zIndex = '30' // Otros marcos con z-index normal
-        }
-        element.style.pointerEvents = 'none' // Maintain non-interactive
-        element.style.willChange = 'auto' // Stop any ongoing GPU optimizations that might interfere
-        element.setAttribute('data-static', 'true')
-        
-        // Force reflow to ensure styles are applied
-        element.offsetHeight
-        
-        // Verify final position and visibility
-        const finalRect = element.getBoundingClientRect()
-        const computedStyle = window.getComputedStyle(element)
-        
-        console.log(`✅ ${elementId} final position: (${finalRect.left}, ${finalRect.top})`)
-        console.log(`🎯 Target: (${translateX}, ${translateY}) vs Actual: (${finalRect.left}, ${finalRect.top})`)
-        console.log(`👁️ ${elementId} visibility - opacity: ${computedStyle.opacity}, zIndex: ${computedStyle.zIndex}`)
-        console.log(`📏 ${elementId} dimensions: ${finalRect.width}x${finalRect.height}`)
-        
-        // Additional check for very small positioning errors
-        const positionAccuracy = Math.abs(finalRect.top - translateY)
-        if (positionAccuracy > 1) {
-          console.warn(`⚠️ ${elementId} position inaccuracy: ${positionAccuracy}px`)
-        }
-      })
-      
-      // Remove scroll listeners - frames now have fixed positions in document
-      window.removeEventListener('scroll', smoothPositionFrames)
-      window.removeEventListener('resize', smoothPositionFrames)
-      
-      // Re-enable scrolling after conversion is complete
-      document.body.style.overflow = 'auto'
-      console.log('✅ Static positioning activated and scroll re-enabled')
-    }
-
-    // Smooth positioning with requestAnimationFrame
-    const smoothPositionFrames = () => {
-      if (!isDynamicMode) return
-      
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId)
-      }
-      
-      animationFrameId = requestAnimationFrame(() => {
-        positionAllFrames()
-        animationFrameId = null
-      })
-    }
-
-    // Position on load and scroll (dynamic mode)
-    positionAllFrames()
-    console.log('🚀 Initial positioning executed')
-    
-    // Execute positioning periodically during the first second to ensure accuracy
-    const intervalId = setInterval(() => {
-      if (isDynamicMode) {
-        positionAllFrames()
-        console.log('⏱️ Periodic positioning update during blocked scroll')
-      }
-    }, 100) // Every 100ms during the first second
-    
-    window.addEventListener('scroll', smoothPositionFrames, { passive: true })
-    window.addEventListener('resize', smoothPositionFrames, { passive: true })
-
-    // Set timer to capture positions and switch to static mode
-    captureTimer = setTimeout(() => {
-      clearInterval(intervalId) // Stop periodic updates
-      convertToStaticMode()
-    }, 1000) // 1 second with blocked scroll for clean capture
-
     // Initialize scroll animations
     const observerOptions = {
       threshold: 0.1,
@@ -540,18 +120,6 @@ export default function TimelinePage() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll)
-      if (isDynamicMode) {
-        window.removeEventListener("scroll", smoothPositionFrames)
-        window.removeEventListener("resize", smoothPositionFrames)
-      }
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId)
-      }
-      if (captureTimer) {
-        clearTimeout(captureTimer)
-      }
-      // Re-enable scroll if component unmounts before conversion
-      document.body.style.overflow = 'auto'
       observer.disconnect()
     }
   }, [])
@@ -664,13 +232,11 @@ export default function TimelinePage() {
   }, [])
 
   const openImage = (e: React.MouseEvent<HTMLImageElement>) => {
-    if (isMobile) return
     const rect = e.currentTarget.getBoundingClientRect()
     setSelectedImage({ src: e.currentTarget.src, rect })
   }
 
   const openImageCarousel = (imageSrc: string, imageArray: string[], currentIndex: number, rect: DOMRect) => {
-    if (isMobile) return
     setSelectedImage({ src: imageSrc, rect, images: imageArray, currentIndex })
     setModalImageIndex(currentIndex)
   }
@@ -837,8 +403,8 @@ export default function TimelinePage() {
           <div className="mb-8">
             <Heart className="w-16 h-16 mx-auto mb-4 animate-pulse" />
           </div>
-          <h1 className="text-6xl md:text-8xl font-bold mb-4 font-elegant">Julen & Maitane</h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto mt-2 font-manuscript">
+          <h1 className="text-8xl font-bold mb-4 font-elegant">Julen & Maitane</h1>
+          <p className="text-2xl mb-8 max-w-2xl mx-auto mt-2 font-manuscript">
             Con toda la ilusion del mundo hemos tejido este pequeño regalo: un mosaico de risas y recuerdos para agradeceros el amor, la alegría y la inspiración que sembrais en cada uno de nosotros. Que estos pedacitos de vuestra vida os devuelvan multiplicado el cariño que hoy nos une para celebrar vuestra historia.
           </p>
         </div>
@@ -873,28 +439,28 @@ export default function TimelinePage() {
         <img 
           src="/flores/sup_izq.png" 
           alt="" 
-          className="absolute top-8 left-8 md:top-12 md:left-12 w-32 h-32 md:w-48 md:h-48 opacity-70 z-10 pointer-events-none"
+          className="absolute top-12 left-12 w-48 h-48 opacity-70 z-10 pointer-events-none"
         />
         <img 
           src="/flores/sup_der.png" 
           alt="" 
-          className="absolute top-8 right-8 md:top-12 md:right-12 w-32 h-32 md:w-48 md:h-48 opacity-70 z-10 pointer-events-none"
+          className="absolute top-12 right-12 w-48 h-48 opacity-70 z-10 pointer-events-none"
         />
         <img 
           src="/flores/inf_izq.png" 
           alt="" 
-          className="absolute bottom-8 left-8 md:bottom-12 md:left-12 w-32 h-32 md:w-48 md:h-48 opacity-70 z-10 pointer-events-none"
+          className="absolute bottom-12 left-12 w-48 h-48 opacity-70 z-10 pointer-events-none"
         />
         <img 
           src="/flores/inf_der.png" 
           alt="" 
-          className="absolute bottom-8 right-8 md:bottom-12 md:right-12 w-32 h-32 md:w-48 md:h-48 opacity-70 z-10 pointer-events-none"
+          className="absolute bottom-12 right-12 w-48 h-48 opacity-70 z-10 pointer-events-none"
         />
         
         <div className="max-w-7xl mx-auto px-4 py-32 relative z-20">
         {/* 2010 - Conocidos - Chat Tuenti */}
-        <section id="conocidos-2010" className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out pt-16 md:pt-24">
-          <div className="lg:col-span-6 lg:pr-8">
+        <section id="conocidos-2010" className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out pt-24">
+          <div className="col-span-6 pr-8">
             {/* Chat de Tuenti */}
             <div className="p-6">
               <div className="tuenti-chat rounded-2xl custom-shadow-right-bottom hover:custom-shadow-right-bottom-hover transition-all duration-500 overflow-hidden" id="tuenti-chat-widget">
@@ -913,7 +479,7 @@ export default function TimelinePage() {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-6 lg:pl-8">
+          <div className="col-span-6 pl-8">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-terracotta mr-4">
                 <svg className="w-6 h-6" viewBox="145.5 144.8 609 609.7" xmlns="http://www.w3.org/2000/svg">
@@ -921,29 +487,29 @@ export default function TimelinePage() {
                         fill="white"/>
                 </svg>
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Los inicios... · 2009</h3>
+              <h3 className="text-5xl font-script text-terracotta">Los inicios... · 2009</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Todo empezó con un reto entre amigas, donde Maitane se fijó en Julen y se armó de valor para hablarle por Tuenti. Después de varios intentos, finalmente acabaron quedando y cuando ya estaban frente a frente Maitane pensó: "¿y ahora que?" 😨 Y a partir de aquel 17 de enero de 2009 comenzó todo….
             </p>
           </div>
         </section>
 
         {/* 2012 - Amigos inseparables */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 lg:pr-12">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-sage mr-4">
                 <img src="/pareja4.svg" alt="Pareja" className="w-8 h-8" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-sage">Primeras escapadas</h3>
+              <h3 className="text-5xl font-script text-sage">Primeras escapadas</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Al principio mantenían la relación en secreto y cuando quedaban tenían que mentir a sus padres, con tan mala suerte, que en una ocasión les pillaron… ¡y tuvieron que dar la cara! Poco a poco, la relación se fue consolidando, a pesar de existir alguna crisis…. 
               y empezaron los primeros viajes: cuando Julen se sacó el carnet y pedía el coche a sus padres para ir a la playa con Maitane, después a Noja y  luego su primer viaje en avión a Mallorca 🏝️. Julen viajó hasta Málaga sin que Maitane lo supiera, y se plantó ahí para darle una sorpresa y pasar unos días juntos❤️.
             </p>
           </div>
-          <div className="lg:col-span-6">
+          <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
@@ -968,15 +534,15 @@ export default function TimelinePage() {
         </section>
 
         {/* 2015-2018 - Estudios universitarios */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 order-2 lg:order-1">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a3.jpg"
                       alt="Estudios universitarios"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
                       onClick={openImage}
                   />
                 </div>
@@ -985,33 +551,33 @@ export default function TimelinePage() {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
+          <div className="col-span-6 order-2 pl-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-terracotta mr-4">
                 <BookOpen className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Estudios universitarios · 2015-2018</h3>
+              <h3 className="text-5xl font-script text-terracotta">Estudios universitarios · 2015-2018</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Julen y Maitane comenzaron su historia en la ikastola Kirikiño, donde estudiaron juntos. Julen continuó su formación con un grado en Publicidad y Recursos Humanos, mientras que Maitane, con una clara vocación por la medicina, se enfrentó a un camino más exigente. Aunque en su primer intento no logró la nota necesaria para entrar en Medicina, accedió a Odontología y, tras un año más de esfuerzo, consiguió finalmente comenzar la carrera de sus sueños. Durante estos años, la pareja atravesó momentos duros: la distancia y la intensidad de los estudios hicieron que cada encuentro fuera un esfuerzo compartido. Maitane pasaba horas entre libros y Julen, además de sus estudios, mantenía un ritmo exigente con entrenamientos y partidos de fútbol.
             </p>
           </div>
         </section>
 
         {/* 2019-2022 - Oposiciones de policía */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 lg:pr-12">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-midnight mr-4">
                 <Star className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-midnight">Oposiciones de policía · 2019-2022</h3>
+              <h3 className="text-5xl font-script text-midnight">Oposiciones de policía · 2019-2022</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Al finalizar su grado, Julen sorprendió a todos inscribiéndose a las oposiciones para Policía Local de Bilbao, sin haberlo comentado ni siquiera con su padre, que había ocupado ese mismo puesto durante años. En su preparación, se volcó como nunca: horas de estudio, caminatas por Bilbao para memorizar calles, ayuda de Maitane en la organización del temario y entrenamiento físico riguroso. Incluso dejó el fútbol para evitar lesiones. El esfuerzo dio fruto: aprobó la oposición y, tras siete meses de academia, comenzó a trabajar como policía a los 24 años.
             </p>
           </div>
-          <div className="lg:col-span-6">
+          <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="rounded-2xl" style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
@@ -1038,15 +604,15 @@ export default function TimelinePage() {
         </section>
 
         {/* 2020-2023 - MIR y vida en común */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 order-2 lg:order-1">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden rounded-2xl" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/medicina-graduacion.png"
                       alt="MIR y vida en común"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
                       onClick={openImage}
                   />
                 </div>
@@ -1055,40 +621,40 @@ export default function TimelinePage() {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
+          <div className="col-span-6 order-2 pl-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-sage mr-4">
                 <Heart className="w-6 h-6 text-midnight" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-sage">MIR y vida en común · 2020-2023</h3>
+              <h3 className="text-5xl font-script text-sage">MIR y vida en común · 2020-2023</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Mientras tanto, Maitane seguía dedicada por completo a su carrera. La exigencia no acabó al obtener el título: para ejercer en la sanidad pública y poder quedarse cerca de Julen, necesitaba una buena nota en el examen MIR. Esto supuso un año de estudio intensivo, sin apenas pausas. Julen, cuando no trabajaba, aprovechaba cada respiro de Maitane para acompañarla unos minutos y apoyarla. Aunque no logró su objetivo en el primer intento, repitió el proceso un año más, esta vez con mayor serenidad. Toda esta etapa fue una verdadera prueba de amor y compromiso mutuo entre ambos.
             </p>
           </div>
         </section>
 
         {/* 2017 - Reencuentro en París */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 lg:pr-12">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-terracotta mr-4">
                 <Camera className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Reencuentro en París · 2017</h3>
+              <h3 className="text-5xl font-script text-terracotta">Reencuentro en París · 2017</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Maitane sorprende a Julen en el Trocadéro durante su Erasmus y la Torre Eiffel cobra un brillo especial. Caminan abrazados junto al Sena, olvidando el frío invernal. Dejan un candado en el Pont des Arts con la promesa tácita de nunca separarse tanto. La magia de esa sorpresa consolida su compromiso sin fecha de caducidad.
             </p>
           </div>
-          <div className="lg:col-span-6">
+          <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a6.jpg"
                       alt="Reencuentro en París"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
                       onClick={openImage}
                   />
                 </div>
@@ -1100,15 +666,15 @@ export default function TimelinePage() {
         </section>
 
         {/* 2019 - Vuelta al mundo */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 order-2 lg:order-1">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a7.jpg"
                       alt="Vuelta al mundo"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
                       onClick={openImage}
                   />
                 </div>
@@ -1117,40 +683,40 @@ export default function TimelinePage() {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
+          <div className="col-span-6 order-2 pl-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-terracotta mr-4">
                 <MapPin className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Vuelta al mundo · 2019</h3>
+              <h3 className="text-5xl font-script text-terracotta">Vuelta al mundo · 2019</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Con pasaportes en mano y mochilas al hombro, abandonan el mapa convencional rumbo a Bangkok, Sydney y Ciudad de México. Cada Polaroid pegada en su diario capta motos atestadas, surf en Bondi y luchadores de lucha libre. Aprenden a pedir menú vegetariano en cinco idiomas y a reírse de vuelos retrasados. Descubren que su hogar es inseparable de su compañía mutua.
             </p>
           </div>
         </section>
 
         {/* 2020 - Adopción de Ilun */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 lg:pr-12">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-sage mr-4">
                 <PawPrint className="w-6 h-6 text-midnight" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-sage">Adopción de Ilun · 2020</h3>
+              <h3 className="text-5xl font-script text-sage">Adopción de Ilun · 2020</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Un refugio local les presentó a Ilun, una bola de pelo negro con ojos color miel que necesitaba un hogar. La conexión fue instantánea. Sus días se llenaron de ladridos de bienvenida, paseos por el monte y siestas en el sofá. Ilun no solo se convirtió en su compañero fiel, sino en el corazón de su nueva familia, enseñándoles que el amor más puro a veces viene en cuatro patas.
             </p>
           </div>
-          <div className="lg:col-span-6">
+          <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a11.jpg"
                       alt="Adopción de Ilun"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
                       onClick={openImage}
                   />
                 </div>
@@ -1162,15 +728,15 @@ export default function TimelinePage() {
         </section>
 
         {/* 2022 - Propuesta */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 order-2 lg:order-1">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a8.png"
                       alt="Propuesta"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
                       onClick={openImage}
                   />
                 </div>
@@ -1179,40 +745,40 @@ export default function TimelinePage() {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
+          <div className="col-span-6 order-2 pl-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-midnight mr-4">
                 <Ring className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-midnight">Propuesta · 2022</h3>
+              <h3 className="text-5xl font-script text-midnight">Propuesta · 2022</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Suben al amanecer los 241 peldaños de Gaztelugatxe sin imaginar lo que les espera. En la cima, Julen se arrodilla con un anillo grabado "Kontuan izan nauzu" bajo el rugido del Cantábrico. Las lágrimas de Maitane mezclan sal y felicidad mientras la campana repica por segunda vez. Ese momento sella el inicio de un nuevo capítulo en su viaje conjunto.
             </p>
           </div>
         </section>
 
         {/* 2024 - Preparativos */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 lg:pr-12">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-terracotta mr-4">
                 <BookOpen className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-terracotta">Preparativos · 2024</h3>
+              <h3 className="text-5xl font-script text-terracotta">Preparativos · 2024</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Su sala se llena de muestrarios de flores, listas de invitados y tarjetas terracota dispuestas sobre la mesa. Debaten menú, música e invitaciones, aprendiendo a escuchar y ceder en cada detalle. Cada decisión refleja su complicidad y el deseo de celebrar no solo un día, sino todo lo vivido. El proceso revela que el verdadero regalo es planificar juntos su futuro.
             </p>
           </div>
-          <div className="lg:col-span-6">
+          <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a9.png"
                       alt="Preparativos"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
                       onClick={openImage}
                   />
                 </div>
@@ -1224,15 +790,15 @@ export default function TimelinePage() {
         </section>
 
         {/* 2025 - La boda */}
-        <section className="timeline-item mb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="lg:col-span-6 order-2 lg:order-1">
+        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
+          <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
                   <img
                       src="/a10.jpg"
                       alt="La boda"
-                      className={`w-full h-96 object-cover ${!isMobile ? 'cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out' : ''}`}
+                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
                       onClick={openImage}
                   />
                 </div>
@@ -1241,14 +807,14 @@ export default function TimelinePage() {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-6 order-1 lg:order-2 lg:pl-12">
+          <div className="col-span-6 order-2 pl-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-midnight mr-4">
                 <PartyPopper className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-4xl md:text-5xl font-script text-midnight">La boda · 2025</h3>
+              <h3 className="text-5xl font-script text-midnight">La boda · 2025</h3>
             </div>
-            <p className="text-lg md:text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
+            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Entre encinas centenarias, sillas blancas y guirnaldas de eucalipto, los invitados se reúnen en un campo iluminado por el último rayo dorado. Julen espera con traje azul medianoche y Maitane avanza con velo ligero, sellando su historia con una promesa de amor eterno. Al confeti elevarse, cada aplauso celebra no un final, sino el prólogo de su vida en común.
             </p>
           </div>
@@ -1393,10 +959,10 @@ export default function TimelinePage() {
         <div className={`relative z-10 text-ivory px-4 max-w-4xl w-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${showVideo ? 'py-20' : ''}`}>
           <div className="text-center">
             <div className="flex items-center justify-center mb-8">
-              <h2 className="text-5xl md:text-7xl font-script">Nuestro Video</h2>
+              <h2 className="text-7xl font-script">Nuestro Video</h2>
               <Heart className="w-10 h-10 ml-4 text-ivory" />
             </div>
-            <p className={`text-xl md:text-2xl leading-relaxed transition-all duration-700 ease-in-out font-manuscript ${showVideo ? 'mb-[44px]' : 'mb-12'}`}>
+            <p className={`text-2xl leading-relaxed transition-all duration-700 ease-in-out font-manuscript ${showVideo ? 'mb-[44px]' : 'mb-12'}`}>
               Un pequeño resumen de un día inolvidable. Gracias por formar parte de él.
             </p>
           </div>

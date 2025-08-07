@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useMediaQuery } from "@/hooks/useMediaQuery"
 
 interface ImageCarouselProps {
   images: string[]
@@ -12,7 +11,6 @@ interface ImageCarouselProps {
 
 export default function ImageCarousel({ images, alt, onImageClick, experienceId }: ImageCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
-  const isMobile = useMediaQuery('(max-width: 768px)')
 
   useEffect(() => {
     if (images.length <= 1) return
@@ -27,7 +25,6 @@ export default function ImageCarousel({ images, alt, onImageClick, experienceId 
   }, [images.length])
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isMobile) return
     const rect = e.currentTarget.getBoundingClientRect()
     onImageClick(images[activeIndex], images, activeIndex, rect)
   }
@@ -36,7 +33,7 @@ export default function ImageCarousel({ images, alt, onImageClick, experienceId 
 
   return (
     <div
-      className={`relative w-full h-full ${!isMobile ? 'cursor-pointer' : ''}`}
+      className="relative w-full h-full cursor-pointer"
       onClick={handleContainerClick}
     >
       <div className="overflow-hidden w-full h-full">
@@ -46,7 +43,7 @@ export default function ImageCarousel({ images, alt, onImageClick, experienceId 
           src={image}
           alt={`${alt} - Imagen ${index + 1}`}
           draggable={false}
-          className={`transition-transform duration-500 ease-in-out ${!isMobile && index === activeIndex ? 'hover:scale-105' : ''}`}
+          className={`transition-transform duration-500 ease-in-out ${index === activeIndex ? 'hover:scale-105' : ''}`}
           style={{
             position: 'absolute',
             top: 0,
