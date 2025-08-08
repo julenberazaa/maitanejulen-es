@@ -26,13 +26,27 @@ export default function RootLayout({
               overflow-x: hidden;
               margin: 0;
               padding: 0;
+              scroll-behavior: smooth; /* scroll suave */
+              overscroll-behavior: none; /* evita estiramiento */
+              min-height: 100%;
             }
             
             body {
               margin: 0;
               padding: 0;
               overflow-x: hidden;
+              overflow-y: auto;
               width: 100vw;
+              min-height: 100%;
+              -webkit-overflow-scrolling: touch; /* suaviza en iOS */
+              background: #ffffff; /* coherente */
+            }
+            
+            #fixed-layout-wrapper {
+              position: relative;
+              width: 100vw;
+              height: 100vh; /* se actualizará por JS */
+              overflow: hidden; /* evita desplazamiento interno */
             }
             
             #fixed-layout {
@@ -40,13 +54,16 @@ export default function RootLayout({
               min-height: 100vh;
               transform-origin: top left;
               position: relative;
+              display: flow-root; /* evita colapso de márgenes */
             }
           `
         }} />
       </head>
       <body>
-        <div id="fixed-layout">
-          {children}
+        <div id="fixed-layout-wrapper">
+          <div id="fixed-layout">
+            {children}
+          </div>
         </div>
         <FixedZoom />
       </body>

@@ -124,6 +124,96 @@ export default function TimelinePage() {
     }
   }, [])
 
+  // Posicionar marcos sobre los carruseles
+  useEffect(() => {
+    function getIntersectionArea(rect: DOMRect) {
+      const xOverlap = Math.max(0, Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0))
+      const yOverlap = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0))
+      return xOverlap * yOverlap
+    }
+
+    function positionFrameToAnchor(anchor: HTMLElement, frameEl: HTMLImageElement, padding = 14) {
+      const rect = anchor.getBoundingClientRect()
+      const width = Math.max(0, rect.width + padding * 2)
+      const height = Math.max(0, rect.height + padding * 2)
+
+      // frames-portal es fixed, así que usamos coords de viewport
+      frameEl.style.width = `${width}px`
+      frameEl.style.height = `${height}px`
+      frameEl.style.left = `${rect.left - padding}px`
+      frameEl.style.top = `${rect.top - padding}px`
+      frameEl.style.opacity = '1'
+      frameEl.style.transform = 'none'
+    }
+
+    function hideFrame(frameEl: HTMLImageElement) {
+      frameEl.style.opacity = '0'
+      frameEl.style.width = '0px'
+      frameEl.style.height = '0px'
+    }
+
+    function updateFrames() {
+      try {
+        // Mapeo anchor->frame para posicionar cada marco de forma independiente
+        const mappings: Array<{ anchorId: string; frameId: string; padding?: number }> = [
+          { anchorId: 'carousel-frame-anchor', frameId: 'carousel-frame-escapadas', padding: 14 },
+          { anchorId: 'carousel-frame-anchor-estudios', frameId: 'carousel-frame-estudios', padding: 14 },
+          { anchorId: 'carousel-frame-anchor-hobbies', frameId: 'carousel-frame-hobbies', padding: 14 },
+          { anchorId: 'carousel-frame-anchor-indep', frameId: 'carousel-frame-indep', padding: 14 },
+          { anchorId: 'carousel-frame-anchor-ilun', frameId: 'carousel-frame-ilun', padding: 14 },
+          { anchorId: 'carousel-frame-anchor-pedida', frameId: 'carousel-frame-pedida', padding: 14 },
+          // Marcos personalizados
+          { anchorId: 'frame-anchor-policia', frameId: 'custom-frame-policia', padding: 8 },
+          { anchorId: 'frame-anchor-medicina', frameId: 'custom-frame-medicina', padding: 8 },
+          // Caso específico legado
+          { anchorId: 'image-frame-anchor-a3', frameId: 'image-frame-a3', padding: 8 },
+        ]
+
+        for (const { anchorId, frameId, padding } of mappings) {
+          const anchor = document.getElementById(anchorId) as HTMLElement | null
+          const frameEl = document.getElementById(frameId) as HTMLImageElement | null
+          if (!frameEl) continue
+          if (!anchor) { hideFrame(frameEl); continue }
+          const area = getIntersectionArea(anchor.getBoundingClientRect())
+          if (area > 1) positionFrameToAnchor(anchor, frameEl, padding ?? 14)
+          else hideFrame(frameEl)
+        }
+      } catch {}
+    }
+
+    const onScroll = () => {
+      requestAnimationFrame(updateFrames)
+    }
+
+    const onResize = () => {
+      updateFrames()
+    }
+
+    window.addEventListener('scroll', onScroll)
+    window.addEventListener('resize', onResize)
+
+    const timeouts = [
+      setTimeout(updateFrames, 100),
+      setTimeout(updateFrames, 500),
+      setTimeout(updateFrames, 1200)
+    ]
+
+    // Recalcular cuando las fuentes e imágenes carguen
+    window.addEventListener('load', updateFrames)
+    // @ts-ignore
+    if (document.fonts && document.fonts.ready) {
+      // @ts-ignore
+      document.fonts.ready.then(() => updateFrames()).catch(() => {})
+    }
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('load', updateFrames)
+      timeouts.forEach(clearTimeout)
+    }
+  }, [])
+
   // Lógica del chat de Tuenti
   useEffect(() => {
     // Array de mensajes del chat - 3 enviados por Maitane, 1 respuesta de Julen
@@ -517,7 +607,9 @@ export default function TimelinePage() {
                     images={[
                       "/primeras-escapadas-01.png",
                       "/experiences/experience-02/primeras-escapadas-02.jpg",
-                      "/experiences/experience-02/primeras-escapadas-03.jpg"
+                      "/experiences/experience-02/primeras-escapadas-03.jpg",
+                      "/experiences/experience-02/escapadas.png",
+                      "/experiences/experience-02/escapadas2.png"
                     ]}
                     alt="Primeras escapadas"
                     experienceId="02"
@@ -539,15 +631,22 @@ export default function TimelinePage() {
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/a3.jpg"
-                      alt="Estudios universitarios"
-                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
-                      onClick={openImage}
+                  <ImageCarousel
+                    images={[
+                      "/estudios/ESTUDIOS.jpeg",
+                      "/estudios/ESTUDIOS.png",
+                    ]}
+                    alt="Estudios universitarios"
+                    experienceId="estudios"
+                    onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                      openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
                   />
                 </div>
                 {/* Marcador invisible para posicionar el marco */}
                 <div id="image-frame-anchor-a3" className="absolute inset-0 pointer-events-none"></div>
+                {/* Anchor dedicado para el carrusel de Estudios */}
+                <div id="carousel-frame-anchor-estudios" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -556,7 +655,7 @@ export default function TimelinePage() {
               <div className="timeline-icon-circle bg-terracotta mr-4">
                 <BookOpen className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-5xl font-script text-terracotta">Estudios universitarios · 2015-2018</h3>
+              <h3 className="text-5xl font-script text-terracotta">Estudios universitarios</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Julen y Maitane comenzaron su historia en la ikastola Kirikiño, donde estudiaron juntos. Julen continuó su formación con un grado en Publicidad y Recursos Humanos, mientras que Maitane, con una clara vocación por la medicina, se enfrentó a un camino más exigente. Aunque en su primer intento no logró la nota necesaria para entrar en Medicina, accedió a Odontología y, tras un año más de esfuerzo, consiguió finalmente comenzar la carrera de sus sueños. Durante estos años, la pareja atravesó momentos duros: la distancia y la intensidad de los estudios hicieron que cada encuentro fuera un esfuerzo compartido. Maitane pasaba horas entre libros y Julen, además de sus estudios, mantenía un ritmo exigente con entrenamientos y partidos de fútbol.
@@ -586,7 +685,8 @@ export default function TimelinePage() {
                       "/estudios-oposiciones-01.png",
                       "/estudios-oposiciones-02.jpg",
                       "/estudios-oposiciones-03.png",
-                      "/estudios-oposiciones-04.png"
+                      "/estudios-oposiciones-04.png",
+                      "/policia/POLICIA.png"
                     ]}
                     alt="Oposiciones de policía"
                     experienceId="03"
@@ -603,17 +703,25 @@ export default function TimelinePage() {
           </div>
         </section>
 
-        {/* 2020-2023 - MIR y vida en común */}
+        {/* 2020-2023 - MIR  */}
         <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden rounded-2xl" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/medicina-graduacion.png"
-                      alt="MIR y vida en común"
-                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
-                      onClick={openImage}
+                  <ImageCarousel
+                    images={[
+                      "/mir/MIR.png",
+                      "/mir/MIR2.png",
+                      "/mir/MIR3.png",
+                      "/mir/MIR4.jpeg",
+                      "/medicina-graduacion.png",
+                    ]}
+                    alt="MIR"
+                    experienceId="mir"
+                    onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                      openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
                   />
                 </div>
                 {/* Marcador invisible para posicionar el marco de medicina */}
@@ -626,7 +734,7 @@ export default function TimelinePage() {
               <div className="timeline-icon-circle bg-sage mr-4">
                 <Heart className="w-6 h-6 text-midnight" />
               </div>
-              <h3 className="text-5xl font-script text-sage">MIR y vida en común · 2020-2023</h3>
+              <h3 className="text-5xl font-script text-sage">MIR · 2020-2023</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Mientras tanto, Maitane seguía dedicada por completo a su carrera. La exigencia no acabó al obtener el título: para ejercer en la sanidad pública y poder quedarse cerca de Julen, necesitaba una buena nota en el examen MIR. Esto supuso un año de estudio intensivo, sin apenas pausas. Julen, cuando no trabajaba, aprovechaba cada respiro de Maitane para acompañarla unos minutos y apoyarla. Aunque no logró su objetivo en el primer intento, repitió el proceso un año más, esta vez con mayor serenidad. Toda esta etapa fue una verdadera prueba de amor y compromiso mutuo entre ambos.
@@ -638,48 +746,62 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-terracotta mr-4">
-                <Camera className="w-6 h-6 text-ivory" />
+              <div className="timeline-icon-circle bg-sage mr-4">
+                <Sun className="w-6 h-6 text-midnight" />
               </div>
-              <h3 className="text-5xl font-script text-terracotta">Reencuentro en París · 2017</h3>
+              <h3 className="text-5xl font-script text-sage">Hobbies</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Maitane sorprende a Julen en el Trocadéro durante su Erasmus y la Torre Eiffel cobra un brillo especial. Caminan abrazados junto al Sena, olvidando el frío invernal. Dejan un candado en el Pont des Arts con la promesa tácita de nunca separarse tanto. La magia de esa sorpresa consolida su compromiso sin fecha de caducidad.
+              Entre semanas de trabajo y estudio, aprendieron a celebrar lo cotidiano: cocinar recetas nuevas, perderse con la cámara por Bilbao y compartir rutas en bici al atardecer. Descubrieron que sus aficiones, más que pasatiempos, eran pequeñas anclas que les unían sin prisa, construyendo momentos que hoy recuerdan con una sonrisa.
             </p>
           </div>
           <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/a6.jpg"
-                      alt="Reencuentro en París"
-                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
-                      onClick={openImage}
+                  <ImageCarousel
+                    images={[
+                      "/hobbies/HOBBIES.jpeg",
+                      "/hobbies/HOBBIES.png",
+                    ]}
+                    alt="Hobbies"
+                    experienceId="hobbies"
+                    onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                      openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco de París */}
-                <div id="frame-anchor-paris" className="absolute inset-0 pointer-events-none"></div>
+                {/* Marcador invisible para posicionar el marco */}
+                <div id="carousel-frame-anchor-hobbies" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 2019 - Vuelta al mundo */}
+        {/* Independizarse */}
         <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/a7.jpg"
-                      alt="Vuelta al mundo"
-                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
-                      onClick={openImage}
+                  <ImageCarousel
+                    images={[
+                      "/independizarse/INDEP.png",
+                      "/independizarse/INDEP2.png",
+                      "/independizarse/INDEP3.png",
+                      "/independizarse/INDEP4.png",
+                      "/independizarse/INDEP5.png",
+                      "/independizarse/INDEP6.png",
+                    ]}
+                    alt="Independizarse"
+                    experienceId="independizarse"
+                    onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                      openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
                   />
                 </div>
                 {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a7" className="absolute inset-0 pointer-events-none"></div>
+                <div id="carousel-frame-anchor-indep" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -688,60 +810,77 @@ export default function TimelinePage() {
               <div className="timeline-icon-circle bg-terracotta mr-4">
                 <MapPin className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-5xl font-script text-terracotta">Vuelta al mundo · 2019</h3>
+              <h3 className="text-5xl font-script text-terracotta">Independizarse</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Con pasaportes en mano y mochilas al hombro, abandonan el mapa convencional rumbo a Bangkok, Sydney y Ciudad de México. Cada Polaroid pegada en su diario capta motos atestadas, surf en Bondi y luchadores de lucha libre. Aprenden a pedir menú vegetariano en cinco idiomas y a reírse de vuelos retrasados. Descubren que su hogar es inseparable de su compañía mutua.
+              Llegó la primera llave compartida y con ella las pequeñas grandes decisiones: pintar la pared del salón, elegir una mesa con historia y aprender a combinar agendas y silencios. El piso se convirtió en hogar cuando entendieron que el mejor lugar siempre era el que construían juntos.
             </p>
           </div>
         </section>
 
-        {/* 2020 - Adopción de Ilun */}
+        {/* Ilun */}
         <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-sage mr-4">
                 <PawPrint className="w-6 h-6 text-midnight" />
               </div>
-              <h3 className="text-5xl font-script text-sage">Adopción de Ilun · 2020</h3>
+              <h3 className="text-5xl font-script text-sage">Ilun</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Un refugio local les presentó a Ilun, una bola de pelo negro con ojos color miel que necesitaba un hogar. La conexión fue instantánea. Sus días se llenaron de ladridos de bienvenida, paseos por el monte y siestas en el sofá. Ilun no solo se convirtió en su compañero fiel, sino en el corazón de su nueva familia, enseñándoles que el amor más puro a veces viene en cuatro patas.
+              Entonces apareció Ilun, un torbellino negro de ojos dulces. Con él llegaron paseos bajo la lluvia, sofás compartidos y risas mañaneras. No tardaron en darse cuenta de que Ilun no llenó la casa: la multiplicó.
             </p>
           </div>
           <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/a11.jpg"
-                      alt="Adopción de Ilun"
-                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
-                      onClick={openImage}
+                  <ImageCarousel
+                    images={[
+                      "/ilun/ILUN.png",
+                      "/ilun/ILUN2.png",
+                      "/ilun/ILUN3.png",
+                      "/ilun/ILUN4.png",
+                      "/ilun/ILUN5.png",
+                      "/ilun/ILUN6.png",
+                      "/ilun/ILUN7.png",
+                      "/ilun/ILUN8.png",
+                      "/ilun/ILUN9.png",
+                      "/ilun/ILUN10.png",
+                    ]}
+                    alt="Ilun"
+                    experienceId="ilun"
+                    onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                      openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
                   />
                 </div>
                 {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a11" className="absolute inset-0 pointer-events-none"></div>
+                <div id="carousel-frame-anchor-ilun" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 2022 - Propuesta */}
+        {/* Pedida de mano */}
         <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/a8.png"
-                      alt="Propuesta"
-                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
-                      onClick={openImage}
+                  <ImageCarousel
+                    images={[
+                      "/pedida/PEDIDA_MANO.png",
+                    ]}
+                    alt="Pedida de mano"
+                    experienceId="pedida"
+                    onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
+                      openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
                   />
                 </div>
                 {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a8" className="absolute inset-0 pointer-events-none"></div>
+                <div id="carousel-frame-anchor-pedida" className="absolute inset-0 pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -750,72 +889,10 @@ export default function TimelinePage() {
               <div className="timeline-icon-circle bg-midnight mr-4">
                 <Ring className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-5xl font-script text-midnight">Propuesta · 2022</h3>
+              <h3 className="text-5xl font-script text-midnight">Pedida de mano</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Suben al amanecer los 241 peldaños de Gaztelugatxe sin imaginar lo que les espera. En la cima, Julen se arrodilla con un anillo grabado "Kontuan izan nauzu" bajo el rugido del Cantábrico. Las lágrimas de Maitane mezclan sal y felicidad mientras la campana repica por segunda vez. Ese momento sella el inicio de un nuevo capítulo en su viaje conjunto.
-            </p>
-          </div>
-        </section>
-
-        {/* 2024 - Preparativos */}
-        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="col-span-6 pr-12">
-            <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-terracotta mr-4">
-                <BookOpen className="w-6 h-6 text-ivory" />
-              </div>
-              <h3 className="text-5xl font-script text-terracotta">Preparativos · 2024</h3>
-            </div>
-            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Su sala se llena de muestrarios de flores, listas de invitados y tarjetas terracota dispuestas sobre la mesa. Debaten menú, música e invitaciones, aprendiendo a escuchar y ceder en cada detalle. Cada decisión refleja su complicidad y el deseo de celebrar no solo un día, sino todo lo vivido. El proceso revela que el verdadero regalo es planificar juntos su futuro.
-            </p>
-          </div>
-          <div className="col-span-6">
-            <div className="p-6 flex justify-center">
-              <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/a9.png"
-                      alt="Preparativos"
-                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
-                      onClick={openImage}
-                  />
-                </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a9" className="absolute inset-0 pointer-events-none"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 2025 - La boda */}
-        <section className="timeline-item mb-32 grid grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
-          <div className="col-span-6 order-1">
-            <div className="p-6 flex justify-center">
-              <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
-                  <img
-                      src="/a10.jpg"
-                      alt="La boda"
-                      className="w-full h-96 object-cover cursor-pointer hover:scale-105 transition-transform duration-500 ease-in-out"
-                      onClick={openImage}
-                  />
-                </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a10" className="absolute inset-0 pointer-events-none"></div>
-              </div>
-            </div>
-          </div>
-          <div className="col-span-6 order-2 pl-12">
-            <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-midnight mr-4">
-                <PartyPopper className="w-6 h-6 text-ivory" />
-              </div>
-              <h3 className="text-5xl font-script text-midnight">La boda · 2025</h3>
-            </div>
-            <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Entre encinas centenarias, sillas blancas y guirnaldas de eucalipto, los invitados se reúnen en un campo iluminado por el último rayo dorado. Julen espera con traje azul medianoche y Maitane avanza con velo ligero, sellando su historia con una promesa de amor eterno. Al confeti elevarse, cada aplauso celebra no un final, sino el prólogo de su vida en común.
+              Sin focos ni guión, solo el rumor del mar y dos manos temblorosas. Una pregunta sencilla, una respuesta que lo cambia todo. Desde entonces, cada campanada les recuerda que el sí fue, es y será su mejor decisión.
             </p>
           </div>
         </section>
@@ -838,6 +915,104 @@ export default function TimelinePage() {
           <img
             id="carousel-frame-image"
             src="/frames/frame-02.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
+            }}
+          />
+
+          {/* Marcos dedicados por carrusel */}
+          <img
+            id="carousel-frame-escapadas"
+            src="/frames/frame-02.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
+            }}
+          />
+          <img
+            id="carousel-frame-estudios"
+            src="/frames/frame-03.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
+            }}
+          />
+          <img
+            id="carousel-frame-hobbies"
+            src="/frames/frame-05.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
+            }}
+          />
+          <img
+            id="carousel-frame-indep"
+            src="/frames/frame-06.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
+            }}
+          />
+          <img
+            id="carousel-frame-ilun"
+            src="/frames/frame-07.png"
+            alt=""
+            className="absolute pointer-events-none"
+            style={{ 
+              width: '0px',
+              height: '0px',
+              objectFit: 'cover',
+              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+              left: '0px',
+              top: '0px'
+            }}
+          />
+          <img
+            id="carousel-frame-pedida"
+            src="/frames/frame-04.png"
             alt=""
             className="absolute pointer-events-none"
             style={{ 
