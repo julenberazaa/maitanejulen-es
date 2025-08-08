@@ -124,92 +124,85 @@ export default function TimelinePage() {
     }
   }, [])
 
-  // Posicionar marcos sobre los carruseles
+  // Medición de carruseles (solo logs)
   useEffect(() => {
-    function getIntersectionArea(rect: DOMRect) {
-      const xOverlap = Math.max(0, Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0))
-      const yOverlap = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0))
-      return xOverlap * yOverlap
-    }
+    let rafId: number | null = null
+    const observers: ResizeObserver[] = []
+    const timeouts: NodeJS.Timeout[] = []
 
-    function positionFrameToAnchor(anchor: HTMLElement, frameEl: HTMLImageElement, padding = 14) {
-      const rect = anchor.getBoundingClientRect()
-      const width = Math.max(0, rect.width + padding * 2)
-      const height = Math.max(0, rect.height + padding * 2)
-
-      // frames-portal es fixed, así que usamos coords de viewport
-      frameEl.style.width = `${width}px`
-      frameEl.style.height = `${height}px`
-      frameEl.style.left = `${rect.left - padding}px`
-      frameEl.style.top = `${rect.top - padding}px`
-      frameEl.style.opacity = '1'
-      frameEl.style.transform = 'none'
-    }
-
-    function hideFrame(frameEl: HTMLImageElement) {
-      frameEl.style.opacity = '0'
-      frameEl.style.width = '0px'
-      frameEl.style.height = '0px'
-    }
-
-    function updateFrames() {
-      try {
-        // Mapeo anchor->frame para posicionar cada marco de forma independiente
-        const mappings: Array<{ anchorId: string; frameId: string; padding?: number }> = [
-          { anchorId: 'carousel-frame-anchor', frameId: 'carousel-frame-escapadas', padding: 14 },
-          { anchorId: 'carousel-frame-anchor-estudios', frameId: 'carousel-frame-estudios', padding: 14 },
-          { anchorId: 'carousel-frame-anchor-hobbies', frameId: 'carousel-frame-hobbies', padding: 14 },
-          { anchorId: 'carousel-frame-anchor-indep', frameId: 'carousel-frame-indep', padding: 14 },
-          { anchorId: 'carousel-frame-anchor-ilun', frameId: 'carousel-frame-ilun', padding: 14 },
-          { anchorId: 'carousel-frame-anchor-pedida', frameId: 'carousel-frame-pedida', padding: 14 },
-          // Marcos personalizados
-          { anchorId: 'frame-anchor-policia', frameId: 'custom-frame-policia', padding: 8 },
-          { anchorId: 'frame-anchor-medicina', frameId: 'custom-frame-medicina', padding: 8 },
-          // Caso específico legado
-          { anchorId: 'image-frame-anchor-a3', frameId: 'image-frame-a3', padding: 8 },
-        ]
-
-        for (const { anchorId, frameId, padding } of mappings) {
-          const anchor = document.getElementById(anchorId) as HTMLElement | null
-          const frameEl = document.getElementById(frameId) as HTMLImageElement | null
-          if (!frameEl) continue
-          if (!anchor) { hideFrame(frameEl); continue }
-          const area = getIntersectionArea(anchor.getBoundingClientRect())
-          if (area > 1) positionFrameToAnchor(anchor, frameEl, padding ?? 14)
-          else hideFrame(frameEl)
+    function collect() {
+      const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-frame-anchor]'))
+      const dpr = window.devicePixelRatio || 1
+      const scroll = { x: window.scrollX, y: window.scrollY }
+      const data = nodes.map((el) => {
+        const rect = el.getBoundingClientRect()
+        const cs = getComputedStyle(el)
+        return {
+          name: el.getAttribute('data-frame-anchor') || '',
+          rect: {
+            left: Math.round(rect.left),
+            top: Math.round(rect.top),
+            width: Math.round(rect.width),
+            height: Math.round(rect.height)
+          },
+          borderRadius: cs.borderRadius,
+          zIndex: cs.zIndex,
+          dpr,
+          scroll
         }
-      } catch {}
+      })
+      if (data.length) {
+        // Tabla para inspección rápida
+        // eslint-disable-next-line no-console
+        console.table(data.map(d => ({ name: d.name, ...d.rect })))
+        // JSON detallado para copiar/pegar
+        // eslint-disable-next-line no-console
+        console.log('FRAME_ANCHORS', JSON.stringify({ anchors: data }, null, 2))
+      }
     }
 
-    const onScroll = () => {
-      requestAnimationFrame(updateFrames)
+    function onScroll() {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(collect)
     }
 
-    const onResize = () => {
-      updateFrames()
+    function onResize() {
+      collect()
+    }
+
+    // Observers por ancla para cambios de tamaño dinámicos
+    const initObservers = () => {
+      const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-frame-anchor]'))
+      nodes.forEach((el) => {
+        if ('ResizeObserver' in window) {
+          const ro = new ResizeObserver(() => collect())
+          ro.observe(el)
+          observers.push(ro)
+        }
+      })
     }
 
     window.addEventListener('scroll', onScroll)
     window.addEventListener('resize', onResize)
 
-    const timeouts = [
-      setTimeout(updateFrames, 100),
-      setTimeout(updateFrames, 500),
-      setTimeout(updateFrames, 1200)
-    ]
+    timeouts.push(setTimeout(collect, 100))
+    timeouts.push(setTimeout(collect, 500))
+    timeouts.push(setTimeout(collect, 1200))
 
-    // Recalcular cuando las fuentes e imágenes carguen
-    window.addEventListener('load', updateFrames)
+    window.addEventListener('load', collect)
     // @ts-ignore
     if (document.fonts && document.fonts.ready) {
       // @ts-ignore
-      document.fonts.ready.then(() => updateFrames()).catch(() => {})
+      document.fonts.ready.then(() => collect()).catch(() => {})
     }
+    initObservers()
 
     return () => {
+      if (rafId) cancelAnimationFrame(rafId)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
-      window.removeEventListener('load', updateFrames)
+      window.removeEventListener('load', collect)
+      observers.forEach(o => o.disconnect())
       timeouts.forEach(clearTimeout)
     }
   }, [])
@@ -616,10 +609,10 @@ export default function TimelinePage() {
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
                     }}
+                    data-frame-anchor="carousel-frame-anchor"
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="carousel-frame-anchor" className="absolute inset-0 pointer-events-none"></div>
+                
               </div>
             </div>
           </div>
@@ -641,12 +634,10 @@ export default function TimelinePage() {
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
                     }}
+                    data-frame-anchor="carousel-frame-anchor-estudios"
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="image-frame-anchor-a3" className="absolute inset-0 pointer-events-none"></div>
-                {/* Anchor dedicado para el carrusel de Estudios */}
-                <div id="carousel-frame-anchor-estudios" className="absolute inset-0 pointer-events-none"></div>
+                
               </div>
             </div>
           </div>
@@ -693,11 +684,10 @@ export default function TimelinePage() {
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
                     }}
+                    data-frame-anchor="frame-anchor-policia"
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco de policía */}
-                <div id="frame-anchor-policia" className="absolute inset-0 pointer-events-none"></div>
-
+                
               </div>
             </div>
           </div>
@@ -722,10 +712,10 @@ export default function TimelinePage() {
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
                     }}
+                    data-frame-anchor="frame-anchor-medicina"
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco de medicina */}
-                <div id="frame-anchor-medicina" className="absolute inset-0 pointer-events-none"></div>
+                
               </div>
             </div>
           </div>
@@ -769,10 +759,10 @@ export default function TimelinePage() {
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
                     }}
+                    data-frame-anchor="carousel-frame-anchor-hobbies"
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="carousel-frame-anchor-hobbies" className="absolute inset-0 pointer-events-none"></div>
+                
               </div>
             </div>
           </div>
@@ -798,10 +788,10 @@ export default function TimelinePage() {
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
                     }}
+                    data-frame-anchor="carousel-frame-anchor-indep"
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="carousel-frame-anchor-indep" className="absolute inset-0 pointer-events-none"></div>
+                
               </div>
             </div>
           </div>
@@ -853,10 +843,10 @@ export default function TimelinePage() {
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
                     }}
+                    data-frame-anchor="carousel-frame-anchor-ilun"
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="carousel-frame-anchor-ilun" className="absolute inset-0 pointer-events-none"></div>
+                
               </div>
             </div>
           </div>
@@ -877,10 +867,10 @@ export default function TimelinePage() {
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
                     }}
+                    data-frame-anchor="carousel-frame-anchor-pedida"
                   />
                 </div>
-                {/* Marcador invisible para posicionar el marco */}
-                <div id="carousel-frame-anchor-pedida" className="absolute inset-0 pointer-events-none"></div>
+                
               </div>
             </div>
           </div>
@@ -898,223 +888,7 @@ export default function TimelinePage() {
         </section>
         </div>
         
-        {/* Marcos florales - renderizados fuera del max-w-7xl */}
-        <div 
-          id="frames-portal" 
-          className="fixed pointer-events-none"
-          style={{ 
-            zIndex: 60,
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            overflow: 'visible'
-          }}
-        >
-          {/* Marco del carrusel - usar segundo marco */}
-          <img
-            id="carousel-frame-image"
-            src="/frames/frame-02.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
-
-          {/* Marcos dedicados por carrusel */}
-          <img
-            id="carousel-frame-escapadas"
-            src="/frames/frame-02.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
-          <img
-            id="carousel-frame-estudios"
-            src="/frames/frame-03.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
-          <img
-            id="carousel-frame-hobbies"
-            src="/frames/frame-05.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
-          <img
-            id="carousel-frame-indep"
-            src="/frames/frame-06.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
-          <img
-            id="carousel-frame-ilun"
-            src="/frames/frame-07.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
-          <img
-            id="carousel-frame-pedida"
-            src="/frames/frame-04.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
-
-          {/* Marcos de imágenes individuales con marcos diferentes */}
-          {['a3', 'a7', 'a11', 'a8', 'a9', 'a10'].map((imageId, index) => {
-            const availableFrames = [
-              '/frames/frame-01.png',
-              '/frames/frame-02.png', 
-              '/frames/frame-03.png',
-              '/frames/frame-04.png',
-              '/frames/frame-05.png',
-              '/frames/frame-06.png',
-              '/frames/frame-07.png',
-              '/frames/frame-08.png',
-              '/frames/frame-09.png',
-              '/frames/frame-10.png'
-            ]
-            const frameIndex = index % availableFrames.length
-            return (
-              <img
-                key={imageId}
-                id={`image-frame-${imageId}`}
-                src={availableFrames[frameIndex]}
-                alt=""
-                className="absolute pointer-events-none"
-                style={{ 
-                  width: '0px',
-                  height: '0px',
-                  objectFit: 'cover',
-                  transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-                  opacity: 0,
-                  transition: 'opacity 0.3s ease',
-                  left: '0px',
-                  top: '0px'
-                }}
-              />
-            )
-          })}
-
-          {/* Marcos personalizados para secciones específicas */}
-          <img
-            id="custom-frame-policia"
-            src="/policia-marco.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px',
-              zIndex: 70
-            }}
-          />
-          <img
-            id="custom-frame-medicina"
-            src="/medicina-marco.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px',
-              zIndex: 70
-            }}
-          />
-          <img
-            id="custom-frame-paris"
-            src="/paris-marco.png"
-            alt=""
-            className="absolute pointer-events-none"
-            style={{ 
-              width: '0px',
-              height: '0px',
-              objectFit: 'cover',
-              transform: 'translate(0px, 0px) scale(1.5) translateX(-3px)',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              left: '0px',
-              top: '0px'
-            }}
-          />
-        </div>
+        
       </div>
 
       {/* Final Section - Video */}
