@@ -118,7 +118,6 @@ export default function TimelinePage() {
       }
     }
 
-    
     window.addEventListener("scroll", handleScroll)
 
     return () => {
