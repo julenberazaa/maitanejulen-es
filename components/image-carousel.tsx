@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react"
 
-interface ImageCarouselProps {
+interface ImageCarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   images: string[]
   alt: string
   onImageClick: (imageSrc: string, imageArray: string[], currentIndex: number, rect: DOMRect) => void
   experienceId?: string
 }
 
-export default function ImageCarousel({ images, alt, onImageClick, experienceId }: ImageCarouselProps) {
+export default function ImageCarousel({ images, alt, onImageClick, experienceId, className, ...rest }: ImageCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
@@ -33,7 +33,8 @@ export default function ImageCarousel({ images, alt, onImageClick, experienceId 
 
   return (
     <div
-      className="relative w-full h-full cursor-pointer"
+      {...rest}
+      className={`relative w-full h-full cursor-pointer${className ? ` ${className}` : ''}`}
       onClick={handleContainerClick}
     >
       <div className="overflow-hidden w-full h-full">

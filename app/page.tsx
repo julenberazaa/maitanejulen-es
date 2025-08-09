@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint } from "lucide-react"
 import ImageCarousel from "@/components/image-carousel"
+import { getFrameConfig } from "@/lib/frame-config"
 
 interface ImageState {
   src: string | null
@@ -23,6 +24,7 @@ export default function TimelinePage() {
   const [isClosing, setIsClosing] = useState(false)
   const [showVideo, setShowVideo] = useState(false)
   const [modalImageIndex, setModalImageIndex] = useState(0)
+  const [tuentiStarted, setTuentiStarted] = useState(false)
 
   // Forzar scroll al top en cada recarga de la página sin animación
   useEffect(() => {
@@ -116,6 +118,7 @@ export default function TimelinePage() {
       }
     }
 
+    
     window.addEventListener("scroll", handleScroll)
 
     return () => {
@@ -124,194 +127,354 @@ export default function TimelinePage() {
     }
   }, [])
 
-  // Medición de carruseles (solo logs)
+  // Sin overlay dinámico. Los marcos se renderizan estáticamente dentro de cada carrusel.
+
+  // Iniciar el chat de Tuenti cuando la sección sea visible
   useEffect(() => {
-    let rafId: number | null = null
-    const observers: ResizeObserver[] = []
-    const timeouts: NodeJS.Timeout[] = []
+    const section = document.getElementById('conocidos-2010')
+    if (!section) return
 
-    function collect() {
-      const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-frame-anchor]'))
-      const dpr = window.devicePixelRatio || 1
-      const scroll = { x: window.scrollX, y: window.scrollY }
-      const data = nodes.map((el) => {
-        const rect = el.getBoundingClientRect()
-        const cs = getComputedStyle(el)
-        return {
-          name: el.getAttribute('data-frame-anchor') || '',
-          rect: {
-            left: Math.round(rect.left),
-            top: Math.round(rect.top),
-            width: Math.round(rect.width),
-            height: Math.round(rect.height)
-          },
-          borderRadius: cs.borderRadius,
-          zIndex: cs.zIndex,
-          dpr,
-          scroll
-        }
-      })
-      if (data.length) {
-        // Tabla para inspección rápida
-        // eslint-disable-next-line no-console
-        console.table(data.map(d => ({ name: d.name, ...d.rect })))
-        // JSON detallado para copiar/pegar
-        // eslint-disable-next-line no-console
-        console.log('FRAME_ANCHORS', JSON.stringify({ anchors: data }, null, 2))
-      }
-    }
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setTuentiStarted(true)
+            obs.disconnect()
+          }
+        })
+      },
+      { threshold: 0.3 }
+    )
 
-    function onScroll() {
-      if (rafId) cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(collect)
-    }
-
-    function onResize() {
-      collect()
-    }
-
-    // Observers por ancla para cambios de tamaño dinámicos
-    const initObservers = () => {
-      const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-frame-anchor]'))
-      nodes.forEach((el) => {
-        if ('ResizeObserver' in window) {
-          const ro = new ResizeObserver(() => collect())
-          ro.observe(el)
-          observers.push(ro)
-        }
-      })
-    }
-
-    window.addEventListener('scroll', onScroll)
-    window.addEventListener('resize', onResize)
-
-    timeouts.push(setTimeout(collect, 100))
-    timeouts.push(setTimeout(collect, 500))
-    timeouts.push(setTimeout(collect, 1200))
-
-    window.addEventListener('load', collect)
-    // @ts-ignore
-    if (document.fonts && document.fonts.ready) {
-      // @ts-ignore
-      document.fonts.ready.then(() => collect()).catch(() => {})
-    }
-    initObservers()
-
-    return () => {
-      if (rafId) cancelAnimationFrame(rafId)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onResize)
-      window.removeEventListener('load', collect)
-      observers.forEach(o => o.disconnect())
-      timeouts.forEach(clearTimeout)
-    }
+    observer.observe(section)
+    return () => observer.disconnect()
   }, [])
 
   // Lógica del chat de Tuenti
   useEffect(() => {
-    // Array de mensajes del chat - 3 enviados por Maitane, 1 respuesta de Julen
-    const messages = [
-      {from: 'out', sender: 'Maitane', text: 'Hola guapo'},
-      {from: 'out', sender: 'Maitane', text: 'Me gustas guapo'},
-      {from: 'out', sender: 'Maitane', text: '¿quieres quedar un día?'},
-      {from: 'in', sender: 'Julen', text: 'Hoy no puedo, me voy a Olabeaga con mis amigos'}
-    ];
+    if (!tuentiStarted) return
 
-    // Función para insertar un mensaje en el chat
-    const insertMessage = (message: {from: string, sender: string, text: string}, index: number) => {
-      const chatBody = document.getElementById('chat-body');
-      if (!chatBody) return;
-      
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `tuenti-message ${message.from === 'in' ? 'incoming' : 'outgoing'}`;
-      messageDiv.innerHTML = `<div class="tuenti-message-bubble"><span class="tuenti-sender-name">${message.sender}:</span> ${message.text}</div>`;
-      
-      // Configurar la animación con delay incremental
-      messageDiv.style.animationDelay = `${index * 0.9}s`;
-      
-      chatBody.appendChild(messageDiv);
-    };
+    const timeouts: NodeJS.Timeout[] = []
 
-    // Función para insertar indicador de "escribiendo"
-    const insertTypingIndicator = () => {
-      const chatBody = document.getElementById('chat-body');
-      if (!chatBody) return;
-      
-      const typingDiv = document.createElement('div');
-      typingDiv.className = 'tuenti-message incoming';
-      typingDiv.id = 'typing-indicator';
-      typingDiv.innerHTML = `
-        <div class="tuenti-typing-indicator">
-          <div class="tuenti-typing-dot"></div>
-          <div class="tuenti-typing-dot"></div>
-          <div class="tuenti-typing-dot"></div>
-        </div>
-      `;
-      
-      // Sin animation delay - debe aparecer inmediatamente cuando se crea
-      typingDiv.style.animationDelay = '0s';
-      
-      chatBody.appendChild(typingDiv);
-    };
+    const start = () => {
+      // Array de mensajes del chat - 3 enviados por Maitane, 1 respuesta de Julen
+      const messages = [
+        {from: 'out', sender: 'Maitane', text: 'Hola guapo'},
+        {from: 'out', sender: 'Maitane', text: 'Me gustas guapo'},
+        {from: 'out', sender: 'Maitane', text: '¿quieres quedar un día?'},
+        {from: 'in', sender: 'Julen', text: 'Hoy no puedo, me voy a Olabeaga con mis amigos'}
+      ];
 
-    // Función para reemplazar indicador con mensaje real
-    const replaceTypingWithMessage = (message: {from: string, sender: string, text: string}) => {
-      const chatBody = document.getElementById('chat-body');
-      const typingIndicator = document.getElementById('typing-indicator');
-      
-      if (!chatBody || !typingIndicator) return;
-      
-      // Remover indicador
-      chatBody.removeChild(typingIndicator);
-      
-      // Insertar mensaje real
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `tuenti-message ${message.from === 'in' ? 'incoming' : 'outgoing'}`;
-      messageDiv.innerHTML = `<div class="tuenti-message-bubble"><span class="tuenti-sender-name">${message.sender}:</span> ${message.text}</div>`;
-      
-      // Sin delay porque aparece inmediatamente después de remover el indicador
-      messageDiv.style.animationDelay = '0s';
-      
-      chatBody.appendChild(messageDiv);
-    };
+      // Función para insertar un mensaje en el chat
+      const insertMessage = (message: {from: string, sender: string, text: string}, index: number) => {
+        const chatBody = document.getElementById('chat-body');
+        if (!chatBody) return;
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `tuenti-message ${message.from === 'in' ? 'incoming' : 'outgoing'}`;
+        messageDiv.innerHTML = `<div class="tuenti-message-bubble"><span class="tuenti-sender-name">${message.sender}:</span> ${message.text}</div>`;
+        
+        // Configurar la animación con delay incremental
+        messageDiv.style.animationDelay = `${index * 0.9}s`;
+        
+        chatBody.appendChild(messageDiv);
+      };
 
-    // Insertar mensajes con delay progresivo
-    const timeouts: NodeJS.Timeout[] = [];
-    messages.forEach((message, index) => {
-      if (index < 3) {
-        // Primeros 3 mensajes (Maitane) - comportamiento normal
-        const timeout = setTimeout(() => {
-          insertMessage(message, index);
+      // Función para insertar indicador de "escribiendo"
+      const insertTypingIndicator = () => {
+        const chatBody = document.getElementById('chat-body');
+        if (!chatBody) return;
+        
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'tuenti-message incoming';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = `
+          <div class="tuenti-typing-indicator">
+            <div class="tuenti-typing-dot"></div>
+            <div class="tuenti-typing-dot"></div>
+            <div class="tuenti-typing-dot"></div>
+          </div>
+        `;
+        
+        // Sin animation delay - debe aparecer inmediatamente cuando se crea
+        typingDiv.style.animationDelay = '0s';
+        
+        chatBody.appendChild(typingDiv);
+      };
+
+      // Función para reemplazar indicador con mensaje real
+      const replaceTypingWithMessage = (message: {from: string, sender: string, text: string}) => {
+        const chatBody = document.getElementById('chat-body');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        if (!chatBody || !typingIndicator) return;
+        
+        // Remover indicador
+        chatBody.removeChild(typingIndicator);
+        
+        // Insertar mensaje real
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `tuenti-message ${message.from === 'in' ? 'incoming' : 'outgoing'}`;
+        messageDiv.innerHTML = `<div class=\"tuenti-message-bubble\"><span class=\"tuenti-sender-name\">${message.sender}:</span> ${message.text}</div>`;
+        
+        // Sin delay porque aparece inmediatamente después de remover el indicador
+        messageDiv.style.animationDelay = '0s';
+        
+        chatBody.appendChild(messageDiv);
+      };
+
+      // Insertar mensajes con delay progresivo
+      messages.forEach((message, index) => {
+        if (index < 3) {
+          // Primeros 3 mensajes (Maitane) - comportamiento normal
+          const timeout = setTimeout(() => {
+            insertMessage(message, index);
+          }, index * 900); // 0.9 segundos de delay entre mensajes
           
-                  // Status dot ya no parpadea como se solicitó
+          timeouts.push(timeout);
+        } else if (index === 3) {
+          // Mensaje de Julen - proceso de 2 pasos
           
+          // Paso 1: Mostrar indicador de "escribiendo" a los 6.7s
+          const typingTimeout = setTimeout(() => {
+            insertTypingIndicator();
+          }, 6700); // 4700 + 2000ms adicionales
+          
+          timeouts.push(typingTimeout);
+          
+          // Paso 2: Reemplazar con mensaje real a los 9s
+          const messageTimeout = setTimeout(() => {
+            replaceTypingWithMessage(message);
+          }, 9000); // 6000 + 2000ms adicionales + 1000ms más de carga
+          
+          timeouts.push(messageTimeout);
+        }
+      });
+    }
 
-        }, index * 900); // 0.9 segundos de delay entre mensajes
-        
-        timeouts.push(timeout);
-      } else if (index === 3) {
-        // Mensaje de Julen - proceso de 2 pasos
-        
-        // Paso 1: Mostrar indicador de "escribiendo" a los 6.7s
-        const typingTimeout = setTimeout(() => {
-          insertTypingIndicator();
-        }, 6700); // 4700 + 2000ms adicionales
-        
-        timeouts.push(typingTimeout);
-        
-        // Paso 2: Reemplazar con mensaje real a los 9s
-        const messageTimeout = setTimeout(() => {
-          replaceTypingWithMessage(message);
-        }, 9000); // 6000 + 2000ms adicionales + 1000ms más de carga
-        
-        timeouts.push(messageTimeout);
-      }
-    });
+    // Iniciar todo con un retraso inicial de 500ms
+    const initialTimeout = setTimeout(start, 300)
+    timeouts.push(initialTimeout)
 
     // Cleanup function para limpiar timeouts
     return () => {
       timeouts.forEach(timeout => clearTimeout(timeout));
     };
+  }, [tuentiStarted])
+
+  useEffect(() => {
+    // Overlay fijo para marcos fuera de cualquier clipping
+    let rafId: number | null = null
+    let freezeTimeout: NodeJS.Timeout | null = null
+    let isFrozen = false
+
+    function ensureOverlay(): HTMLDivElement {
+      let overlay = document.getElementById('frames-portal-overlay') as HTMLDivElement | null
+      if (!overlay) {
+        overlay = document.createElement('div')
+        overlay.id = 'frames-portal-overlay'
+        overlay.style.position = 'fixed'
+        overlay.style.top = '0'
+        overlay.style.left = '0'
+        overlay.style.width = '100vw'
+        overlay.style.height = '100vh'
+        overlay.style.pointerEvents = 'none'
+        overlay.style.zIndex = '90'
+        document.body.appendChild(overlay)
+        // eslint-disable-next-line no-console
+        console.log('[FRAMES] Overlay created')
+      }
+      return overlay
+    }
+
+    function ensureStaticLayer(): HTMLDivElement | null {
+      const fixedLayout = document.getElementById('fixed-layout') as HTMLDivElement | null
+      if (!fixedLayout) return null
+      let layer = document.getElementById('static-frames-layer') as HTMLDivElement | null
+      if (!layer) {
+        layer = document.createElement('div')
+        layer.id = 'static-frames-layer'
+        layer.style.position = 'absolute'
+        layer.style.top = '0'
+        layer.style.left = '0'
+        layer.style.width = `${fixedLayout.scrollWidth || fixedLayout.getBoundingClientRect().width}px`
+        layer.style.height = `${fixedLayout.scrollHeight || fixedLayout.getBoundingClientRect().height}px`
+        layer.style.pointerEvents = 'none'
+        layer.style.zIndex = '99'
+        fixedLayout.appendChild(layer)
+        // eslint-disable-next-line no-console
+        console.log('[FRAMES] Static layer created under #fixed-layout')
+      } else {
+        const fixedLayout = document.getElementById('fixed-layout') as HTMLDivElement | null
+        if (fixedLayout) {
+          layer.style.width = `${fixedLayout.scrollWidth || fixedLayout.getBoundingClientRect().width}px`
+          layer.style.height = `${fixedLayout.scrollHeight || fixedLayout.getBoundingClientRect().height}px`
+        }
+      }
+      return layer
+    }
+
+    function paint() {
+      if (isFrozen) return
+      const overlay = ensureOverlay()
+      const seen = new Set<string>()
+      const anchors = Array.from(document.querySelectorAll<HTMLElement>('[data-frame-anchor]'))
+      // eslint-disable-next-line no-console
+      console.log('[FRAMES] paint anchors:', anchors.length)
+
+      anchors.forEach((el) => {
+        const name = el.getAttribute('data-frame-anchor') || ''
+        const rect = el.getBoundingClientRect()
+        // Pintar solo si interseca viewport
+        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return
+
+        const cfg = getFrameConfig(name)
+        const id = `overlay-frame-${name}`
+        seen.add(id)
+
+        let img = document.getElementById(id) as HTMLImageElement | null
+        if (!img) {
+          img = document.createElement('img')
+          img.id = id
+          img.alt = ''
+          img.className = 'pointer-events-none'
+          overlay.appendChild(img)
+        }
+
+        img.src = cfg.src
+
+        const scale = cfg.scale ?? 1
+        const scaledW = rect.width * scale
+        const scaledH = rect.height * scale
+        const left = rect.left - (scaledW - rect.width) / 2 + (cfg.offsetX ?? 0)
+        const top = rect.top - (scaledH - rect.height) / 2 + (cfg.offsetY ?? 0)
+
+        img.style.position = 'absolute'
+        img.style.left = `${Math.round(left)}px`
+        img.style.top = `${Math.round(top)}px`
+        img.style.width = `${Math.round(scaledW)}px`
+        img.style.height = `${Math.round(scaledH)}px`
+        img.style.objectFit = 'cover'
+        img.style.borderRadius = '12px'
+        img.style.opacity = '1'
+      })
+
+      // Remove non-seen
+      Array.from(overlay.children).forEach((child) => {
+        if (!seen.has((child as HTMLElement).id)) overlay.removeChild(child)
+      })
+    }
+
+    function freezeToStatic() {
+      if (isFrozen) return
+      const fixedLayout = document.getElementById('fixed-layout') as HTMLDivElement | null
+      if (!fixedLayout) return
+
+      // Calcular escala actual del fixed-layout para convertir coords
+      const baseWidth = parseFloat((fixedLayout.style.width || '0').replace('px', '')) || 1588
+      const layoutRect = fixedLayout.getBoundingClientRect()
+      const layoutScale = layoutRect.width / baseWidth
+      // eslint-disable-next-line no-console
+      console.log('[FRAMES] freeze: layoutScale', layoutScale, 'layoutRect.width', layoutRect.width, 'baseWidth', baseWidth)
+
+      const layer = ensureStaticLayer()
+      if (!layer) return
+
+      // Limpiar cualquier estático previo
+      while (layer.firstChild) layer.removeChild(layer.firstChild)
+
+      const anchors = Array.from(document.querySelectorAll<HTMLElement>('[data-frame-anchor]'))
+      // eslint-disable-next-line no-console
+      console.log('[FRAMES] freeze anchors:', anchors.length)
+      anchors.forEach((el) => {
+        const name = el.getAttribute('data-frame-anchor') || ''
+        const rect = el.getBoundingClientRect()
+        const cfg = getFrameConfig(name)
+
+        const scale = cfg.scale ?? 1
+        // Convertir de viewport a coords del fixed-layout pre-transform
+        const preLeft = (window.scrollX + rect.left) / layoutScale
+        const preTop = (window.scrollY + rect.top) / layoutScale
+        const preW = rect.width / layoutScale
+        const preH = rect.height / layoutScale
+
+        const scaledW = preW * scale
+        const scaledH = preH * scale
+        const left = preLeft - (scaledW - preW) / 2 + (cfg.offsetX ?? 0) / layoutScale
+        const top = preTop - (scaledH - preH) / 2 + (cfg.offsetY ?? 0) / layoutScale
+
+        const img = document.createElement('img')
+        img.src = cfg.src
+        img.alt = ''
+        img.style.position = 'absolute'
+        img.style.left = `${Math.round(left)}px`
+        img.style.top = `${Math.round(top)}px`
+        img.style.width = `${Math.round(scaledW)}px`
+        img.style.height = `${Math.round(scaledH)}px`
+        img.style.objectFit = 'cover'
+        img.style.borderRadius = '12px'
+        img.style.pointerEvents = 'none'
+        img.style.zIndex = '99'
+        layer.appendChild(img)
+      })
+
+      if (anchors.length === 0) {
+        // Reintentar la congelación tras un breve tiempo si todavía no hay anclas
+        // eslint-disable-next-line no-console
+        console.warn('[FRAMES] freeze: no anchors found yet, retrying...')
+        setTimeout(freezeToStatic, 500)
+        return
+      }
+
+      // eslint-disable-next-line no-console
+      console.log('[FRAMES] static children count:', (ensureStaticLayer() as HTMLDivElement)?.children.length)
+
+      // Desmontar overlay y listeners (gracia de 50ms para evitar parpadeo)
+      const overlay = document.getElementById('frames-portal-overlay')
+      if (overlay) {
+        setTimeout(() => {
+          if (overlay.parentElement) overlay.parentElement.removeChild(overlay)
+        }, 50)
+      }
+      isFrozen = true
+      if (rafId) cancelAnimationFrame(rafId)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('load', paint)
+      // eslint-disable-next-line no-console
+      console.log('[FRAMES] frozen to static')
+    }
+
+    function onScroll() {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(paint)
+    }
+
+    function onResize() {
+      paint()
+    }
+
+    window.addEventListener('scroll', onScroll)
+    window.addEventListener('resize', onResize)
+    window.addEventListener('load', paint)
+    // @ts-ignore
+    if (document.fonts && document.fonts.ready) {
+      // @ts-ignore
+      document.fonts.ready.then(() => paint()).catch(() => {})
+    }
+
+    // Primer pintado
+    setTimeout(paint, 100)
+    // Congelar a estático después de ~1s
+    freezeTimeout = setTimeout(freezeToStatic, 1000)
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId)
+      if (freezeTimeout) clearTimeout(freezeTimeout)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('load', paint)
+    }
   }, [])
 
   const openImage = (e: React.MouseEvent<HTMLImageElement>) => {
@@ -595,7 +758,7 @@ export default function TimelinePage() {
           <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
+                <div style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
                       "/primeras-escapadas-01.png",
@@ -611,6 +774,7 @@ export default function TimelinePage() {
                     }}
                     data-frame-anchor="carousel-frame-anchor"
                   />
+                  
                 </div>
                 
               </div>
@@ -623,7 +787,7 @@ export default function TimelinePage() {
           <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
                       "/estudios/ESTUDIOS.jpeg",
@@ -636,7 +800,9 @@ export default function TimelinePage() {
                     }}
                     data-frame-anchor="carousel-frame-anchor-estudios"
                   />
+                  
                 </div>
+                
                 
               </div>
             </div>
@@ -670,7 +836,7 @@ export default function TimelinePage() {
           <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="rounded-2xl" style={{ height: 'calc(384px - 0px)', overflow: 'hidden' }}>
+                <div className="rounded-2xl" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
                       "/estudios-oposiciones-01.png",
@@ -686,7 +852,9 @@ export default function TimelinePage() {
                     }}
                     data-frame-anchor="frame-anchor-policia"
                   />
+                  
                 </div>
+                
                 
               </div>
             </div>
@@ -698,7 +866,7 @@ export default function TimelinePage() {
           <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden rounded-2xl" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden rounded-2xl" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
                       "/mir/MIR.png",
@@ -714,7 +882,9 @@ export default function TimelinePage() {
                     }}
                     data-frame-anchor="frame-anchor-medicina"
                   />
+                  
                 </div>
+                
                 
               </div>
             </div>
@@ -748,7 +918,7 @@ export default function TimelinePage() {
           <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
                       "/hobbies/HOBBIES.jpeg",
@@ -761,6 +931,7 @@ export default function TimelinePage() {
                     }}
                     data-frame-anchor="carousel-frame-anchor-hobbies"
                   />
+                  
                 </div>
                 
               </div>
@@ -773,7 +944,7 @@ export default function TimelinePage() {
           <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
                       "/independizarse/INDEP.png",
@@ -790,6 +961,7 @@ export default function TimelinePage() {
                     }}
                     data-frame-anchor="carousel-frame-anchor-indep"
                   />
+                  
                 </div>
                 
               </div>
@@ -824,7 +996,7 @@ export default function TimelinePage() {
           <div className="col-span-6">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
                       "/ilun/ILUN.png",
@@ -845,6 +1017,7 @@ export default function TimelinePage() {
                     }}
                     data-frame-anchor="carousel-frame-anchor-ilun"
                   />
+                  
                 </div>
                 
               </div>
@@ -857,7 +1030,7 @@ export default function TimelinePage() {
           <div className="col-span-6 order-1">
             <div className="p-6 flex justify-center">
               <div className="relative" style={{ width: '96%' }}>
-                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)' }}>
+                <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
                       "/pedida/PEDIDA_MANO.png",
@@ -869,6 +1042,7 @@ export default function TimelinePage() {
                     }}
                     data-frame-anchor="carousel-frame-anchor-pedida"
                   />
+                  
                 </div>
                 
               </div>
