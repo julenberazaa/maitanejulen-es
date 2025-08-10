@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint } from "lucide-react"
 import ImageCarousel from "@/components/image-carousel"
-import { getFrameConfig } from "@/lib/frame-config"
+import FramesOverlay from "@/components/frames-overlay"
 
 interface ImageState {
   src: string | null
@@ -37,6 +37,14 @@ export default function TimelinePage() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
     document.documentElement.scrollTop = 0
     document.body.scrollTop = 0
+
+    // Bloquear scroll durante el primer segundo para estabilizar marcos
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const unlock = setTimeout(() => {
+      document.body.style.overflow = prevOverflow || 'auto'
+    }, 1000)
+    return () => clearTimeout(unlock)
   }, [])
 
   useEffect(() => {
@@ -261,220 +269,7 @@ export default function TimelinePage() {
     };
   }, [tuentiStarted])
 
-  useEffect(() => {
-    // Overlay fijo para marcos fuera de cualquier clipping
-    let rafId: number | null = null
-    let freezeTimeout: NodeJS.Timeout | null = null
-    let isFrozen = false
-
-    function ensureOverlay(): HTMLDivElement {
-      let overlay = document.getElementById('frames-portal-overlay') as HTMLDivElement | null
-      if (!overlay) {
-        overlay = document.createElement('div')
-        overlay.id = 'frames-portal-overlay'
-        overlay.style.position = 'fixed'
-        overlay.style.top = '0'
-        overlay.style.left = '0'
-        overlay.style.width = '100vw'
-        overlay.style.height = '100vh'
-        overlay.style.pointerEvents = 'none'
-        overlay.style.zIndex = '90'
-        document.body.appendChild(overlay)
-        // eslint-disable-next-line no-console
-        console.log('[FRAMES] Overlay created')
-      }
-      return overlay
-    }
-
-    function ensureStaticLayer(): HTMLDivElement | null {
-      const fixedLayout = document.getElementById('fixed-layout') as HTMLDivElement | null
-      if (!fixedLayout) return null
-      let layer = document.getElementById('static-frames-layer') as HTMLDivElement | null
-      if (!layer) {
-        layer = document.createElement('div')
-        layer.id = 'static-frames-layer'
-        layer.style.position = 'absolute'
-        layer.style.top = '0'
-        layer.style.left = '0'
-        layer.style.width = `${fixedLayout.scrollWidth || fixedLayout.getBoundingClientRect().width}px`
-        layer.style.height = `${fixedLayout.scrollHeight || fixedLayout.getBoundingClientRect().height}px`
-        layer.style.pointerEvents = 'none'
-        layer.style.zIndex = '99'
-        fixedLayout.appendChild(layer)
-        // eslint-disable-next-line no-console
-        console.log('[FRAMES] Static layer created under #fixed-layout')
-      } else {
-        const fixedLayout = document.getElementById('fixed-layout') as HTMLDivElement | null
-        if (fixedLayout) {
-          layer.style.width = `${fixedLayout.scrollWidth || fixedLayout.getBoundingClientRect().width}px`
-          layer.style.height = `${fixedLayout.scrollHeight || fixedLayout.getBoundingClientRect().height}px`
-        }
-      }
-      return layer
-    }
-
-    function paint() {
-      if (isFrozen) return
-      const overlay = ensureOverlay()
-      const seen = new Set<string>()
-      const anchors = Array.from(document.querySelectorAll<HTMLElement>('[data-frame-anchor]'))
-      // eslint-disable-next-line no-console
-      console.log('[FRAMES] paint anchors:', anchors.length)
-
-      anchors.forEach((el) => {
-        const name = el.getAttribute('data-frame-anchor') || ''
-        const rect = el.getBoundingClientRect()
-        // Pintar solo si interseca viewport
-        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return
-
-        const cfg = getFrameConfig(name)
-        const id = `overlay-frame-${name}`
-        seen.add(id)
-
-        let img = document.getElementById(id) as HTMLImageElement | null
-        if (!img) {
-          img = document.createElement('img')
-          img.id = id
-          img.alt = ''
-          img.className = 'pointer-events-none'
-          overlay.appendChild(img)
-        }
-
-        img.src = cfg.src
-
-        const scale = cfg.scale ?? 1
-        const scaledW = rect.width * scale
-        const scaledH = rect.height * scale
-        const left = rect.left - (scaledW - rect.width) / 2 + (cfg.offsetX ?? 0)
-        const top = rect.top - (scaledH - rect.height) / 2 + (cfg.offsetY ?? 0)
-
-        img.style.position = 'absolute'
-        img.style.left = `${Math.round(left)}px`
-        img.style.top = `${Math.round(top)}px`
-        img.style.width = `${Math.round(scaledW)}px`
-        img.style.height = `${Math.round(scaledH)}px`
-        img.style.objectFit = 'cover'
-        img.style.borderRadius = '12px'
-        img.style.opacity = '1'
-      })
-
-      // Remove non-seen
-      Array.from(overlay.children).forEach((child) => {
-        if (!seen.has((child as HTMLElement).id)) overlay.removeChild(child)
-      })
-    }
-
-    function freezeToStatic() {
-      if (isFrozen) return
-      const fixedLayout = document.getElementById('fixed-layout') as HTMLDivElement | null
-      if (!fixedLayout) return
-
-      // Calcular escala actual del fixed-layout para convertir coords
-      const baseWidth = parseFloat((fixedLayout.style.width || '0').replace('px', '')) || 1588
-      const layoutRect = fixedLayout.getBoundingClientRect()
-      const layoutScale = layoutRect.width / baseWidth
-      // eslint-disable-next-line no-console
-      console.log('[FRAMES] freeze: layoutScale', layoutScale, 'layoutRect.width', layoutRect.width, 'baseWidth', baseWidth)
-
-      const layer = ensureStaticLayer()
-      if (!layer) return
-
-      // Limpiar cualquier estático previo
-      while (layer.firstChild) layer.removeChild(layer.firstChild)
-
-      const anchors = Array.from(document.querySelectorAll<HTMLElement>('[data-frame-anchor]'))
-      // eslint-disable-next-line no-console
-      console.log('[FRAMES] freeze anchors:', anchors.length)
-      anchors.forEach((el) => {
-        const name = el.getAttribute('data-frame-anchor') || ''
-        const rect = el.getBoundingClientRect()
-        const cfg = getFrameConfig(name)
-
-        const scale = cfg.scale ?? 1
-        // Convertir de viewport a coords del fixed-layout pre-transform
-        const preLeft = (window.scrollX + rect.left) / layoutScale
-        const preTop = (window.scrollY + rect.top) / layoutScale
-        const preW = rect.width / layoutScale
-        const preH = rect.height / layoutScale
-
-        const scaledW = preW * scale
-        const scaledH = preH * scale
-        const left = preLeft - (scaledW - preW) / 2 + (cfg.offsetX ?? 0) / layoutScale
-        const top = preTop - (scaledH - preH) / 2 + (cfg.offsetY ?? 0) / layoutScale
-
-        const img = document.createElement('img')
-        img.src = cfg.src
-        img.alt = ''
-        img.style.position = 'absolute'
-        img.style.left = `${Math.round(left)}px`
-        img.style.top = `${Math.round(top)}px`
-        img.style.width = `${Math.round(scaledW)}px`
-        img.style.height = `${Math.round(scaledH)}px`
-        img.style.objectFit = 'cover'
-        img.style.borderRadius = '12px'
-        img.style.pointerEvents = 'none'
-        img.style.zIndex = '99'
-        layer.appendChild(img)
-      })
-
-      if (anchors.length === 0) {
-        // Reintentar la congelación tras un breve tiempo si todavía no hay anclas
-        // eslint-disable-next-line no-console
-        console.warn('[FRAMES] freeze: no anchors found yet, retrying...')
-        setTimeout(freezeToStatic, 500)
-        return
-      }
-
-      // eslint-disable-next-line no-console
-      console.log('[FRAMES] static children count:', (ensureStaticLayer() as HTMLDivElement)?.children.length)
-
-      // Desmontar overlay y listeners (gracia de 50ms para evitar parpadeo)
-      const overlay = document.getElementById('frames-portal-overlay')
-      if (overlay) {
-        setTimeout(() => {
-          if (overlay.parentElement) overlay.parentElement.removeChild(overlay)
-        }, 50)
-      }
-      isFrozen = true
-      if (rafId) cancelAnimationFrame(rafId)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onResize)
-      window.removeEventListener('load', paint)
-      // eslint-disable-next-line no-console
-      console.log('[FRAMES] frozen to static')
-    }
-
-    function onScroll() {
-      if (rafId) cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(paint)
-    }
-
-    function onResize() {
-      paint()
-    }
-
-    window.addEventListener('scroll', onScroll)
-    window.addEventListener('resize', onResize)
-    window.addEventListener('load', paint)
-    // @ts-ignore
-    if (document.fonts && document.fonts.ready) {
-      // @ts-ignore
-      document.fonts.ready.then(() => paint()).catch(() => {})
-    }
-
-    // Primer pintado
-    setTimeout(paint, 100)
-    // Congelar a estático después de ~1s
-    freezeTimeout = setTimeout(freezeToStatic, 1000)
-
-    return () => {
-      if (rafId) cancelAnimationFrame(rafId)
-      if (freezeTimeout) clearTimeout(freezeTimeout)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onResize)
-      window.removeEventListener('load', paint)
-    }
-  }, [])
+  // Removed old dynamic overlay logic; frames are now rendered via FramesOverlay
 
   const openImage = (e: React.MouseEvent<HTMLImageElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -580,6 +375,8 @@ export default function TimelinePage() {
 
   return (
     <div className="min-h-screen bg-ivory text-midnight overflow-x-hidden">
+      {/* Static frames overlay, above base content but below modal/video */}
+      <FramesOverlay />
       {/* Image Modal */}
       {selectedImage.src && (
         <div 
@@ -1078,7 +875,7 @@ export default function TimelinePage() {
           ref={finalSectionBgRef}
           className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90"
         />
-        <div className={`relative z-10 text-ivory px-4 max-w-4xl w-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${showVideo ? 'py-20' : ''}`}>
+        <div className={`relative z-[80] text-ivory px-4 max-w-4xl w-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${showVideo ? 'py-20' : ''}`}>
           <div className="text-center">
             <div className="flex items-center justify-center mb-8">
               <h2 className="text-7xl font-script">Nuestro Video</h2>

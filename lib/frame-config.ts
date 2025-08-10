@@ -1,38 +1,40 @@
-export type FrameConfig = {
+export type OverlayFrame = {
+  // Stable identifier for the frame (we reuse previous anchor names)
+  id: string
+  // Image source path
   src: string
-  scale?: number
+  // Offset from viewport center (px)
+  x?: number
+  y?: number
+  // Desired rendered size (px). If one is omitted, the browser keeps aspect ratio.
+  width?: number
+  height?: number
+  // Non-uniform scale factors (applied after centering). Defaults to 1.
   scaleX?: number
   scaleY?: number
-  offsetX?: number
-  offsetY?: number
+  // Visibility toggle
+  visible?: boolean
 }
 
-const DEFAULT_SCALE = 1.6
+// Initial defaults: centered with moderate size. Tune per-frame manually.
+const DEFAULT_WIDTH = 600
+const DEFAULT_HEIGHT = 400
 
-const FRAME_CONFIGS: Record<string, FrameConfig> = {
+export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Primeras escapadas
-  'carousel-frame-anchor': { src: '/frames/frame-02.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 },
+  { id: 'carousel-frame-anchor', src: '/frames/frame-02.png', x: 338, y: 1284, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, visible: true },
   // Estudios universitarios
-  'carousel-frame-anchor-estudios': { src: '/frames/frame-03.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 },
+  { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -300, y: 1885, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, visible: true },
   // Policía (custom)
-  'frame-anchor-policia': { src: '/policia-marco.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 },
+  { id: 'frame-anchor-policia', src: '/policia-marco.png', x: 348, y: 2444, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, visible: true },
   // Medicina / MIR (custom)
-  'frame-anchor-medicina': { src: '/medicina-marco.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 },
+  { id: 'frame-anchor-medicina', src: '/medicina-marco.png', x: -295, y: 3005, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, visible: true },
   // Hobbies
-  'carousel-frame-anchor-hobbies': { src: '/frames/frame-05.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 },
+  { id: 'carousel-frame-anchor-hobbies', src: '/frames/frame-05.png', x: 350, y: 3568, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.50, visible: true },
   // Independizarse
-  'carousel-frame-anchor-indep': { src: '/frames/frame-06.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 },
+  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-06.png', x: -302, y: 4128, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, visible: true },
   // Ilun
-  'carousel-frame-anchor-ilun': { src: '/frames/frame-07.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 },
+  { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 342, y: 4685, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, visible: true },
   // Pedida
-  'carousel-frame-anchor-pedida': { src: '/frames/frame-04.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 },
-}
-
-export function getFrameConfig(anchorName: string): FrameConfig {
-  return FRAME_CONFIGS[anchorName] ?? { src: '/frames/frame-02.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 }
-}
-
-export function setFrameConfig(anchorName: string, config: Partial<FrameConfig>) {
-  const current = FRAME_CONFIGS[anchorName] ?? { src: '/frames/frame-02.png', scale: DEFAULT_SCALE, offsetX: 0, offsetY: 0 }
-  FRAME_CONFIGS[anchorName] = { ...current, ...config }
-} 
+  { id: 'carousel-frame-anchor-pedida', src: '/frames/frame-04.png', x: -297, y: 5243, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.545, visible: true },
+]
