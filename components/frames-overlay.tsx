@@ -7,7 +7,7 @@ import { OVERLAY_FRAMES } from "@/lib/frame-config"
 const BASE_VIEWPORT_WIDTH = 1536
 const MAX_CONTENT_WIDTH = 1280 // max-w-7xl = 80rem = 1280px
 
-export default function FramesOverlay(): JSX.Element | null {
+export default function FramesOverlay(): React.JSX.Element | null {
   const [layoutInfo, setLayoutInfo] = useState({
     scale: 1,
     contentWidth: MAX_CONTENT_WIDTH,
