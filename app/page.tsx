@@ -374,7 +374,7 @@ export default function TimelinePage() {
   }
 
   return (
-    <div className="min-h-screen bg-ivory text-midnight overflow-x-hidden">
+    <div className="min-h-screen bg-ivory text-midnight overflow-x-hidden relative">
       {/* Static frames overlay, above base content but below modal/video */}
       <FramesOverlay />
       {/* Image Modal */}

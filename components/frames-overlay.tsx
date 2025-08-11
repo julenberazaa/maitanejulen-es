@@ -69,7 +69,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
     <div
       id="frames-overlay"
       style={{
-        position: "fixed",
+        position: "absolute",
         inset: 0,
         pointerEvents: "none",
         zIndex: 50,
@@ -94,9 +94,9 @@ export default function FramesOverlay(): React.JSX.Element | null {
         const finalScaleX = scaleX * layoutInfo.scale
         const finalScaleY = scaleY * layoutInfo.scale
 
-        // Position relative to content center, not viewport center
-        const contentCenterX = layoutInfo.contentCenterX
-        const contentCenterY = layoutInfo.contentCenterY
+        // Position relative to content center; for absolute overlay we use viewport center baseline
+        const contentCenterX = layoutInfo.viewportWidth / 2
+        const contentCenterY = layoutInfo.viewportHeight / 2
 
         const transform = `translate(-50%, -50%) translate(${Math.round(scaledX)}px, ${Math.round(scaledY)}px) scale(${finalScaleX}, ${finalScaleY})`
         const style: React.CSSProperties = {
