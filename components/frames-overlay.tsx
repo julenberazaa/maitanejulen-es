@@ -11,6 +11,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const [layoutInfo, setLayoutInfo] = useState({
     scale: 1,
     contentWidth: MAX_CONTENT_WIDTH,
+    contentLeft: 0, // Real left position of content container
     contentCenterX: BASE_VIEWPORT_WIDTH / 2,
     contentCenterY: 408,
     viewportWidth: BASE_VIEWPORT_WIDTH,
@@ -22,11 +23,16 @@ export default function FramesOverlay(): React.JSX.Element | null {
       const viewportWidth = window.innerWidth
       const viewportHeight = window.innerHeight
       
-      // Calculate actual content area width (same logic as max-w-7xl mx-auto)
-      const contentWidth = Math.min(viewportWidth - 32, MAX_CONTENT_WIDTH) // px-4 = 16px each side
+      // Calculate actual content area width and position (same logic as max-w-7xl mx-auto px-4)
+      const paddingX = 16 * 2 // px-4 = 16px each side = 32px total
+      const availableWidth = viewportWidth - paddingX
+      const contentWidth = Math.min(availableWidth, MAX_CONTENT_WIDTH)
       
-      // Content is always centered in viewport
-      const contentCenterX = viewportWidth / 2
+      // Calculate where the content container actually starts (left position)
+      const contentLeft = (viewportWidth - contentWidth) / 2
+      
+      // Content center is at contentLeft + half of contentWidth
+      const contentCenterX = contentLeft + (contentWidth / 2)
       const contentCenterY = viewportHeight / 2
       
       // Scale is based on content width, not viewport width
@@ -35,6 +41,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
       setLayoutInfo({
         scale,
         contentWidth,
+        contentLeft,
         contentCenterX,
         contentCenterY,
         viewportWidth,
@@ -42,12 +49,15 @@ export default function FramesOverlay(): React.JSX.Element | null {
       })
       
       // Debug logging
-      console.log('[FRAMES UNIFIED RESPONSIVE]', {
+      console.log('[FRAMES REAL CONTAINER RESPONSIVE]', {
         viewportWidth,
+        availableWidth,
         contentWidth,
+        contentLeft,
+        contentCenterX,
         maxContentWidth: MAX_CONTENT_WIDTH,
         scale,
-        contentCenter: { x: contentCenterX, y: contentCenterY },
+        paddingX,
         timestamp: Date.now()
       })
     }
@@ -88,15 +98,15 @@ export default function FramesOverlay(): React.JSX.Element | null {
         const finalScaleX = scaleX * layoutInfo.scale
         const finalScaleY = scaleY * layoutInfo.scale
 
-        // Position relative to viewport center (unified for all devices)
-        const contentCenterX = layoutInfo.viewportWidth / 2
-        const contentCenterY = layoutInfo.viewportHeight / 2
+        // Position relative to the REAL content container center (not viewport center)
+        const realContentCenterX = layoutInfo.contentCenterX
+        const realContentCenterY = layoutInfo.contentCenterY
 
         const transform = `translate(-50%, -50%) translate(${Math.round(scaledX)}px, ${Math.round(scaledY)}px) scale(${finalScaleX}, ${finalScaleY})`
         const style: React.CSSProperties = {
           position: "absolute",
-          left: `${contentCenterX}px`,
-          top: `${contentCenterY}px`,
+          left: `${realContentCenterX}px`, // Using REAL content center, not viewport center
+          top: `${realContentCenterY}px`,
           transform,
           objectFit: "cover",
           borderRadius: 12 * layoutInfo.scale,
@@ -108,7 +118,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
         // Debug logging for first frame
         if (id === 'carousel-frame-anchor') {
-          console.log('[FRAMES UNIFIED DEBUG]', {
+          console.log('[FRAMES REAL CONTAINER DEBUG]', {
             frameId: id,
             original: { x, y, width, height, scaleX, scaleY },
             scaled: { 
@@ -121,8 +131,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
             },
             layoutInfo,
             finalPosition: {
-              left: contentCenterX,
-              top: contentCenterY,
+              left: realContentCenterX,
+              top: realContentCenterY,
               transform
             }
           })
