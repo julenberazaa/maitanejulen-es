@@ -12,9 +12,7 @@ export type OverlayFrame = {
   // Non-uniform scale factors (applied after centering). Defaults to 1.
   scaleX?: number
   scaleY?: number
-  // Optional mobile-specific offsets relative to the target anchor center (px)
-  mobileOffsetX?: number
-  mobileOffsetY?: number
+
   // Visibility toggle
   visible?: boolean
 }
@@ -33,9 +31,9 @@ export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Medicina / MIR (custom)
   { id: 'frame-anchor-medicina', src: '/medicina-marco.png', x: -295, y: 2960, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, visible: true },
   // Hobbies
-  { id: 'carousel-frame-anchor-hobbies', src: '/frames/frame-05.png', x: 350, y: 3528, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.50, visible: true },
+  { id: 'carousel-frame-anchor-hobbies', src: '/frames/frame-05.png', x: 351, y: 3524, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.50, visible: true },
   // Independizarse
-  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-06.png', x: -302, y: 4128, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, visible: true },
+  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-06.png', x: -302, y: 4088, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, visible: true },
   // Ilun
   { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 342, y: 4685, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, visible: true },
   // Pedida

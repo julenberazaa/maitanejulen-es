@@ -15,7 +15,6 @@ export default function FramesOverlay(): React.JSX.Element | null {
     contentCenterY: 408,
     viewportWidth: BASE_VIEWPORT_WIDTH,
     viewportHeight: 816,
-    isMobile: false,
   })
 
   useEffect(() => {
@@ -40,11 +39,10 @@ export default function FramesOverlay(): React.JSX.Element | null {
         contentCenterY,
         viewportWidth,
         viewportHeight,
-        isMobile: viewportWidth <= 768
       })
       
       // Debug logging
-      console.log('[FRAMES CONTENT RESPONSIVE]', {
+      console.log('[FRAMES UNIFIED RESPONSIVE]', {
         viewportWidth,
         contentWidth,
         maxContentWidth: MAX_CONTENT_WIDTH,
@@ -76,15 +74,11 @@ export default function FramesOverlay(): React.JSX.Element | null {
       }}
     >
       {OVERLAY_FRAMES.filter((f) => f.visible !== false).map((frame) => {
-        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetX, mobileOffsetY } = frame
+        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1 } = frame
 
-        // Apply content-based scaling to position offsets
-        // Apply optional mobile-specific nudges relative to anchor center
-        const baseX = layoutInfo.isMobile && typeof mobileOffsetX === 'number' ? x + mobileOffsetX : x
-        const baseY = layoutInfo.isMobile && typeof mobileOffsetY === 'number' ? y + mobileOffsetY : y
-
-        const scaledX = baseX * layoutInfo.scale
-        const scaledY = baseY * layoutInfo.scale
+        // Apply unified content-based scaling to all positions and dimensions
+        const scaledX = x * layoutInfo.scale
+        const scaledY = y * layoutInfo.scale
         
         // Apply content-based scaling to dimensions
         const scaledWidth = width ? width * layoutInfo.scale : width
@@ -94,7 +88,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
         const finalScaleX = scaleX * layoutInfo.scale
         const finalScaleY = scaleY * layoutInfo.scale
 
-        // Position relative to content center; for absolute overlay we use viewport center baseline
+        // Position relative to viewport center (unified for all devices)
         const contentCenterX = layoutInfo.viewportWidth / 2
         const contentCenterY = layoutInfo.viewportHeight / 2
 
@@ -114,7 +108,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
         // Debug logging for first frame
         if (id === 'carousel-frame-anchor') {
-          console.log('[FRAMES CONTENT DEBUG]', {
+          console.log('[FRAMES UNIFIED DEBUG]', {
             frameId: id,
             original: { x, y, width, height, scaleX, scaleY },
             scaled: { 
