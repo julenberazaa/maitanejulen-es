@@ -23,7 +23,7 @@ const DEFAULT_HEIGHT = 400
 
 export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Primeras escapadas
-  { id: 'carousel-frame-anchor', src: '/frames/frame-02.png', x: 338, y: 1284, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, visible: true },
+  { id: 'carousel-frame-anchor', src: '/frames/frame-02.png', x: 138, y: 1694, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, visible: true },
   // Estudios universitarios
   { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -300, y: 1842, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, visible: true },
   // Policía (custom)
