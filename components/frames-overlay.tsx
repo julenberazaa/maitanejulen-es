@@ -1,12 +1,24 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { OVERLAY_FRAMES } from "@/lib/frame-config"
 
 // Base design width - same as the #fixed-layout element
 const BASE_DESIGN_WIDTH = 1920
 
 export default function FramesOverlay(): React.JSX.Element | null {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   return (
     <div
       id="frames-overlay"
@@ -22,17 +34,20 @@ export default function FramesOverlay(): React.JSX.Element | null {
       }}
     >
       {OVERLAY_FRAMES.filter((f) => f.visible !== false).map((frame) => {
-        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1 } = frame
+        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetY = 0 } = frame
 
         // Position relative to the center of the base design (1920px width)
         const baseCenterX = BASE_DESIGN_WIDTH / 2
+        
+        // Apply mobile vertical offset if on mobile
+        const finalY = isMobile ? y + mobileOffsetY : y
         
         // Direct coordinates in the base design space (no scaling calculations needed)
         const transform = `translate(-50%, -50%) scale(${scaleX}, ${scaleY})`
         const style: React.CSSProperties = {
           position: "absolute",
           left: `${baseCenterX + x}px`, // Center + offset in base design space
-          top: `${y}px`, // Direct Y coordinate in base design space
+          top: `${finalY}px`, // Y coordinate with mobile adjustment
           transform,
           objectFit: "cover",
           borderRadius: 12,
@@ -45,16 +60,17 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
         // Debug logging for first frame
         if (id === 'carousel-frame-anchor') {
-          console.log('[FRAMES INSIDE SCALED CONTAINER]', {
+          console.log('[FRAMES WITH MOBILE OFFSET]', {
             frameId: id,
-            baseDesignWidth: BASE_DESIGN_WIDTH,
-            baseCenterX,
+            isMobile,
+            original: { x, y, mobileOffsetY },
             finalPosition: {
               left: baseCenterX + x,
-              top: y,
+              top: finalY,
               transform
             },
-            frame: { x, y, width, height, scaleX, scaleY }
+            baseDesignWidth: BASE_DESIGN_WIDTH,
+            baseCenterX
           })
         }
 
