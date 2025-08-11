@@ -13,7 +13,7 @@ export type OverlayFrame = {
   scaleX?: number
   scaleY?: number
   // Mobile-specific vertical offset to fix alignment issues (px)
-  mobileOffsetY?: number
+  mobileOffsetY?: 100
   // Visibility toggle
   visible?: boolean
 }
