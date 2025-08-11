@@ -3,39 +3,58 @@
 import React, { useEffect, useState } from "react"
 import { OVERLAY_FRAMES } from "@/lib/frame-config"
 
-// Use EXACTLY the same constants as FixedZoom component
-const BASE_WIDTH = 1920
-const DESIGN_MAGNIFY = 1.21 // ~21% total más grande
-const EFFECTIVE_BASE_WIDTH = BASE_WIDTH / DESIGN_MAGNIFY // ~1587.6px
-
 export default function FramesOverlay(): React.JSX.Element | null {
   const [layoutInfo, setLayoutInfo] = useState({
     scale: 1,
-    viewportWidth: EFFECTIVE_BASE_WIDTH,
-    viewportHeight: 816,
+    fixedLayoutLeft: 0,
+    fixedLayoutTop: 0,
+    fixedLayoutCenterX: 0,
+    fixedLayoutCenterY: 0,
+    fixedLayoutWidth: 1920,
   })
 
   useEffect(() => {
     const updateLayout = () => {
-      // Use EXACTLY the same logic as FixedZoom component
-      const documentWidth = document.documentElement.clientWidth
-      const innerWidth = window.innerWidth
-      const viewport = documentWidth || innerWidth
-      const scale = viewport / EFFECTIVE_BASE_WIDTH
+      // Get the REAL position and scale of the #fixed-layout element
+      const fixedLayout = document.getElementById('fixed-layout')
+      if (!fixedLayout) return
+
+      // Get the actual bounding box of the scaled element
+      const rect = fixedLayout.getBoundingClientRect()
+      
+      // Extract the scale from the computed transform
+      const computedStyle = window.getComputedStyle(fixedLayout)
+      const transform = computedStyle.transform
+      
+      let scale = 1
+      if (transform && transform !== 'none') {
+        // Parse matrix(scaleX, 0, 0, scaleY, translateX, translateY)
+        const values = transform.match(/matrix\(([^)]+)\)/)
+        if (values) {
+          const matrix = values[1].split(',').map(v => parseFloat(v.trim()))
+          scale = matrix[0] // scaleX value
+        }
+      }
+
+      // Calculate the center of the scaled fixed-layout element
+      const fixedLayoutCenterX = rect.left + (rect.width / 2)
+      const fixedLayoutCenterY = rect.top + (rect.height / 2)
       
       setLayoutInfo({
         scale,
-        viewportWidth: viewport,
-        viewportHeight: window.innerHeight,
+        fixedLayoutLeft: rect.left,
+        fixedLayoutTop: rect.top,
+        fixedLayoutCenterX,
+        fixedLayoutCenterY,
+        fixedLayoutWidth: rect.width,
       })
       
       // Debug logging
-      console.log('[FRAMES FIXED ZOOM SYSTEM]', {
-        viewport,
-        effectiveBaseWidth: EFFECTIVE_BASE_WIDTH,
+      console.log('[FRAMES REAL FIXED-LAYOUT REFERENCE]', {
+        rect,
         scale,
-        documentWidth,
-        innerWidth,
+        center: { x: fixedLayoutCenterX, y: fixedLayoutCenterY },
+        transform,
         timestamp: Date.now()
       })
     }
@@ -43,13 +62,28 @@ export default function FramesOverlay(): React.JSX.Element | null {
     // Initial calculation
     updateLayout()
 
-    // Listen to resize events (same as FixedZoom)
+    // Listen to resize events and layout changes
     const handleResize = () => {
-      setTimeout(updateLayout, 150) // Same debounce as FixedZoom
+      setTimeout(updateLayout, 150)
     }
 
     window.addEventListener('resize', handleResize)
     window.addEventListener('orientationchange', () => setTimeout(updateLayout, 200))
+    
+    // Also listen for any changes to the fixed-layout element
+    const fixedLayout = document.getElementById('fixed-layout')
+    if (fixedLayout && 'ResizeObserver' in window) {
+      const resizeObserver = new ResizeObserver(() => {
+        setTimeout(updateLayout, 50)
+      })
+      resizeObserver.observe(fixedLayout)
+      
+      return () => {
+        window.removeEventListener('resize', handleResize)
+        window.removeEventListener('orientationchange', handleResize)
+        resizeObserver.disconnect()
+      }
+    }
     
     return () => {
       window.removeEventListener('resize', handleResize)
@@ -70,27 +104,20 @@ export default function FramesOverlay(): React.JSX.Element | null {
       {OVERLAY_FRAMES.filter((f) => f.visible !== false).map((frame) => {
         const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1 } = frame
 
-        // Apply FIXED ZOOM scaling (same as the entire page)
+        // Position relative to the REAL center of the scaled #fixed-layout element
+        // Apply the same scale that's applied to the fixed-layout
         const scaledX = x * layoutInfo.scale
         const scaledY = y * layoutInfo.scale
-        
-        // Apply fixed zoom scaling to dimensions
         const scaledWidth = width ? width * layoutInfo.scale : width
         const scaledHeight = height ? height * layoutInfo.scale : height
-        
-        // Apply fixed zoom scaling to scale factors
         const finalScaleX = scaleX * layoutInfo.scale
         const finalScaleY = scaleY * layoutInfo.scale
-
-        // Position relative to viewport center (like the fixed zoom system)
-        const viewportCenterX = layoutInfo.viewportWidth / 2
-        const viewportCenterY = layoutInfo.viewportHeight / 2
 
         const transform = `translate(-50%, -50%) translate(${Math.round(scaledX)}px, ${Math.round(scaledY)}px) scale(${finalScaleX}, ${finalScaleY})`
         const style: React.CSSProperties = {
           position: "absolute",
-          left: `${viewportCenterX}px`,
-          top: `${viewportCenterY}px`,
+          left: `${layoutInfo.fixedLayoutCenterX}px`, // Use REAL center of scaled element
+          top: `${layoutInfo.fixedLayoutCenterY}px`,   // Use REAL center of scaled element
           transform,
           objectFit: "cover",
           borderRadius: 12 * layoutInfo.scale,
@@ -102,7 +129,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
         // Debug logging for first frame
         if (id === 'carousel-frame-anchor') {
-          console.log('[FRAMES FIXED ZOOM DEBUG]', {
+          console.log('[FRAMES REAL CENTER DEBUG]', {
             frameId: id,
             original: { x, y, width, height, scaleX, scaleY },
             scaled: { 
@@ -115,8 +142,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
             },
             layoutInfo,
             finalPosition: {
-              left: viewportCenterX,
-              top: viewportCenterY,
+              left: layoutInfo.fixedLayoutCenterX,
+              top: layoutInfo.fixedLayoutCenterY,
               transform
             }
           })
