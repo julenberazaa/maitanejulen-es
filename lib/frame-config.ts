@@ -12,6 +12,9 @@ export type OverlayFrame = {
   // Non-uniform scale factors (applied after centering). Defaults to 1.
   scaleX?: number
   scaleY?: number
+  // Optional mobile-specific offsets relative to the target anchor center (px)
+  mobileOffsetX?: number
+  mobileOffsetY?: number
   // Visibility toggle
   visible?: boolean
 }
@@ -24,9 +27,9 @@ export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Primeras escapadas
   { id: 'carousel-frame-anchor', src: '/frames/frame-02.png', x: 338, y: 1284, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, visible: true },
   // Estudios universitarios
-  { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -300, y: 1885, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, visible: true },
+  { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -300, y: 1842, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, visible: true },
   // Policía (custom)
-  { id: 'frame-anchor-policia', src: '/policia-marco.png', x: 348, y: 2444, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, visible: true },
+  { id: 'frame-anchor-policia', src: '/policia-marco.png', x: 348, y: 2401, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, visible: true },
   // Medicina / MIR (custom)
   { id: 'frame-anchor-medicina', src: '/medicina-marco.png', x: -295, y: 3005, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, visible: true },
   // Hobbies

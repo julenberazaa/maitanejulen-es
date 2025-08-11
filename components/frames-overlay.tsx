@@ -14,7 +14,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     contentCenterX: BASE_VIEWPORT_WIDTH / 2,
     contentCenterY: 408,
     viewportWidth: BASE_VIEWPORT_WIDTH,
-    viewportHeight: 816
+    viewportHeight: 816,
+    isMobile: false,
   })
 
   useEffect(() => {
@@ -38,7 +39,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
         contentCenterX,
         contentCenterY,
         viewportWidth,
-        viewportHeight
+        viewportHeight,
+        isMobile: viewportWidth <= 768
       })
       
       // Debug logging
@@ -74,11 +76,15 @@ export default function FramesOverlay(): React.JSX.Element | null {
       }}
     >
       {OVERLAY_FRAMES.filter((f) => f.visible !== false).map((frame) => {
-        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1 } = frame
+        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetX, mobileOffsetY } = frame
 
         // Apply content-based scaling to position offsets
-        const scaledX = x * layoutInfo.scale
-        const scaledY = y * layoutInfo.scale
+        // Apply optional mobile-specific nudges relative to anchor center
+        const baseX = layoutInfo.isMobile && typeof mobileOffsetX === 'number' ? x + mobileOffsetX : x
+        const baseY = layoutInfo.isMobile && typeof mobileOffsetY === 'number' ? y + mobileOffsetY : y
+
+        const scaledX = baseX * layoutInfo.scale
+        const scaledY = baseY * layoutInfo.scale
         
         // Apply content-based scaling to dimensions
         const scaledWidth = width ? width * layoutInfo.scale : width
