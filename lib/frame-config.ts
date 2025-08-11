@@ -26,7 +26,7 @@ export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Primeras escapadas
   { id: 'carousel-frame-anchor', src: '/frames/frame-02.png', x: 146, y: 1690, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, mobileOffsetY: 100, visible: true },
   // Estudios universitarios
-  { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -490, y: 2250, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -490, y: 2250, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 80, visible: true },
   // Policía (custom)
   { id: 'frame-anchor-policia', src: '/udaltzaingoa_marco.png', x: 348, y: 2401, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, mobileOffsetY: 0, visible: true },
   // Medicina / MIR (custom)
