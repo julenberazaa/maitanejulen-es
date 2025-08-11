@@ -84,60 +84,56 @@ export default function FramesOverlay(): React.JSX.Element | null {
       }}
     >
       {OVERLAY_FRAMES.filter((f) => f.visible !== false).map((frame) => {
-        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1 } = frame
+        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetX = 0, mobileOffsetY = 0 } = frame
 
-        // Apply unified content-based scaling to all positions and dimensions
+        const isMobile = layoutInfo.viewportWidth <= 768
+
+        if (isMobile) {
+          // MOBILE: Anchor to real DOM element center so it follows layout exactly
+          const anchor = document.querySelector<HTMLElement>(`[data-frame-anchor="${id}"]`)
+          if (!anchor) return null
+          const rect = anchor.getBoundingClientRect()
+          const centerLeftDoc = window.scrollX + rect.left + rect.width / 2
+          const centerTopDoc = window.scrollY + rect.top + rect.height / 2
+
+          const finalScaleX = scaleX * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH)
+          const finalScaleY = scaleY * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH)
+
+          const style: React.CSSProperties = {
+            position: 'absolute',
+            left: `${Math.round(centerLeftDoc + mobileOffsetX)}px`,
+            top: `${Math.round(centerTopDoc + mobileOffsetY)}px`,
+            transform: `translate(-50%, -50%) scale(${finalScaleX}, ${finalScaleY})`,
+            objectFit: 'cover',
+            borderRadius: 12 * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH),
+            pointerEvents: 'none',
+          }
+          if (typeof width === 'number') style.width = `${Math.round(width * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH))}px`
+          if (typeof height === 'number') style.height = `${Math.round(height * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH))}px`
+          return <img key={id} id={`overlay-${id}`} src={src} alt="" style={style} />
+        }
+
+        // DESKTOP: keep current content-based center positioning
         const scaledX = x * layoutInfo.scale
         const scaledY = y * layoutInfo.scale
-        
-        // Apply content-based scaling to dimensions
         const scaledWidth = width ? width * layoutInfo.scale : width
         const scaledHeight = height ? height * layoutInfo.scale : height
-        
-        // Apply content-based scaling to scale factors
         const finalScaleX = scaleX * layoutInfo.scale
         const finalScaleY = scaleY * layoutInfo.scale
-
-        // Position relative to the REAL content container center (not viewport center)
         const realContentCenterX = layoutInfo.contentCenterX
         const realContentCenterY = layoutInfo.contentCenterY
-
         const transform = `translate(-50%, -50%) translate(${Math.round(scaledX)}px, ${Math.round(scaledY)}px) scale(${finalScaleX}, ${finalScaleY})`
         const style: React.CSSProperties = {
           position: "absolute",
-          left: `${realContentCenterX}px`, // Using REAL content center, not viewport center
+          left: `${realContentCenterX}px`,
           top: `${realContentCenterY}px`,
           transform,
           objectFit: "cover",
           borderRadius: 12 * layoutInfo.scale,
           pointerEvents: "none",
         }
-
         if (typeof scaledWidth === "number") style.width = `${Math.round(scaledWidth)}px`
         if (typeof scaledHeight === "number") style.height = `${Math.round(scaledHeight)}px`
-
-        // Debug logging for first frame
-        if (id === 'carousel-frame-anchor') {
-          console.log('[FRAMES REAL CONTAINER DEBUG]', {
-            frameId: id,
-            original: { x, y, width, height, scaleX, scaleY },
-            scaled: { 
-              x: scaledX, 
-              y: scaledY, 
-              width: scaledWidth, 
-              height: scaledHeight, 
-              scaleX: finalScaleX, 
-              scaleY: finalScaleY 
-            },
-            layoutInfo,
-            finalPosition: {
-              left: realContentCenterX,
-              top: realContentCenterY,
-              transform
-            }
-          })
-        }
-
         return <img key={id} id={`overlay-${id}`} src={src} alt="" style={style} />
       })}
     </div>

@@ -708,7 +708,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-sage">Hobbies</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Entre semanas de trabajo y estudio, aprendieron a celebrar lo cotidiano: cocinar recetas nuevas, perderse con la cámara por Bilbao y compartir rutas en bici al atardecer. Descubrieron que sus aficiones, más que pasatiempos, eran pequeñas anclas que les unían sin prisa, construyendo momentos que hoy recuerdan con una sonrisa.
+              Los hobbies son clave para mantener una buena salud física y mental porque permiten salir de las “obligaciones” y entrar en un disfrute elegido. A lo largo de su vida, Julen y Maitane han tenido y tienen diversos hobbies. A Maitane le gustan la decoración y la pintura, y durante años practicó equitación —actividad que echa mucho de menos y con la que le habría encantado seguir— hasta el punto de que, si pudiera, volvería a dedicarle tiempo. Hoy Julen pasa horas entrenando crossfit, aunque durante muchos años su gran ilusión fue el fútbol. Vivía pegado a un balón y su pasión era chutar y marcar goles.
             </p>
           </div>
           <div className="col-span-6">
@@ -719,6 +719,7 @@ export default function TimelinePage() {
                     images={[
                       "/hobbies/HOBBIES.jpeg",
                       "/hobbies/HOBBIES.png",
+                      "/hobbies/HOBBIE_FUTBOL.jpeg",
                     ]}
                     alt="Hobbies"
                     experienceId="hobbies"
