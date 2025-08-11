@@ -28,7 +28,7 @@ export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Estudios universitarios
   { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -490, y: 2250, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 75, visible: true },
   // Policía (custom)
-  { id: 'frame-anchor-policia', src: '/udaltzaingoa_marco.png', x: 348, y: 2401, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, mobileOffsetY: 0, visible: true },
+  { id: 'frame-anchor-policia', src: '/frames/udaltzaingoa_marco_real.png', x: 348, y: 2901, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1, scaleY: 1, mobileOffsetY: 0, visible: true },
   // Medicina / MIR (custom)
   { id: 'frame-anchor-medicina', src: '/medicina-marco.png', x: -295, y: 2960, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, mobileOffsetY: 0, visible: true },
   // Hobbies
