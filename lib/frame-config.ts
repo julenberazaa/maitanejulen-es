@@ -12,9 +12,6 @@ export type OverlayFrame = {
   // Non-uniform scale factors (applied after centering). Defaults to 1.
   scaleX?: number
   scaleY?: number
-  // Optional mobile-specific nudges relative to anchor center (px)
-  mobileOffsetX?: number
-  mobileOffsetY?: number
 
   // Visibility toggle
   visible?: boolean

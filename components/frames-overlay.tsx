@@ -3,61 +3,39 @@
 import React, { useEffect, useState } from "react"
 import { OVERLAY_FRAMES } from "@/lib/frame-config"
 
-// Base dimensions when frames were positioned correctly
-const BASE_VIEWPORT_WIDTH = 1536
-const MAX_CONTENT_WIDTH = 1280 // max-w-7xl = 80rem = 1280px
+// Use EXACTLY the same constants as FixedZoom component
+const BASE_WIDTH = 1920
+const DESIGN_MAGNIFY = 1.21 // ~21% total más grande
+const EFFECTIVE_BASE_WIDTH = BASE_WIDTH / DESIGN_MAGNIFY // ~1587.6px
 
 export default function FramesOverlay(): React.JSX.Element | null {
   const [layoutInfo, setLayoutInfo] = useState({
     scale: 1,
-    contentWidth: MAX_CONTENT_WIDTH,
-    contentLeft: 0, // Real left position of content container
-    contentCenterX: BASE_VIEWPORT_WIDTH / 2,
-    contentCenterY: 408,
-    viewportWidth: BASE_VIEWPORT_WIDTH,
+    viewportWidth: EFFECTIVE_BASE_WIDTH,
     viewportHeight: 816,
   })
 
   useEffect(() => {
     const updateLayout = () => {
-      const viewportWidth = window.innerWidth
-      const viewportHeight = window.innerHeight
-      
-      // Calculate actual content area width and position (same logic as max-w-7xl mx-auto px-4)
-      const paddingX = 16 * 2 // px-4 = 16px each side = 32px total
-      const availableWidth = viewportWidth - paddingX
-      const contentWidth = Math.min(availableWidth, MAX_CONTENT_WIDTH)
-      
-      // Calculate where the content container actually starts (left position)
-      const contentLeft = (viewportWidth - contentWidth) / 2
-      
-      // Content center is at contentLeft + half of contentWidth
-      const contentCenterX = contentLeft + (contentWidth / 2)
-      const contentCenterY = viewportHeight / 2
-      
-      // Scale is based on content width, not viewport width
-      const scale = contentWidth / MAX_CONTENT_WIDTH
+      // Use EXACTLY the same logic as FixedZoom component
+      const documentWidth = document.documentElement.clientWidth
+      const innerWidth = window.innerWidth
+      const viewport = documentWidth || innerWidth
+      const scale = viewport / EFFECTIVE_BASE_WIDTH
       
       setLayoutInfo({
         scale,
-        contentWidth,
-        contentLeft,
-        contentCenterX,
-        contentCenterY,
-        viewportWidth,
-        viewportHeight,
+        viewportWidth: viewport,
+        viewportHeight: window.innerHeight,
       })
       
       // Debug logging
-      console.log('[FRAMES REAL CONTAINER RESPONSIVE]', {
-        viewportWidth,
-        availableWidth,
-        contentWidth,
-        contentLeft,
-        contentCenterX,
-        maxContentWidth: MAX_CONTENT_WIDTH,
+      console.log('[FRAMES FIXED ZOOM SYSTEM]', {
+        viewport,
+        effectiveBaseWidth: EFFECTIVE_BASE_WIDTH,
         scale,
-        paddingX,
+        documentWidth,
+        innerWidth,
         timestamp: Date.now()
       })
     }
@@ -65,11 +43,17 @@ export default function FramesOverlay(): React.JSX.Element | null {
     // Initial calculation
     updateLayout()
 
-    // Listen to resize events
-    window.addEventListener('resize', updateLayout)
+    // Listen to resize events (same as FixedZoom)
+    const handleResize = () => {
+      setTimeout(updateLayout, 150) // Same debounce as FixedZoom
+    }
+
+    window.addEventListener('resize', handleResize)
+    window.addEventListener('orientationchange', () => setTimeout(updateLayout, 200))
     
     return () => {
-      window.removeEventListener('resize', updateLayout)
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('orientationchange', handleResize)
     }
   }, [])
 
@@ -84,56 +68,60 @@ export default function FramesOverlay(): React.JSX.Element | null {
       }}
     >
       {OVERLAY_FRAMES.filter((f) => f.visible !== false).map((frame) => {
-        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetX = 0, mobileOffsetY = 0 } = frame
+        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1 } = frame
 
-        const isMobile = layoutInfo.viewportWidth <= 768
-
-        if (isMobile) {
-          // MOBILE: Anchor to real DOM element center so it follows layout exactly
-          const anchor = document.querySelector<HTMLElement>(`[data-frame-anchor="${id}"]`)
-          if (!anchor) return null
-          const rect = anchor.getBoundingClientRect()
-          const centerLeftDoc = window.scrollX + rect.left + rect.width / 2
-          const centerTopDoc = window.scrollY + rect.top + rect.height / 2
-
-          const finalScaleX = scaleX * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH)
-          const finalScaleY = scaleY * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH)
-
-          const style: React.CSSProperties = {
-            position: 'absolute',
-            left: `${Math.round(centerLeftDoc + mobileOffsetX)}px`,
-            top: `${Math.round(centerTopDoc + mobileOffsetY)}px`,
-            transform: `translate(-50%, -50%) scale(${finalScaleX}, ${finalScaleY})`,
-            objectFit: 'cover',
-            borderRadius: 12 * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH),
-            pointerEvents: 'none',
-          }
-          if (typeof width === 'number') style.width = `${Math.round(width * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH))}px`
-          if (typeof height === 'number') style.height = `${Math.round(height * (layoutInfo.contentWidth / MAX_CONTENT_WIDTH))}px`
-          return <img key={id} id={`overlay-${id}`} src={src} alt="" style={style} />
-        }
-
-        // DESKTOP: keep current content-based center positioning
+        // Apply FIXED ZOOM scaling (same as the entire page)
         const scaledX = x * layoutInfo.scale
         const scaledY = y * layoutInfo.scale
+        
+        // Apply fixed zoom scaling to dimensions
         const scaledWidth = width ? width * layoutInfo.scale : width
         const scaledHeight = height ? height * layoutInfo.scale : height
+        
+        // Apply fixed zoom scaling to scale factors
         const finalScaleX = scaleX * layoutInfo.scale
         const finalScaleY = scaleY * layoutInfo.scale
-        const realContentCenterX = layoutInfo.contentCenterX
-        const realContentCenterY = layoutInfo.contentCenterY
+
+        // Position relative to viewport center (like the fixed zoom system)
+        const viewportCenterX = layoutInfo.viewportWidth / 2
+        const viewportCenterY = layoutInfo.viewportHeight / 2
+
         const transform = `translate(-50%, -50%) translate(${Math.round(scaledX)}px, ${Math.round(scaledY)}px) scale(${finalScaleX}, ${finalScaleY})`
         const style: React.CSSProperties = {
           position: "absolute",
-          left: `${realContentCenterX}px`,
-          top: `${realContentCenterY}px`,
+          left: `${viewportCenterX}px`,
+          top: `${viewportCenterY}px`,
           transform,
           objectFit: "cover",
           borderRadius: 12 * layoutInfo.scale,
           pointerEvents: "none",
         }
+
         if (typeof scaledWidth === "number") style.width = `${Math.round(scaledWidth)}px`
         if (typeof scaledHeight === "number") style.height = `${Math.round(scaledHeight)}px`
+
+        // Debug logging for first frame
+        if (id === 'carousel-frame-anchor') {
+          console.log('[FRAMES FIXED ZOOM DEBUG]', {
+            frameId: id,
+            original: { x, y, width, height, scaleX, scaleY },
+            scaled: { 
+              x: scaledX, 
+              y: scaledY, 
+              width: scaledWidth, 
+              height: scaledHeight, 
+              scaleX: finalScaleX, 
+              scaleY: finalScaleY 
+            },
+            layoutInfo,
+            finalPosition: {
+              left: viewportCenterX,
+              top: viewportCenterY,
+              transform
+            }
+          })
+        }
+
         return <img key={id} id={`overlay-${id}`} src={src} alt="" style={style} />
       })}
     </div>
