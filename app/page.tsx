@@ -374,7 +374,7 @@ export default function TimelinePage() {
   }
 
   return (
-    <div className="min-h-screen bg-ivory text-midnight overflow-x-hidden relative">
+    <div className="bg-ivory text-midnight overflow-x-hidden relative">
       {/* Static frames overlay, above base content but below modal/video */}
       <FramesOverlay />
       {/* Image Modal */}
@@ -433,7 +433,7 @@ export default function TimelinePage() {
       )}
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center bg-gradient-to-br from-terracotta to-sage overflow-hidden">
+      <section className="relative py-32 bg-gradient-to-br from-terracotta to-sage overflow-hidden" style={{ height: '600px' }}>
         <div
           ref={heroRef}
           className="absolute inset-0 bg-cover bg-center opacity-30"
@@ -441,7 +441,7 @@ export default function TimelinePage() {
             backgroundImage: `url('/a10.jpg')`,
           }}
         />
-        <div className="relative z-10 text-center text-ivory px-4">
+        <div className="relative z-10 text-center text-ivory px-4 flex flex-col justify-center h-full">
           <div className="mb-8">
             <Heart className="w-16 h-16 mx-auto mb-4 animate-pulse" />
           </div>
@@ -865,7 +865,8 @@ export default function TimelinePage() {
       {/* Final Section - Video */}
       <section 
         ref={finalSectionRef}
-        className="relative min-h-screen bg-midnight flex items-center justify-center text-center overflow-hidden"
+        className="relative py-32 bg-midnight text-center overflow-hidden"
+        style={{ minHeight: '600px' }}
       >
         <div
           ref={finalSectionImageRef}
@@ -876,7 +877,7 @@ export default function TimelinePage() {
           ref={finalSectionBgRef}
           className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90"
         />
-        <div className={`relative z-[80] text-ivory px-4 max-w-4xl w-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${showVideo ? 'py-20' : ''}`}>
+        <div className={`relative z-[80] text-ivory px-4 max-w-4xl w-full mx-auto transition-all duration-700 ease-in-out ${showVideo ? 'py-20' : ''}`}>
           <div className="text-center">
             <div className="flex items-center justify-center mb-8">
               <h2 className="text-7xl font-script">Nuestro Video</h2>
