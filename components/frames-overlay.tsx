@@ -27,14 +27,14 @@ export default function FramesOverlay(): React.JSX.Element | null {
         top: 0,
         left: 0,
         width: `${BASE_DESIGN_WIDTH}px`, // Same as #fixed-layout base width
-        height: "100%",
+        // NO height property - let it be determined by content, not viewport
         pointerEvents: "none",
         zIndex: 50,
         // NO transform - the parent #fixed-layout already handles scaling
       }}
     >
       {OVERLAY_FRAMES.filter((f) => f.visible !== false).map((frame) => {
-        const { id, src, x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetY = 0 } = frame
+        const { id, src, fit = 'cover', x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetY = 0 } = frame
 
         // Position relative to the center of the base design (1920px width)
         const baseCenterX = BASE_DESIGN_WIDTH / 2
@@ -49,7 +49,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
           left: `${baseCenterX + x}px`, // Center + offset in base design space
           top: `${finalY}px`, // Y coordinate with mobile adjustment
           transform,
-          objectFit: "cover",
+          objectFit: fit as any,
           borderRadius: 12,
           pointerEvents: "none",
         }
