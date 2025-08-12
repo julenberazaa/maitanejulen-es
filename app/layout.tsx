@@ -45,13 +45,13 @@ export default function RootLayout({
             #fixed-layout-wrapper {
               position: relative;
               width: 100vw;
-              height: 100vh; /* se actualizará por JS */
-              overflow: hidden; /* evita desplazamiento interno */
+              /* NO height property - let content determine height naturally */
+              overflow-x: hidden; /* solo evita scroll horizontal */
             }
             
             #fixed-layout {
               width: 1920px;
-              min-height: 100vh;
+              /* NO min-height - let content determine height naturally */
               transform-origin: top left;
               position: relative;
               display: flow-root; /* evita colapso de márgenes */

@@ -41,9 +41,8 @@ export default function FixedZoom() {
           document.documentElement.style.width = '100vw'
           document.body.style.width = '100vw'
 
-          // Altura escalada precisa en el wrapper (contenedor del scroll)
-          const scaledHeight = Math.max(0, Math.round(naturalHeight * scale))
-          wrapper.style.height = `${scaledHeight}px`
+          // NO actualizar altura del wrapper - dejar que el contenido determine la altura naturalmente
+          // El wrapper tendrá altura automática basada en el contenido escalado
         }
       } catch (error) {
         console.error('❌ FixedZoom - Error:', error)
