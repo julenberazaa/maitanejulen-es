@@ -27,7 +27,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
         top: 0,
         left: 0,
         width: `${BASE_DESIGN_WIDTH}px`, // Same as #fixed-layout base width
-        // NO height property - let it be determined by content, not viewport
+        height: '100%', // Limitar al alto del contenido para evitar overflow que añada scroll
+        overflow: 'hidden', // Evita que frames absolutos alarguen el scroll por debajo del video
         pointerEvents: "none",
         zIndex: 50,
         // NO transform - the parent #fixed-layout already handles scaling

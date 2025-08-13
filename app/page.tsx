@@ -593,10 +593,10 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-12 sm:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-sage mr-4">
+              <div className="timeline-icon-circle bg-forest mr-4">
                 <img src="/pareja4.svg" alt="Pareja" className="w-8 h-8" />
               </div>
-              <h3 className="text-5xl font-script text-sage">Primeras escapadas</h3>
+              <h3 className="text-5xl font-script text-forest">Primeras escapadas</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Al principio mantuvieron la relación en secreto; cuando quedaban mentían a sus padres, hasta que un día les pillaron y tuvieron que dar la cara. Poco a poco se consolidó, pese a alguna crisis, y llegaron los primeros viajes: con el carnet recién sacado, Julen pedía el coche para ir a la playa con Maitane, luego a Noja y, más tarde, su primer vuelo a Mallorca 🏝️. También viajó a Málaga sin que ella lo supiera para sorprenderla y pasar unos días juntos ❤️.
@@ -738,10 +738,10 @@ export default function TimelinePage() {
           </div>
           <div className="col-span-6 order-2 pl-12">
             <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-sage mr-4">
-                <Heart className="w-6 h-6 text-midnight" />
+              <div className="timeline-icon-circle bg-moss mr-4">
+                <Heart className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-5xl font-script text-sage">MIR · 2020-2023</h3>
+              <h3 className="text-5xl font-script text-moss">MIR · 2020-2023</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Mientras tanto, Maitane seguía volcada en su carrera. La exigencia continuó tras titularse: para ejercer en la sanidad pública y quedarse cerca de Julen, necesitaba buena nota en el MIR. Eso implicó un año de estudio intensivo, casi sin pausas. Julen, cuando no trabajaba, aprovechaba cada respiro para acompañarla unos minutos y apoyarla. Aunque no logró el objetivo a la primera, repitió otro año con mayor serenidad. Fue una prueba de amor y compromiso mutuo.
@@ -753,10 +753,10 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-12 sm:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-sage mr-4">
-                <Sun className="w-6 h-6 text-midnight" />
+              <div className="timeline-icon-circle bg-earth mr-4">
+                <Sun className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-5xl font-script text-sage">Hobbies</h3>
+              <h3 className="text-5xl font-script text-earth">Hobbies</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Los hobbies son clave para la salud física y mental: permiten salir de las “obligaciones” y disfrutar por elección. A lo largo de su vida, Julen y Maitane han tenido varios. A Maitane le gustan la decoración y la pintura, y durante años practicó equitación, actividad que añora y retomaría si pudiera. Hoy Julen dedica horas al crossfit, aunque durante mucho tiempo su gran pasión fue el fútbol: vivía pegado al balón y disfrutaba chutar y marcar.
@@ -832,10 +832,10 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-12 sm:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-sage mr-4">
-                <PawPrint className="w-6 h-6 text-midnight" />
+              <div className="timeline-icon-circle bg-moss mr-4">
+                <PawPrint className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-5xl font-script text-sage">Ilun</h3>
+              <h3 className="text-5xl font-script text-moss">Ilun</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Entonces apareció Ilun, un torbellino negro de ojos dulces. Con él llegaron paseos bajo la lluvia, sofás compartidos y risas mañaneras. No tardaron en darse cuenta de que Ilun no llenó la casa: la multiplicó.

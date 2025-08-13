@@ -41,8 +41,11 @@ export default function FixedZoom() {
           document.documentElement.style.width = '100vw'
           document.body.style.width = '100vw'
 
-          // NO actualizar altura del wrapper - dejar que el contenido determine la altura naturalmente
-          // El wrapper tendrá altura automática basada en el contenido escalado
+          // Ajustar la altura del wrapper al alto VISUAL tras el scale
+          // Usamos getBoundingClientRect() que sí refleja transformaciones CSS
+          const visualHeight = Math.max(0, Math.ceil(fixedLayout.getBoundingClientRect().height))
+          wrapper.style.height = `${visualHeight}px`
+          wrapper.style.minHeight = `${visualHeight}px`
         }
       } catch (error) {
         console.error('❌ FixedZoom - Error:', error)
