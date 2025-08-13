@@ -28,17 +28,17 @@ export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Primeras escapadas
   { id: 'carousel-frame-anchor', src: '/frames/frame-02.png', x: 146, y: 1706, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, mobileOffsetY: 0, visible: true },
   // Estudios universitarios
-  { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -490, y: 2120, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-estudios', src: '/frames/frame-03.png', x: -490, y: 2328, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
   // Policía (custom)
-  { id: 'frame-anchor-policia', src: '/frames/udaltzaingoa_marco_real.png', fit: 'contain', x: 160, y: 2700, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.55, scaleY: 1.75, mobileOffsetY: 0, visible: true },
+  { id: 'frame-anchor-policia', src: '/frames/udaltzaingoa_marco_real.png', fit: 'contain', x: 160, y: 2980, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.55, scaleY: 1.85, mobileOffsetY: 0, visible: true },
   // Medicina / MIR (custom)
-  { id: 'frame-anchor-medicina', src: '/medicina-marco.png', x: -480, y: 3240, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, mobileOffsetY: 0, visible: true },
+  { id: 'frame-anchor-medicina', src: '/medicina-marco.png', x: -480, y: 3590, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.225, scaleY: 1.45, mobileOffsetY: 0, visible: true },
   // Hobbies
-  { id: 'carousel-frame-anchor-hobbies', src: '/frames/frame-05.png', x: 158, y: 3802, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.50, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-hobbies', src: '/frames/frame-05.png', x: 158, y: 4218, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.50, mobileOffsetY: 0, visible: true },
   // Independizarse
-  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-06.png', x: -496, y: 4362, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-06.png', x: -496, y: 4840, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, mobileOffsetY: 0, visible: true },
   // Ilun
-  { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 150, y: 4920, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 150, y: 5464, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
   // Pedida
-  { id: 'carousel-frame-anchor-pedida', src: '/frames/frame-04.png', x: -488, y: 5480, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.54, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-pedida', src: '/frames/frame-04.png', x: -488, y: 6084, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.54, mobileOffsetY: 0, visible: true },
 ]
