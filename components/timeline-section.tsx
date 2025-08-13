@@ -78,7 +78,7 @@ export default function TimelineSection({
             data-aos-delay="100"
           >
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 bg-sage-green rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-sage rounded-full flex items-center justify-center">
                 <span className="text-midnight font-bold text-lg">{age}</span>
               </div>
               <div>

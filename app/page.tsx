@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint } from "lucide-react"
 import ImageCarousel from "@/components/image-carousel"
 import FramesOverlay from "@/components/frames-overlay"
@@ -271,12 +272,33 @@ export default function TimelinePage() {
 
   // Removed old dynamic overlay logic; frames are now rendered via FramesOverlay
 
+  // Get current FixedZoom scale factor
+  const getCurrentScale = (): number => {
+    const fixedLayout = document.getElementById('fixed-layout')
+    if (!fixedLayout) return 1
+    
+    const computedStyle = window.getComputedStyle(fixedLayout)
+    const transform = computedStyle.transform
+    
+    if (transform && transform !== 'none') {
+      // Parse matrix(scaleX, 0, 0, scaleY, translateX, translateY)
+      const values = transform.match(/matrix\(([^)]+)\)/)
+      if (values) {
+        const matrix = values[1].split(',').map(v => parseFloat(v.trim()))
+        return matrix[0] // scaleX value
+      }
+    }
+    return 1
+  }
+
   const openImage = (e: React.MouseEvent<HTMLImageElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
+    // Use viewport coordinates directly for fixed-position modal
     setSelectedImage({ src: e.currentTarget.src, rect })
   }
 
   const openImageCarousel = (imageSrc: string, imageArray: string[], currentIndex: number, rect: DOMRect) => {
+    // Use viewport coordinates directly for fixed-position modal
     setSelectedImage({ src: imageSrc, rect, images: imageArray, currentIndex })
     setModalImageIndex(currentIndex)
   }
@@ -377,13 +399,14 @@ export default function TimelinePage() {
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
       {/* Static frames overlay, above base content but below modal/video */}
       <FramesOverlay />
-      {/* Image Modal */}
-      {selectedImage.src && (
+      {/* Image Modal via portal to escape transformed ancestors */}
+      {selectedImage.src && createPortal(
+        (
         <div 
           className={`fixed inset-0 bg-black z-[100] transition-opacity duration-300 ${isAnimating && !isClosing ? 'bg-opacity-75' : 'bg-opacity-0'}`}
           onClick={closeImage}
         >
-          <div className="relative w-full h-full">
+            <div className="relative w-full h-full" onClick={(e) => e.stopPropagation()}>
             {/* Render all carousel images with fade or single image */}
             {selectedImage.images && selectedImage.images.length > 1 ? (
               selectedImage.images.map((image, index) => (
@@ -392,6 +415,7 @@ export default function TimelinePage() {
                   className="absolute rounded-2xl shadow-2xl overflow-hidden"
                   style={{
                     ...getModalStyle(image),
+                    backgroundColor: '#ffffff',
                     opacity: index === modalImageIndex ? 1 : 0,
                     transition: 'opacity 1.5s ease-in-out, all 0.3s ease-in-out',
                     zIndex: index === modalImageIndex ? 20 : 10,
@@ -403,20 +427,27 @@ export default function TimelinePage() {
                   <img
                     src={image}
                     alt={`Vista ampliada - Imagen ${index + 1}`}
-                    className="max-w-full max-h-full object-contain"
+                      className="max-w-full max-h-full object-contain"
                     style={{
-                      borderRadius: '1rem'
+                        borderRadius: '1rem'
                     }}
                   />
                 </div>
               ))
             ) : (
-              <img 
-                src={selectedImage.src} 
-                alt="Vista ampliada" 
-                className="absolute object-cover rounded-2xl shadow-2xl"
-                style={getModalStyle()}
-              />
+                <div
+                  className="absolute rounded-2xl shadow-2xl overflow-hidden"
+                  style={{ ...getModalStyle(), backgroundColor: '#ffffff' }}
+                >
+                  <img 
+                    src={selectedImage.src} 
+                    alt="Vista ampliada" 
+                    className="w-full h-full object-cover"
+                    style={{
+                      borderRadius: '1rem'
+                    }}
+                  />
+                </div>
             )}
             <button
               onClick={closeImage}
@@ -430,25 +461,46 @@ export default function TimelinePage() {
             </button>
           </div>
         </div>
+        ),
+        document.body
       )}
 
       {/* Hero Section */}
-      <section className="relative py-32 bg-gradient-to-br from-terracotta to-sage overflow-hidden" style={{ height: '600px' }}>
+      <section className="relative py-32 bg-gradient-to-br from-terracotta to-sage overflow-hidden" style={{ height: 'var(--hero-height, 680px)' }}>
         <div
           ref={heroRef}
-          className="absolute inset-0 bg-cover bg-center opacity-30"
+          className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
             backgroundImage: `url('/a10.jpg')`,
           }}
         />
-        <div className="relative z-10 text-center text-ivory px-4 flex flex-col justify-center h-full">
+        <div className="absolute inset-0 bg-black/10" />
+          <div className="relative z-10 text-center text-ivory px-4 flex flex-col justify-center h-full" style={{ marginTop: '30px' }}>
           <div className="mb-8">
-            <Heart className="w-16 h-16 mx-auto mb-4 animate-pulse" />
+              <Heart className="w-16 h-16 mx-auto mb-0 animate-pulse" style={{ marginTop: '0px' }} />
           </div>
-          <h1 className="text-8xl font-bold mb-4 font-elegant">Julen & Maitane</h1>
-          <p className="text-2xl mb-8 max-w-2xl mx-auto mt-2 font-manuscript">
-            Con toda la ilusion del mundo hemos tejido este pequeño regalo: un mosaico de risas y recuerdos para agradeceros el amor, la alegría y la inspiración que sembrais en cada uno de nosotros. Que estos pedacitos de vuestra vida os devuelvan multiplicado el cariño que hoy nos une para celebrar vuestra historia.
-          </p>
+          <div className="inline-block mx-auto px-6 py-2">
+            <h1 className="text-8xl font-bold mb-4 font-elegant">Julen & Maitane</h1>
+            <p
+              className="text-2xl max-w-3xl mx-auto font-manuscript hero-intro-text"
+              style={{
+                // Ancho un poco mayor (max-w-3xl) y márgenes extra arriba y abajo
+                
+                marginTop: '2.25rem',
+                marginBottom: '4.5rem',
+                // Permite ajustar manualmente el tamaño si se desea (1 = por defecto)
+                // Cambia este valor para escalar solo este texto
+                // @ts-ignore
+                ['--hero-intro-scale' as any]: 1,
+                // Interlineado algo mayor para esta intro
+                // @ts-ignore
+                ['--hero-intro-leading' as any]: 1.4,
+                lineHeight: 'var(--hero-intro-leading, 1.6)',
+              }}
+            >
+              Con toda la ilusion del mundo hemos tejido este pequeño regalo: un mosaico de risas y recuerdos para agradeceros el amor, la alegría y la inspiración que sembrais en cada uno de nosotros. Que estos pedacitos de vuestra vida os devuelvan multiplicado el cariño que hoy nos une para celebrar vuestra historia.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -547,8 +599,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-sage">Primeras escapadas</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Al principio mantenían la relación en secreto y cuando quedaban tenían que mentir a sus padres, con tan mala suerte, que en una ocasión les pillaron… ¡y tuvieron que dar la cara! Poco a poco, la relación se fue consolidando, a pesar de existir alguna crisis…. 
-              y empezaron los primeros viajes: cuando Julen se sacó el carnet y pedía el coche a sus padres para ir a la playa con Maitane, después a Noja y  luego su primer viaje en avión a Mallorca 🏝️. Julen viajó hasta Málaga sin que Maitane lo supiera, y se plantó ahí para darle una sorpresa y pasar unos días juntos❤️.
+              Al principio mantuvieron la relación en secreto; cuando quedaban mentían a sus padres, hasta que un día les pillaron y tuvieron que dar la cara. Poco a poco se consolidó, pese a alguna crisis, y llegaron los primeros viajes: con el carnet recién sacado, Julen pedía el coche para ir a la playa con Maitane, luego a Noja y, más tarde, su primer vuelo a Mallorca 🏝️. También viajó a Málaga sin que ella lo supiera para sorprenderla y pasar unos días juntos ❤️.
             </p>
           </div>
           <div className="col-span-6">
@@ -611,7 +662,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-terracotta">Estudios universitarios</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Julen y Maitane comenzaron su historia en la ikastola Kirikiño, donde estudiaron juntos. Julen continuó su formación con un grado en Publicidad y Recursos Humanos, mientras que Maitane, con una clara vocación por la medicina, se enfrentó a un camino más exigente. Aunque en su primer intento no logró la nota necesaria para entrar en Medicina, accedió a Odontología y, tras un año más de esfuerzo, consiguió finalmente comenzar la carrera de sus sueños. Durante estos años, la pareja atravesó momentos duros: la distancia y la intensidad de los estudios hicieron que cada encuentro fuera un esfuerzo compartido. Maitane pasaba horas entre libros y Julen, además de sus estudios, mantenía un ritmo exigente con entrenamientos y partidos de fútbol.
+              Julen y Maitane se conocieron en la ikastola Kirikiño, donde estudiaron juntos. Julen cursó un grado en Publicidad y Recursos Humanos. Maitane, con vocación médica, afrontó un camino más duro: no logró la nota para Medicina, entró en Odontología y, tras un año, inició por fin Medicina. Fueron años exigentes: la distancia y el ritmo de estudio convertían cada encuentro en un esfuerzo compartido. Ella pasaba horas entre libros; él compaginaba clases con entrenamientos y partidos de fútbol.
             </p>
           </div>
         </section>
@@ -626,7 +677,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-midnight">Oposiciones de policía · 2019-2022</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Al finalizar su grado, Julen sorprendió a todos inscribiéndose a las oposiciones para Policía Local de Bilbao, sin haberlo comentado ni siquiera con su padre, que había ocupado ese mismo puesto durante años. En su preparación, se volcó como nunca: horas de estudio, caminatas por Bilbao para memorizar calles, ayuda de Maitane en la organización del temario y entrenamiento físico riguroso. Incluso dejó el fútbol para evitar lesiones. El esfuerzo dio fruto: aprobó la oposición y, tras siete meses de academia, comenzó a trabajar como policía a los 24 años.
+              Al terminar el grado, Julen sorprendió a todos inscribiéndose a oposiciones de Policía Local de Bilbao, sin contarlo ni a su padre, que había ocupado ese puesto durante años. Se volcó: horas de estudio, recorridos por Bilbao para memorizar calles, apoyo de Maitane en el temario y entrenamiento físico riguroso. Incluso dejó el fútbol para evitar lesiones. Aprobó la oposición y, tras siete meses de academia, empezó de policía con 24 años.
             </p>
           </div>
           <div className="col-span-6">
@@ -693,7 +744,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-sage">MIR · 2020-2023</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Mientras tanto, Maitane seguía dedicada por completo a su carrera. La exigencia no acabó al obtener el título: para ejercer en la sanidad pública y poder quedarse cerca de Julen, necesitaba una buena nota en el examen MIR. Esto supuso un año de estudio intensivo, sin apenas pausas. Julen, cuando no trabajaba, aprovechaba cada respiro de Maitane para acompañarla unos minutos y apoyarla. Aunque no logró su objetivo en el primer intento, repitió el proceso un año más, esta vez con mayor serenidad. Toda esta etapa fue una verdadera prueba de amor y compromiso mutuo entre ambos.
+              Mientras tanto, Maitane seguía volcada en su carrera. La exigencia continuó tras titularse: para ejercer en la sanidad pública y quedarse cerca de Julen, necesitaba buena nota en el MIR. Eso implicó un año de estudio intensivo, casi sin pausas. Julen, cuando no trabajaba, aprovechaba cada respiro para acompañarla unos minutos y apoyarla. Aunque no logró el objetivo a la primera, repitió otro año con mayor serenidad. Fue una prueba de amor y compromiso mutuo.
             </p>
           </div>
         </section>
@@ -708,7 +759,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-sage">Hobbies</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Los hobbies son clave para mantener una buena salud física y mental porque permiten salir de las "obligaciones" y entrar en un disfrute elegido. A lo largo de su vida, Julen y Maitane han tenido y tienen diversos hobbies. A Maitane le gustan la decoración y la pintura, y durante años practicó equitación —actividad que echa mucho de menos y con la que le habría encantado seguir— hasta el punto de que, si pudiera, volvería a dedicarle tiempo. Hoy Julen pasa horas entrenando crossfit, aunque durante muchos años su gran ilusión fue el fútbol. Vivía pegado a un balón y su pasión era chutar y marcar goles.
+              Los hobbies son clave para la salud física y mental: permiten salir de las “obligaciones” y disfrutar por elección. A lo largo de su vida, Julen y Maitane han tenido varios. A Maitane le gustan la decoración y la pintura, y durante años practicó equitación, actividad que añora y retomaría si pudiera. Hoy Julen dedica horas al crossfit, aunque durante mucho tiempo su gran pasión fue el fútbol: vivía pegado al balón y disfrutaba chutar y marcar.
             </p>
           </div>
           <div className="col-span-6">

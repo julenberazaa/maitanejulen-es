@@ -28,6 +28,8 @@
     --ivory: #fff9f4;
     --sage: #c8d6c1;
     --midnight: #2e2e3a;
+    --font-scale: 1.2;
+    --timeline-extra-spacing: 12rem;
   }
 
   .dark {
@@ -91,6 +93,12 @@
     transform: translateY(0) !important;
   }
 
+  /* Permite ajustar manualmente el tamaño del texto del intro del héroe con --hero-intro-scale */
+  .hero-intro-text {
+    font-size: calc(1em * var(--hero-intro-scale, 1));
+    line-height: var(--hero-intro-leading, 1.65);
+  }
+
   /* Asegurar que los círculos de iconos mantengan su forma perfecta */
   .timeline-icon-circle {
     aspect-ratio: 1 / 1;
@@ -131,6 +139,23 @@
 }
 
 @layer utilities {
+  /* Escala tipográfica global mínima y segura */
+  .text-xs { font-size: calc(0.75rem * var(--font-scale)); line-height: 1rem; }
+  .text-sm { font-size: calc(0.875rem * var(--font-scale)); line-height: 1.25rem; }
+  .text-base { font-size: calc(1rem * var(--font-scale)); line-height: 1.5rem; }
+  .text-lg { font-size: calc(1.125rem * var(--font-scale)); line-height: 1.75rem; }
+  .text-xl { font-size: calc(1.25rem * var(--font-scale)); line-height: 1.75rem; }
+  .text-2xl { font-size: calc(1.5rem * var(--font-scale)); line-height: 2rem; }
+  .text-3xl { font-size: calc(1.875rem * var(--font-scale)); line-height: 2.25rem; }
+  .text-4xl { font-size: calc(2.25rem * var(--font-scale)); line-height: 2.5rem; }
+  .text-5xl { font-size: calc(3rem * var(--font-scale)); line-height: 1; }
+  .text-6xl { font-size: calc(3.75rem * var(--font-scale)); line-height: 1; }
+  .text-7xl { font-size: calc(4.5rem * var(--font-scale)); line-height: 1; }
+  .text-8xl { font-size: calc(6rem * var(--font-scale)); line-height: 1; }
+  .text-9xl { font-size: calc(8rem * var(--font-scale)); line-height: 1; }
+
+  /* Ligeramente más separación vertical para textos con leading-relaxed */
+  .leading-relaxed { line-height: 1.6; }
   .bg-terracotta {
     background-color: var(--terracotta);
   }
@@ -202,6 +227,11 @@
 .timeline-item {
   content-visibility: auto;
   contain-intrinsic-size: 0 400px;
+}
+
+/* Espaciado vertical adicional entre secciones, ajustable con --timeline-extra-spacing */
+.timeline-item + .timeline-item {
+  margin-top: var(--timeline-extra-spacing, 0rem);
 }
 
 /* Estilos del Chat de Tuenti 2010 */
