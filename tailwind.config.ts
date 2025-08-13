@@ -55,6 +55,9 @@ const config: Config = {
         ivory: "#FFF9F4",
         sage: "#C8D6C1",
         midnight: "#2E2E3A",
+        forest: "#4A5D23",
+        moss: "#7A8471",
+        earth: "#8B4513",
       },
       fontFamily: {
         serif: ["Times New Roman", "Times", "serif"],

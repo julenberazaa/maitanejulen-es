@@ -40,7 +40,7 @@ export const timelineData: TimelineItem[] = [
     imageSide: "right",
     imageUrl: "/placeholder.svg?height=400&width=600",
     animation: "fade-up-left",
-    background: "bg-sage-green/20",
+    background: "bg-sage/20",
     icon: <Sparkles className="w-6 h-6 text-ivory" />,
   },
   {
@@ -82,7 +82,7 @@ export const timelineData: TimelineItem[] = [
     imageSide: "left",
     imageUrl: "/placeholder.svg?height=400&width=600",
     animation: "flip-left",
-    background: "bg-sage-green/20",
+    background: "bg-sage/20",
     icon: <Plane className="w-6 h-6 text-ivory" />,
   },
   {
@@ -110,7 +110,7 @@ export const timelineData: TimelineItem[] = [
     imageSide: "left",
     imageUrl: "/placeholder.svg?height=400&width=600",
     animation: "zoom-in",
-    background: "bg-sage-green/20",
+    background: "bg-sage/20",
     icon: <Camera className="w-6 h-6 text-ivory" />,
   },
 

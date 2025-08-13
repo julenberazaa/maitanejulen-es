@@ -20,7 +20,7 @@ export default function VideoSection() {
               animationDuration: `${3 + Math.random() * 2}s`,
             }}
           >
-            <div className={`w-2 h-2 ${Math.random() > 0.5 ? "bg-terracotta" : "bg-sage-green"} rotate-45`} />
+            <div className={`w-2 h-2 ${Math.random() > 0.5 ? "bg-terracotta" : "bg-sage"} rotate-45`} />
           </div>
         ))}
       </div>

@@ -195,6 +195,30 @@
   .border-sage {
     border-color: var(--sage);
   }
+
+  .bg-forest {
+    background-color: #4A5D23;
+  }
+
+  .bg-moss {
+    background-color: #7A8471;
+  }
+
+  .bg-earth {
+    background-color: #8B4513;
+  }
+
+  .text-forest {
+    color: #4A5D23;
+  }
+
+  .text-moss {
+    color: #7A8471;
+  }
+
+  .text-earth {
+    color: #8B4513;
+  }
 }
 
 /* Custom directional shadows */
