@@ -59,7 +59,12 @@ export default function TimelinePage() {
       }
       const rect = finalSectionRef.current.getBoundingClientRect()
       const visualBottom = window.scrollY + rect.bottom
-      maxScrollRef.current = Math.max(0, Math.ceil(visualBottom - window.innerHeight))
+      const maxScroll = Math.max(0, Math.ceil(visualBottom - window.innerHeight))
+      maxScrollRef.current = maxScroll
+      // Forzar que la altura real del documento coincida con el límite calculado
+      const targetDocHeight = maxScroll + window.innerHeight
+      document.documentElement.style.height = `${targetDocHeight}px`
+      document.body.style.height = `${targetDocHeight}px`
     }
 
     const wheelHandler = (e: WheelEvent) => {
@@ -1009,6 +1014,7 @@ export default function TimelinePage() {
 
       {/* Final Section - Video */}
       <section 
+        id="final-video-section"
         ref={finalSectionRef}
         className="relative py-32 bg-midnight text-center overflow-hidden"
         style={{ minHeight: '600px' }}
