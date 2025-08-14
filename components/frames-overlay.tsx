@@ -8,6 +8,7 @@ const BASE_DESIGN_WIDTH = 1920
 
 export default function FramesOverlay(): React.JSX.Element | null {
   const [isMobile, setIsMobile] = useState(false)
+  const [containerHeight, setContainerHeight] = useState('100%')
 
   useEffect(() => {
     const checkMobile = () => {
@@ -19,6 +20,40 @@ export default function FramesOverlay(): React.JSX.Element | null {
     
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  // Calcular altura máxima basada en el final de la sección del video
+  useEffect(() => {
+    const updateContainerHeight = () => {
+      const finalSection = document.getElementById('final-video-section')
+      if (finalSection) {
+        const rect = finalSection.getBoundingClientRect()
+        const finalBottom = window.scrollY + rect.bottom
+        setContainerHeight(`${finalBottom}px`)
+      }
+    }
+
+    // Calcular inicialmente y en cambios de tamaño
+    updateContainerHeight()
+    
+    const resizeObserver = new ResizeObserver(updateContainerHeight)
+    const finalSection = document.getElementById('final-video-section')
+    if (finalSection) {
+      resizeObserver.observe(finalSection)
+    }
+
+    window.addEventListener('resize', updateContainerHeight)
+    window.addEventListener('load', updateContainerHeight)
+    
+    // Recalcular en varias pasadas para cubrir cargas diferidas
+    const timers = [50, 200, 600, 1200].map(ms => setTimeout(updateContainerHeight, ms))
+
+    return () => {
+      timers.forEach(clearTimeout)
+      window.removeEventListener('resize', updateContainerHeight)
+      window.removeEventListener('load', updateContainerHeight)
+      resizeObserver.disconnect()
+    }
+  }, [])
   return (
     <div
       id="frames-overlay"
@@ -27,8 +62,10 @@ export default function FramesOverlay(): React.JSX.Element | null {
         top: 0,
         left: 0,
         width: `${BASE_DESIGN_WIDTH}px`, // Same as #fixed-layout base width
-        height: '100%', // Limitar al alto del contenido para evitar overflow que añada scroll
+        height: containerHeight, // Altura dinámica basada en el final del video
+        maxHeight: containerHeight, // Reforzar límite máximo
         overflow: 'hidden', // Evita que frames absolutos alarguen el scroll por debajo del video
+        overflowY: 'hidden', // Explícitamente bloquear scroll vertical
         pointerEvents: "none",
         zIndex: 50,
         // NO transform - the parent #fixed-layout already handles scaling
