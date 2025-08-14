@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint } from "lucide-react"
 import ImageCarousel from "@/components/image-carousel"
@@ -23,6 +23,17 @@ export default function TimelinePage() {
   const [selectedImage, setSelectedImage] = useState<ImageState>({ src: null, rect: null })
   const [isAnimating, setIsAnimating] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
+  const [selectedVideo, setSelectedVideo] = useState<{ src: string | null, rect: DOMRect | null }>({ src: null, rect: null })
+  const [isAnimatingVideo, setIsAnimatingVideo] = useState(false)
+  const [isClosingVideo, setIsClosingVideo] = useState(false)
+  const modalVideoRef = useRef<HTMLVideoElement>(null)
+  // Unified media modal state
+  type MediaItem = { type: 'image' | 'video', src: string }
+  const [selectedMedia, setSelectedMedia] = useState<{ items: MediaItem[]; startIndex: number; rect: DOMRect | null } | null>(null)
+  const [mediaActiveIndex, setMediaActiveIndex] = useState(0)
+  const [isAnimatingMedia, setIsAnimatingMedia] = useState(false)
+  const [isClosingMedia, setIsClosingMedia] = useState(false)
+  const mediaVideoRefs = useRef<Record<number, HTMLVideoElement | null>>({})
   const [showVideo, setShowVideo] = useState(false)
   const [modalImageIndex, setModalImageIndex] = useState(0)
   const [tuentiStarted, setTuentiStarted] = useState(false)
@@ -58,13 +69,15 @@ export default function TimelinePage() {
         return
       }
       const rect = finalSectionRef.current.getBoundingClientRect()
-      const visualBottom = window.scrollY + rect.bottom
-      const maxScroll = Math.max(0, Math.ceil(visualBottom - window.innerHeight))
+      // En móviles, usar visualViewport si está disponible para medir correctamente
+      const viewportTop = (window.visualViewport?.pageTop ?? window.scrollY)
+      const viewportHeight = (window.visualViewport?.height ?? window.innerHeight)
+      const visualBottom = viewportTop + rect.bottom
+      const maxScroll = Math.max(0, Math.ceil(visualBottom - viewportHeight))
       maxScrollRef.current = maxScroll
-      // Forzar que la altura real del documento coincida con el límite calculado
-      const targetDocHeight = maxScroll + window.innerHeight
-      document.documentElement.style.height = `${targetDocHeight}px`
-      document.body.style.height = `${targetDocHeight}px`
+      // No forzar altura del documento; reducir riesgo de saltos en móvil
+      document.documentElement.style.height = ''
+      document.body.style.height = ''
     }
 
     const wheelHandler = (e: WheelEvent) => {
@@ -109,6 +122,11 @@ export default function TimelinePage() {
     const recompute = () => computeMaxScroll()
     window.addEventListener('resize', recompute)
     window.addEventListener('orientationchange', recompute)
+    // Reaccionar a cambios del viewport visual (barras de navegador móviles)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', recompute)
+      window.visualViewport.addEventListener('scroll', recompute)
+    }
     window.addEventListener('wheel', wheelHandler, { passive: false })
     window.addEventListener('touchstart', onTouchStart, { passive: true })
     window.addEventListener('touchmove', onTouchMove, { passive: false })
@@ -138,6 +156,10 @@ export default function TimelinePage() {
       timers.forEach(clearTimeout)
       window.removeEventListener('resize', recompute)
       window.removeEventListener('orientationchange', recompute)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', recompute as any)
+        window.visualViewport.removeEventListener('scroll', recompute as any)
+      }
       window.removeEventListener('wheel', wheelHandler as any)
       window.removeEventListener('touchstart', onTouchStart as any)
       window.removeEventListener('touchmove', onTouchMove as any)
@@ -155,6 +177,62 @@ export default function TimelinePage() {
       return () => clearTimeout(timer)
     }
   }, [selectedImage.src])
+
+  // Unified media modal mount animation
+  useEffect(() => {
+    if (!selectedMedia) return
+    setMediaActiveIndex(selectedMedia.startIndex)
+    const t = setTimeout(() => setIsAnimatingMedia(true), 10)
+    return () => clearTimeout(t)
+  }, [selectedMedia])
+
+  // Auto-advance for images inside unified modal
+  const currentMediaItem: MediaItem | null = useMemo(() => {
+    if (!selectedMedia) return null
+    return selectedMedia.items[mediaActiveIndex] ?? null
+  }, [selectedMedia, mediaActiveIndex])
+
+  useEffect(() => {
+    if (!selectedMedia || selectedMedia.items.length <= 1) return
+    if (!currentMediaItem || currentMediaItem.type !== 'image') return
+    const interval = setInterval(() => {
+      setMediaActiveIndex((prev) => (prev === selectedMedia.items.length - 1 ? 0 : prev + 1))
+    }, 3500)
+    return () => clearInterval(interval)
+  }, [selectedMedia, currentMediaItem])
+
+  // Handle video playback + advance when ended in modal
+  useEffect(() => {
+    if (!selectedMedia || !currentMediaItem || currentMediaItem.type !== 'video') return
+    const vid = mediaVideoRefs.current[mediaActiveIndex]
+    if (!vid) return
+    try { vid.currentTime = 0 } catch {}
+    vid.muted = true
+    const onEnded = () => setMediaActiveIndex((prev) => (prev === selectedMedia.items.length - 1 ? 0 : prev + 1))
+    vid.addEventListener('ended', onEnded)
+    const p = vid.play()
+    if (p && typeof p.catch === 'function') p.catch(() => {})
+    return () => {
+      vid.removeEventListener('ended', onEnded)
+      try { vid.pause() } catch {}
+    }
+  }, [selectedMedia, currentMediaItem, mediaActiveIndex])
+
+  // Animación de apertura para el video modal
+  useEffect(() => {
+    if (selectedVideo.src) {
+      const timer = setTimeout(() => {
+        setIsAnimatingVideo(true)
+        // Intentar reproducir automáticamente
+        if (modalVideoRef.current) {
+          try { modalVideoRef.current.currentTime = 0 } catch {}
+          const playP = modalVideoRef.current.play()
+          if (playP && typeof playP.catch === 'function') playP.catch(() => {})
+        }
+      }, 10)
+      return () => clearTimeout(timer)
+    }
+  }, [selectedVideo.src])
 
   // Modal carousel rotation effect
   useEffect(() => {
@@ -412,6 +490,19 @@ export default function TimelinePage() {
     }, 300) // Match transition duration
   }
 
+  const openVideoFromCarousel = (_videoSrc: string, rect: DOMRect) => {
+    setSelectedVideo({ src: _videoSrc, rect })
+  }
+
+  const closeVideo = () => {
+    setIsClosingVideo(true)
+    setIsAnimatingVideo(false)
+    setTimeout(() => {
+      setSelectedVideo({ src: null, rect: null })
+      setIsClosingVideo(false)
+    }, 300)
+  }
+
   const getCloseButtonStyle = () => {
     if (!selectedImage.images || selectedImage.images.length <= 1) {
       // Para imagen individual
@@ -494,6 +585,90 @@ export default function TimelinePage() {
     return isAnimating ? { ...baseStyle, ...finalStyle } : initialStyle
   }
 
+  const getVideoModalStyle = (): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = { transition: 'all 0.3s ease-in-out' }
+    if (!selectedVideo.rect) {
+      return { ...baseStyle, opacity: 0, top: '50%', left: '50%', width: '0px', height: '0px' }
+    }
+    const { top, left, width, height } = selectedVideo.rect
+    const initialStyle = { top: `${top}px`, left: `${left}px`, width: `${width}px`, height: `${height}px` }
+    const screenWidth = window.innerWidth
+    const screenHeight = window.innerHeight
+    // Usar proporción 16:9 como base para video
+    const targetWidth = Math.min(screenWidth * 0.64, 960)
+    const targetHeight = targetWidth * (9 / 16)
+    const finalStyle = {
+      top: `${(screenHeight - targetHeight) / 2}px`,
+      left: `${(screenWidth - targetWidth) / 2}px`,
+      width: `${targetWidth}px`,
+      height: `${targetHeight}px`,
+    }
+    if (isClosingVideo) return { ...baseStyle, ...initialStyle }
+    return isAnimatingVideo ? { ...baseStyle, ...finalStyle } : initialStyle
+  }
+
+  const getVideoCloseButtonStyle = () => {
+    const modalStyle = getVideoModalStyle()
+    return {
+      top: `calc(${modalStyle.top ?? '50%'} - 1.25rem)`,
+      left: `calc(${modalStyle.left ?? '50%'} + ${modalStyle.width ?? '0px'} - 1.25rem)`,
+    }
+  }
+
+  // Unified modal styles
+  const getUnifiedModalStyle = (itemSrc?: string): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = { transition: 'all 0.3s ease-in-out' }
+    if (!selectedMedia?.rect) {
+      return { ...baseStyle, opacity: 0, top: '50%', left: '50%', width: '0px', height: '0px' }
+    }
+    const { top, left, width, height } = selectedMedia.rect
+    const initialStyle = { top: `${top}px`, left: `${left}px`, width: `${width}px`, height: `${height}px` }
+    const screenWidth = window.innerWidth
+    const screenHeight = window.innerHeight
+
+    const topPosition = screenHeight * 0.05
+    const bottomMargin = screenHeight * 0.05 + 20
+    const maxAvailableHeight = screenHeight - topPosition - bottomMargin - 60
+    const maxAvailableWidth = Math.min(screenWidth * 0.64, 960)
+
+    const isVertical = itemSrc && (itemSrc.includes('primeras-escapadas-01') || itemSrc.includes('vertical'))
+    const targetHeight = maxAvailableHeight
+    const targetWidth = isVertical ? Math.min(screenWidth * 0.5, 700) : maxAvailableWidth
+
+    const finalStyle = {
+      top: `${topPosition}px`,
+      left: `${(screenWidth - targetWidth) / 2}px`,
+      width: `${targetWidth}px`,
+      height: 'auto' as const,
+      maxHeight: `${maxAvailableHeight}px`,
+      maxWidth: `${targetWidth}px`,
+    }
+    if (isClosingMedia) return { ...baseStyle, ...initialStyle }
+    return isAnimatingMedia ? { ...baseStyle, ...finalStyle } : initialStyle
+  }
+
+  const getUnifiedCloseButtonStyle = () => {
+    const modalStyle = getUnifiedModalStyle()
+    return {
+      top: `${window.innerHeight * 0.05 - 24}px`,
+      left: `calc(${modalStyle.left ?? '50%'} + ${modalStyle.width ?? '0px'} - 1.25rem)`,
+    }
+  }
+
+  const openUnifiedMediaCarousel = (items: { type: 'image' | 'video', src: string }[], startIndex: number, rect: DOMRect) => {
+    setSelectedMedia({ items, startIndex, rect })
+  }
+
+  const closeUnifiedMedia = () => {
+    setIsClosingMedia(true)
+    setIsAnimatingMedia(false)
+    setTimeout(() => {
+      setSelectedMedia(null)
+      setIsClosingMedia(false)
+      setMediaActiveIndex(0)
+    }, 300)
+  }
+
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
       {/* Static frames overlay, above base content but below modal/video */}
@@ -559,6 +734,102 @@ export default function TimelinePage() {
               <X className="w-6 h-6" />
             </button>
           </div>
+        </div>
+        ),
+        document.body
+      )}
+
+      {/* Video Modal via portal */}
+      {selectedVideo.src && createPortal(
+        (
+        <div 
+          className={`fixed inset-0 bg-black z-[100] transition-opacity duration-300 ${isAnimatingVideo && !isClosingVideo ? 'bg-opacity-75' : 'bg-opacity-0'}`}
+          onClick={closeVideo}
+        >
+            <div className="relative w-full h-full" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="absolute rounded-2xl shadow-2xl overflow-hidden bg-white"
+                style={{ ...getVideoModalStyle() }}
+              >
+                <video
+                  ref={modalVideoRef}
+                  src={selectedVideo.src || undefined}
+                  controls
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <button
+                onClick={closeVideo}
+                className={`absolute w-12 h-12 bg-terracotta rounded-full flex items-center justify-center shadow-lg text-ivory transition-all duration-300 hover:scale-110 ${isAnimatingVideo && !isClosingVideo ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+                style={{
+                  ...getVideoCloseButtonStyle(),
+                  zIndex: 101
+                }}
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+        </div>
+        ),
+        document.body
+      )}
+
+      {/* Unified Media Modal (images + video, no interactions on video) */}
+      {selectedMedia && createPortal(
+        (
+        <div 
+          className={`fixed inset-0 bg-black z-[100] transition-opacity duration-300 ${isAnimatingMedia && !isClosingMedia ? 'bg-opacity-75' : 'bg-opacity-0'}`}
+          onClick={closeUnifiedMedia}
+        >
+            <div className="relative w-full h-full" onClick={(e) => e.stopPropagation()}>
+              {/* Render all media items with fade, advancing index */}
+              {selectedMedia.items.map((item, index) => (
+                <div
+                  key={`unified-${item.type}-${item.src}-${index}`}
+                  className="absolute rounded-2xl shadow-2xl overflow-hidden"
+                  style={{
+                    ...getUnifiedModalStyle(item.src),
+                    backgroundColor: '#ffffff',
+                    opacity: index === mediaActiveIndex ? 1 : 0,
+                    transition: 'opacity 1.5s ease-in-out, all 0.3s ease-in-out',
+                    zIndex: index === mediaActiveIndex ? 20 : 10,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  {item.type === 'image' ? (
+                    <img
+                      src={item.src}
+                      alt={`Vista ampliada - Media ${index + 1}`}
+                      className="max-w-full max-h-full object-contain"
+                      style={{ borderRadius: '1rem' }}
+                    />
+                  ) : (
+                    <video
+                      ref={(el) => { mediaVideoRefs.current[index] = el }}
+                      src={item.src}
+                      playsInline
+                      muted
+                      controls={false}
+                      className="max-w-full max-h-full object-contain"
+                      style={{ borderRadius: '1rem', pointerEvents: 'none' }}
+                    />
+                  )}
+                </div>
+              ))}
+              <button
+                onClick={closeUnifiedMedia}
+                className={`absolute w-12 h-12 bg-terracotta rounded-full flex items-center justify-center shadow-lg text-ivory transition-all duration-300 hover:scale-110 ${isAnimatingMedia && !isClosingMedia ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+                style={{
+                  ...getUnifiedCloseButtonStyle(),
+                  zIndex: 101
+                }}
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
         </div>
         ),
         document.body
@@ -738,6 +1009,7 @@ export default function TimelinePage() {
                     images={[
                       "/estudios/ESTUDIOS.jpeg",
                       "/estudios/ESTUDIOS.png",
+                      "/mir/MIR4.jpeg",
                     ]}
                     alt="Estudios universitarios"
                     experienceId="estudios"
@@ -818,7 +1090,6 @@ export default function TimelinePage() {
                       "/mir/MIR.png",
                       "/mir/MIR2.png",
                       "/mir/MIR3.png",
-                      "/mir/MIR4.jpeg",
                       "/medicina-graduacion.png",
                     ]}
                     alt="MIR"
@@ -945,22 +1216,29 @@ export default function TimelinePage() {
               <div className="relative" style={{ width: '96%' }}>
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
-                    images={[
-                      "/ilun/ILUN.png",
-                      "/ilun/ILUN2.png",
-                      "/ilun/ILUN3.png",
-                      "/ilun/ILUN4.png",
-                      "/ilun/ILUN5.png",
-                      "/ilun/ILUN6.png",
-                      "/ilun/ILUN7.png",
-                      "/ilun/ILUN8.png",
-                      "/ilun/ILUN9.png",
-                      "/ilun/ILUN10.png",
+                    media={[
+                      { type: 'image', src: '/ilun/ILUN.png' },
+                      { type: 'image', src: '/ilun/ILUN2.png' },
+                      { type: 'image', src: '/ilun/ILUN3.png' },
+                      { type: 'image', src: '/ilun/ILUN4.png' },
+                      { type: 'image', src: '/ilun/ILUN5.png' },
+                      { type: 'video', src: 'https://res.cloudinary.com/dgevq0wwq/video/upload/v1755167850/VID-20250806-WA0000_cuzzkr.mp4' },
+                      { type: 'image', src: '/ilun/ILUN6.png' },
+                      { type: 'image', src: '/ilun/ILUN7.png' },
+                      { type: 'image', src: '/ilun/ILUN8.png' },
+                      { type: 'image', src: '/ilun/ILUN9.png' },
+                      { type: 'image', src: '/ilun/ILUN10.png' },
                     ]}
                     alt="Ilun"
                     experienceId="ilun"
                     onImageClick={(imageSrc, imageArray, currentIndex, rect) => {
                       openImageCarousel(imageSrc, imageArray, currentIndex, rect)
+                    }}
+                    onVideoClick={(videoSrc, rect) => {
+                      openVideoFromCarousel(videoSrc, rect)
+                    }}
+                    onOpenMediaCarousel={(items, startIndex, rect) => {
+                      openUnifiedMediaCarousel(items, startIndex, rect)
                     }}
                     data-frame-anchor="carousel-frame-anchor-ilun"
                   />
