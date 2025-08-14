@@ -219,6 +219,30 @@
   .text-earth {
     color: #8B4513;
   }
+
+  .bg-olive {
+    background-color: #8FBC8F;
+  }
+
+  .bg-pine {
+    background-color: #6B8E5A;
+  }
+
+  .text-olive {
+    color: #8FBC8F;
+  }
+
+  .text-pine {
+    color: #6B8E5A;
+  }
+
+  .bg-escape {
+    background-color: #3aba5c;
+  }
+
+  .text-escape {
+    color: #3aba5c;
+  }
 }
 
 /* Custom directional shadows */

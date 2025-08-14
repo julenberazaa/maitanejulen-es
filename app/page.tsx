@@ -26,6 +26,8 @@ export default function TimelinePage() {
   const [showVideo, setShowVideo] = useState(false)
   const [modalImageIndex, setModalImageIndex] = useState(0)
   const [tuentiStarted, setTuentiStarted] = useState(false)
+  // Límite inferior de scroll: borde inferior de la sección del video
+  const maxScrollRef = useRef<number>(Infinity)
 
   // Forzar scroll al top en cada recarga de la página sin animación
   useEffect(() => {
@@ -47,6 +49,98 @@ export default function TimelinePage() {
     }, 1000)
     return () => clearTimeout(unlock)
   }, [])
+
+  // Limitar desplazamiento inferior sin parpadeo: impedir eventos extra cuando se llega al final
+  useEffect(() => {
+    const computeMaxScroll = () => {
+      if (!finalSectionRef.current) {
+        maxScrollRef.current = Infinity
+        return
+      }
+      const rect = finalSectionRef.current.getBoundingClientRect()
+      const visualBottom = window.scrollY + rect.bottom
+      maxScrollRef.current = Math.max(0, Math.ceil(visualBottom - window.innerHeight))
+    }
+
+    const wheelHandler = (e: WheelEvent) => {
+      const maxScroll = maxScrollRef.current
+      if (window.scrollY >= maxScroll && e.deltaY > 0) {
+        e.preventDefault()
+      }
+    }
+
+    let touchStartY = 0
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches && e.touches.length) touchStartY = e.touches[0].clientY
+    }
+    const onTouchMove = (e: TouchEvent) => {
+      const maxScroll = maxScrollRef.current
+      const currentY = e.touches && e.touches.length ? e.touches[0].clientY : 0
+      const movingDown = touchStartY > 0 ? (currentY < touchStartY) : false // gesto hacia arriba del contenido
+      if (window.scrollY >= maxScroll && movingDown) {
+        e.preventDefault()
+      }
+    }
+
+    const keyHandler = (e: KeyboardEvent) => {
+      const keys = ['PageDown', 'ArrowDown', 'End', 'Space']
+      if (!keys.includes(e.code) && !(e.code === 'Space' && !e.shiftKey)) return
+      const maxScroll = maxScrollRef.current
+      if (window.scrollY >= maxScroll) {
+        e.preventDefault()
+      }
+    }
+
+    // Observadores de tamaño para recalcular el límite cuando cambie cualquier contenedor relevante
+    const resizeObserver = new ResizeObserver(() => computeMaxScroll())
+    if (finalSectionRef.current) resizeObserver.observe(finalSectionRef.current)
+    const fixedLayoutEl = document.getElementById('fixed-layout')
+    const wrapperEl = document.getElementById('fixed-layout-wrapper')
+    if (fixedLayoutEl) resizeObserver.observe(fixedLayoutEl)
+    if (wrapperEl) resizeObserver.observe(wrapperEl)
+
+    // Recalcular y suscribir
+    computeMaxScroll()
+    const recompute = () => computeMaxScroll()
+    window.addEventListener('resize', recompute)
+    window.addEventListener('orientationchange', recompute)
+    window.addEventListener('wheel', wheelHandler, { passive: false })
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchmove', onTouchMove, { passive: false })
+    window.addEventListener('keydown', keyHandler)
+
+    // Pasadas adicionales por cargas diferidas + primeras frames
+    const timers = [16, 50, 200, 600, 1200].map(ms => setTimeout(recompute, ms))
+    // Recalcular cuando las fuentes estén listas (afecta medidas)
+    // @ts-ignore
+    if (document.fonts && document.fonts.ready) {
+      // @ts-ignore
+      document.fonts.ready.then(() => recompute()).catch(() => {})
+    }
+    // Recalcular en las primeras 5 frames por si el zoom aplica luego
+    let rafCount = 0
+    const rafTick = () => {
+      if (rafCount++ < 5) {
+        recompute()
+        requestAnimationFrame(rafTick)
+      }
+    }
+    requestAnimationFrame(rafTick)
+    const onLoad = () => recompute()
+    window.addEventListener('load', onLoad)
+
+    return () => {
+      timers.forEach(clearTimeout)
+      window.removeEventListener('resize', recompute)
+      window.removeEventListener('orientationchange', recompute)
+      window.removeEventListener('wheel', wheelHandler as any)
+      window.removeEventListener('touchstart', onTouchStart as any)
+      window.removeEventListener('touchmove', onTouchMove as any)
+      window.removeEventListener('keydown', keyHandler as any)
+      window.removeEventListener('load', onLoad)
+      resizeObserver.disconnect()
+    }
+  }, [showVideo])
 
   useEffect(() => {
     if (selectedImage.src) {
@@ -480,7 +574,7 @@ export default function TimelinePage() {
               <Heart className="w-16 h-16 mx-auto mb-0 animate-pulse" style={{ marginTop: '0px' }} />
           </div>
           <div className="inline-block mx-auto px-6 py-2">
-            <h1 className="text-8xl font-bold mb-4 font-elegant">Julen & Maitane</h1>
+            <h1 className="text-8xl font-bold mb-4 font-elegant">Maitane & Julen</h1>
             <p
               className="text-2xl max-w-3xl mx-auto font-manuscript hero-intro-text"
               style={{
@@ -593,10 +687,10 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-12 sm:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-forest mr-4">
+              <div className="timeline-icon-circle bg-escape mr-4">
                 <img src="/pareja4.svg" alt="Pareja" className="w-8 h-8" />
               </div>
-              <h3 className="text-5xl font-script text-forest">Primeras escapadas</h3>
+              <h3 className="text-5xl font-script text-escape">Primeras escapadas</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Al principio mantuvieron la relación en secreto; cuando quedaban mentían a sus padres, hasta que un día les pillaron y tuvieron que dar la cara. Poco a poco se consolidó, pese a alguna crisis, y llegaron los primeros viajes: con el carnet recién sacado, Julen pedía el coche para ir a la playa con Maitane, luego a Noja y, más tarde, su primer vuelo a Mallorca 🏝️. También viajó a Málaga sin que ella lo supiera para sorprenderla y pasar unos días juntos ❤️.
@@ -753,10 +847,10 @@ export default function TimelinePage() {
         <section className="timeline-item mb-32 grid grid-cols-12 sm:grid-cols-12 gap-8 items-center opacity-0 translate-y-8 transition-all duration-1000 ease-in-out">
           <div className="col-span-6 pr-12">
             <div className="flex items-center mb-6">
-              <div className="timeline-icon-circle bg-earth mr-4">
+              <div className="timeline-icon-circle bg-pine mr-4">
                 <Sun className="w-6 h-6 text-ivory" />
               </div>
-              <h3 className="text-5xl font-script text-earth">Hobbies</h3>
+              <h3 className="text-5xl font-script text-pine">Hobbies</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
               Los hobbies son clave para la salud física y mental: permiten salir de las “obligaciones” y disfrutar por elección. A lo largo de su vida, Julen y Maitane han tenido varios. A Maitane le gustan la decoración y la pintura, y durante años practicó equitación, actividad que añora y retomaría si pudiera. Hoy Julen dedica horas al crossfit, aunque durante mucho tiempo su gran pasión fue el fútbol: vivía pegado al balón y disfrutaba chutar y marcar.

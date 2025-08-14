@@ -58,6 +58,9 @@ const config: Config = {
         forest: "#4A5D23",
         moss: "#7A8471",
         earth: "#8B4513",
+        olive: "#8FBC8F",
+        pine: "#6B8E5A",
+        escape: "#3aba5c",
       },
       fontFamily: {
         serif: ["Times New Roman", "Times", "serif"],

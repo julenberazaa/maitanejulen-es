@@ -41,11 +41,14 @@ export default function FixedZoom() {
           document.documentElement.style.width = '100vw'
           document.body.style.width = '100vw'
 
-          // Ajustar la altura del wrapper al alto VISUAL tras el scale
+          // Ajustar la altura del wrapper y del documento al alto VISUAL tras el scale
           // Usamos getBoundingClientRect() que sí refleja transformaciones CSS
           const visualHeight = Math.max(0, Math.ceil(fixedLayout.getBoundingClientRect().height))
           wrapper.style.height = `${visualHeight}px`
           wrapper.style.minHeight = `${visualHeight}px`
+          // Sincronizar el alto del documento para que no exista espacio extra al final
+          document.documentElement.style.height = `${visualHeight}px`
+          document.body.style.height = `${visualHeight}px`
         }
       } catch (error) {
         console.error('❌ FixedZoom - Error:', error)
@@ -73,11 +76,15 @@ export default function FixedZoom() {
 
     // Aplicar zoom inicial con múltiples intentos para cubrir carga diferida
     const timeouts = [
+      setTimeout(applyZoom, 0),
+      setTimeout(applyZoom, 16),
       setTimeout(applyZoom, 50),
       setTimeout(applyZoom, 200),
       setTimeout(applyZoom, 600),
       setTimeout(applyZoom, 1200)
     ]
+    // Adelantar aún más al primer frame de render
+    requestAnimationFrame(() => applyZoom())
 
     // Recalcular cuando todo cargue (imágenes, etc.)
     window.addEventListener('load', applyZoom)
