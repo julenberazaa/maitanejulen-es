@@ -271,10 +271,11 @@
   filter: drop-shadow(6px 12px 30px rgba(0, 0, 0, 0.25));
 }
 
-/* Performance optimizations */
+/* Performance optimizations - desactivadas para evitar huecos blancos al final de la página
+   causados por tamaños intrínsecos de placeholders cuando los elementos están fuera de viewport. */
 .timeline-item {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 400px;
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
 }
 
 /* Espaciado vertical adicional entre secciones, ajustable con --timeline-extra-spacing */
