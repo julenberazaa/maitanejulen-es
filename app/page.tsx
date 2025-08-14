@@ -37,8 +37,7 @@ export default function TimelinePage() {
   const [showVideo, setShowVideo] = useState(false)
   const [modalImageIndex, setModalImageIndex] = useState(0)
   const [tuentiStarted, setTuentiStarted] = useState(false)
-  // Límite inferior de scroll: borde inferior de la sección del video
-  const maxScrollRef = useRef<number>(Infinity)
+  // HARD CUT aplicado en FixedZoom - no necesitamos lógica de scroll compleja
 
   // Forzar scroll al top en cada recarga de la página sin animación
   useEffect(() => {
@@ -61,113 +60,8 @@ export default function TimelinePage() {
     return () => clearTimeout(unlock)
   }, [])
 
-  // Limitar desplazamiento inferior sin parpadeo: impedir eventos extra cuando se llega al final
-  useEffect(() => {
-    const computeMaxScroll = () => {
-      if (!finalSectionRef.current) {
-        maxScrollRef.current = Infinity
-        return
-      }
-      const rect = finalSectionRef.current.getBoundingClientRect()
-      // En móviles, usar visualViewport si está disponible para medir correctamente
-      const viewportTop = (window.visualViewport?.pageTop ?? window.scrollY)
-      const viewportHeight = (window.visualViewport?.height ?? window.innerHeight)
-      const visualBottom = viewportTop + rect.bottom
-      const maxScroll = Math.max(0, Math.ceil(visualBottom - viewportHeight))
-      maxScrollRef.current = maxScroll
-      // No forzar altura del documento; reducir riesgo de saltos en móvil
-      document.documentElement.style.height = ''
-      document.body.style.height = ''
-    }
-
-    const wheelHandler = (e: WheelEvent) => {
-      const maxScroll = maxScrollRef.current
-      if (window.scrollY >= maxScroll && e.deltaY > 0) {
-        e.preventDefault()
-      }
-    }
-
-    let touchStartY = 0
-    const onTouchStart = (e: TouchEvent) => {
-      if (e.touches && e.touches.length) touchStartY = e.touches[0].clientY
-    }
-    const onTouchMove = (e: TouchEvent) => {
-      const maxScroll = maxScrollRef.current
-      const currentY = e.touches && e.touches.length ? e.touches[0].clientY : 0
-      const movingDown = touchStartY > 0 ? (currentY < touchStartY) : false // gesto hacia arriba del contenido
-      if (window.scrollY >= maxScroll && movingDown) {
-        e.preventDefault()
-      }
-    }
-
-    const keyHandler = (e: KeyboardEvent) => {
-      const keys = ['PageDown', 'ArrowDown', 'End', 'Space']
-      if (!keys.includes(e.code) && !(e.code === 'Space' && !e.shiftKey)) return
-      const maxScroll = maxScrollRef.current
-      if (window.scrollY >= maxScroll) {
-        e.preventDefault()
-      }
-    }
-
-    // Observadores de tamaño para recalcular el límite cuando cambie cualquier contenedor relevante
-    const resizeObserver = new ResizeObserver(() => computeMaxScroll())
-    if (finalSectionRef.current) resizeObserver.observe(finalSectionRef.current)
-    const fixedLayoutEl = document.getElementById('fixed-layout')
-    const wrapperEl = document.getElementById('fixed-layout-wrapper')
-    if (fixedLayoutEl) resizeObserver.observe(fixedLayoutEl)
-    if (wrapperEl) resizeObserver.observe(wrapperEl)
-
-    // Recalcular y suscribir
-    computeMaxScroll()
-    const recompute = () => computeMaxScroll()
-    window.addEventListener('resize', recompute)
-    window.addEventListener('orientationchange', recompute)
-    // Reaccionar a cambios del viewport visual (barras de navegador móviles)
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', recompute)
-      window.visualViewport.addEventListener('scroll', recompute)
-    }
-    window.addEventListener('wheel', wheelHandler, { passive: false })
-    window.addEventListener('touchstart', onTouchStart, { passive: true })
-    window.addEventListener('touchmove', onTouchMove, { passive: false })
-    window.addEventListener('keydown', keyHandler)
-
-    // Pasadas adicionales por cargas diferidas + primeras frames
-    const timers = [16, 50, 200, 600, 1200].map(ms => setTimeout(recompute, ms))
-    // Recalcular cuando las fuentes estén listas (afecta medidas)
-    // @ts-ignore
-    if (document.fonts && document.fonts.ready) {
-      // @ts-ignore
-      document.fonts.ready.then(() => recompute()).catch(() => {})
-    }
-    // Recalcular en las primeras 5 frames por si el zoom aplica luego
-    let rafCount = 0
-    const rafTick = () => {
-      if (rafCount++ < 5) {
-        recompute()
-        requestAnimationFrame(rafTick)
-      }
-    }
-    requestAnimationFrame(rafTick)
-    const onLoad = () => recompute()
-    window.addEventListener('load', onLoad)
-
-    return () => {
-      timers.forEach(clearTimeout)
-      window.removeEventListener('resize', recompute)
-      window.removeEventListener('orientationchange', recompute)
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', recompute as any)
-        window.visualViewport.removeEventListener('scroll', recompute as any)
-      }
-      window.removeEventListener('wheel', wheelHandler as any)
-      window.removeEventListener('touchstart', onTouchStart as any)
-      window.removeEventListener('touchmove', onTouchMove as any)
-      window.removeEventListener('keydown', keyHandler as any)
-      window.removeEventListener('load', onLoad)
-      resizeObserver.disconnect()
-    }
-  }, [showVideo])
+  // HARD CUT: La lógica de corte de scroll ahora está en FixedZoom.
+  // El documento se corta físicamente a la altura del video, eliminando scroll extra.
 
   useEffect(() => {
     if (selectedImage.src) {

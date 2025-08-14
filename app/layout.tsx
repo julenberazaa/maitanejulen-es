@@ -28,7 +28,7 @@ export default function RootLayout({
               padding: 0;
               scroll-behavior: smooth; /* scroll suave */
               overscroll-behavior: none; /* evita estiramiento */
-              min-height: 100%;
+              /* HARD CUT controla la altura - no fijar min-height aquí */
             }
             
             body {
@@ -37,7 +37,7 @@ export default function RootLayout({
               overflow-x: hidden;
               overflow-y: auto;
               width: 100vw;
-              min-height: 100%;
+              /* HARD CUT controla la altura - no fijar min-height aquí */
               -webkit-overflow-scrolling: touch; /* suaviza en iOS */
               background: #ffffff; /* coherente */
             }
@@ -45,13 +45,13 @@ export default function RootLayout({
             #fixed-layout-wrapper {
               position: relative;
               width: 100vw;
-              /* NO height property - let content determine height naturally */
+              /* HARD CUT en FixedZoom controla la altura exacta */
               overflow-x: hidden; /* solo evita scroll horizontal */
             }
             
             #fixed-layout {
               width: 1920px;
-              /* NO min-height - let content determine height naturally */
+              /* HARD CUT en FixedZoom mide y controla la altura total */
               transform-origin: top left;
               position: relative;
               display: flow-root; /* evita colapso de márgenes */
