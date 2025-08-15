@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint } from "lucide-react"
+import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint, Eye, EyeOff } from "lucide-react"
 import ImageCarousel from "@/components/image-carousel"
 import FramesOverlay from "@/components/frames-overlay"
 
@@ -42,6 +42,7 @@ export default function TimelinePage() {
   // Overlay de contraseña (pantalla previa)
   const [overlayVisible, setOverlayVisible] = useState(true)
   const [inputPass, setInputPass] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [isShakingOverlay, setIsShakingOverlay] = useState(false)
   const [overlayError, setOverlayError] = useState('')
   const [fadeToBlack, setFadeToBlack] = useState(false)
@@ -652,12 +653,24 @@ export default function TimelinePage() {
               <div className="flex items-center">
                 <div className="bg-terracotta rounded-full p-1.5 flex items-center">
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={inputPass}
                     onChange={(e) => setInputPass(e.target.value)}
                     placeholder="Contraseña"
                     className="rounded-full bg-white text-midnight placeholder-midnight/60 px-6 h-12 w-[260px] focus:outline-none"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="ml-2 bg-white text-midnight rounded-full w-10 h-10 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
                   <button
                     type="button"
                     className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
@@ -707,7 +720,7 @@ export default function TimelinePage() {
                 <div className="bg-terracotta rounded-full p-1.5 flex items-center">
                   {/* Input blanco */}
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={inputPass}
                     onChange={(e) => setInputPass(e.target.value)}
                     placeholder="Contraseña"
@@ -715,6 +728,18 @@ export default function TimelinePage() {
                     autoFocus
                     onKeyDown={(e) => { if (e.key === 'Enter') handleOverlaySubmit() }}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="ml-2 bg-white text-midnight rounded-full w-10 h-10 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
                   {/* Botón circular */}
                   <button
                     type="submit"
@@ -1332,7 +1357,7 @@ export default function TimelinePage() {
                 <div className="overflow-hidden" style={{ height: 'calc(384px - 0px)', overflow: 'hidden', position: 'relative' }}>
                   <ImageCarousel
                     images={[
-                      "/pedida/PEDIDA_MANO.png",
+                      "/pedida/anillos.svg",
                     ]}
                     alt="Pedida de mano"
                     experienceId="pedida"
