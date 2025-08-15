@@ -172,24 +172,44 @@ export default function TimelinePage() {
 
   useEffect(() => {
     if (overlayVisible) return
-    // Initialize scroll animations cuando el overlay ya no está visible
+    // Initialize animations cuando el overlay ya no está visible
     const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px",
+      threshold: 0.25,
+      rootMargin: "0px 0px -10% 0px",
     }
+
+    // Preparar items para efecto "brocha"
+    const items = Array.from(document.querySelectorAll('.timeline-item')) as HTMLElement[]
+    items.forEach((el) => el.classList.add('paint-reveal'))
+
+    // Calcular los que ya están a la vista y asignar una cascada inicial
+    const viewportH = window.innerHeight
+    const initiallyVisible = items.filter((el) => {
+      const r = el.getBoundingClientRect()
+      return r.top < viewportH && r.bottom > 0
+    }).sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)
+    initiallyVisible.forEach((el, idx) => {
+      el.dataset.prSeq = String(idx)
+    })
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("animate-in")
-        }
+        const el = entry.target as HTMLElement
+        if (!entry.isIntersecting) return
+        if (el.dataset.prRevealed === '1') return
+        // Cascada si se marcó en la carga inicial
+        const seq = parseInt(el.dataset.prSeq || '0', 10)
+        const delayMs = Number.isFinite(seq) ? seq * 200 : 0
+        el.style.setProperty('--pr-delay', `${delayMs}ms`)
+        el.classList.add('pr-revealed')
+        el.classList.add('animate-in')
+        el.dataset.prRevealed = '1'
+        observer.unobserve(el)
       })
     }, observerOptions)
 
     // Observe all timeline items
-    document.querySelectorAll(".timeline-item").forEach((item) => {
-      observer.observe(item)
-    })
+    items.forEach((item) => observer.observe(item))
 
     // Zoom effect for hero on scroll
     const handleScroll = () => {
@@ -263,7 +283,7 @@ export default function TimelinePage() {
             document.body.style.overflowY = ''
             window.dispatchEvent(new Event('scroll'))
           })
-        }, 600)
+        }, 1000) // Mantener fade 1s completo
       } else {
         setOverlayError('Contraseña incorrecta')
         setIsShakingOverlay(true)
@@ -635,6 +655,57 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
+      {/* CSS para efecto brocha de pintura (reutilizable) */}
+      <style jsx global>{`
+        .paint-reveal {
+          position: relative;
+          /* Estado inicial oculto por máscara */
+          -webkit-mask-image: linear-gradient(90deg, black 0 0);
+          -webkit-mask-size: 0% 100%;
+          -webkit-mask-repeat: no-repeat;
+          mask-image: linear-gradient(90deg, black 0 0);
+          mask-size: 0% 100%;
+          mask-repeat: no-repeat;
+          opacity: 0;
+        }
+        .paint-reveal.pr-revealed {
+          animation: pr-wipe var(--pr-duration, 900ms) ease-out var(--pr-delay, 0ms) forwards;
+        }
+        /* Cabeza de brocha */
+        .paint-reveal::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          background-image: radial-gradient(ellipse at center, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.12) 40%, transparent 70%);
+          mix-blend-mode: multiply;
+          transform: translateX(-20%) rotate(0.2deg);
+          opacity: 0;
+        }
+        .paint-reveal.pr-revealed::before {
+          animation: pr-brush var(--pr-brush-duration, 800ms) ease-out var(--pr-delay, 0ms) forwards;
+        }
+        /* Keyframes */
+        @keyframes pr-wipe {
+          0% { -webkit-mask-size: 0% 100%; mask-size: 0% 100%; opacity: 1; }
+          100% { -webkit-mask-size: 100% 100%; mask-size: 100% 100%; opacity: 1; }
+        }
+        @keyframes pr-brush {
+          0% { transform: translateX(-20%) rotate(0.2deg); opacity: 0.85; }
+          70% { transform: translateX(100%) rotate(0.6deg); opacity: 0.6; }
+          100% { transform: translateX(120%) rotate(0.6deg); opacity: 0; }
+        }
+        /* Fallback sin mask: simple fade-slide */
+        @supports not ((mask-size: 100% 100%) or (-webkit-mask-size: 100% 100%)) {
+          .paint-reveal { opacity: 0; transform: translateY(8px); }
+          .paint-reveal.pr-revealed { animation: pr-fade var(--pr-duration, 900ms) ease-out var(--pr-delay, 0ms) forwards; }
+          @keyframes pr-fade {
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+          .paint-reveal::before { display: none; }
+        }
+      `}</style>
       {/* Overlay inline SSR (antes del montaje) para evitar FOUC */}
       {!hasMounted && (
         <div className={`fixed inset-0 z-[1000] ${fadeToBlack ? 'pointer-events-none' : ''}`}>
@@ -643,7 +714,7 @@ export default function TimelinePage() {
             style={{ backgroundImage: `url('/a12.jpg')` }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
-          <div className={`absolute inset-0 ${fadeToBlack ? 'bg-black opacity-100 transition-opacity duration-500' : 'bg-black/10'}`} />
+          <div className="absolute inset-0 bg-black transition-opacity duration-1000" style={{ opacity: fadeToBlack ? 1 : 0.1 }} />
           <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
             <form
               onSubmit={(e) => { e.preventDefault() }}
@@ -693,8 +764,8 @@ export default function TimelinePage() {
           />
           {/* Gradiente como en la sección final */}
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
-          {/* +10% negro */}
-          <div className={`absolute inset-0 ${fadeToBlack ? 'bg-black opacity-100 transition-opacity duration-500' : 'bg-black/10'}`} />
+          {/* Capa negra con fade de 1s completo */}
+          <div className="absolute inset-0 bg-black transition-opacity duration-1000" style={{ opacity: fadeToBlack ? 1 : 0.1 }} />
 
           {/* Contenido central */}
           <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
