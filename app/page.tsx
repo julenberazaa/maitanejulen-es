@@ -180,7 +180,11 @@ export default function TimelinePage() {
 
     // Preparar items para efecto "brocha"
     const items = Array.from(document.querySelectorAll('.timeline-item')) as HTMLElement[]
-    items.forEach((el) => el.classList.add('paint-reveal'))
+    items.forEach((el) => {
+      el.classList.add('paint-reveal')
+      el.style.setProperty('--pr-duration', '1000ms')
+      el.style.setProperty('--pr-brush-duration', '950ms')
+    })
 
     // Calcular los que ya están a la vista y asignar una cascada inicial
     const viewportH = window.innerHeight
@@ -659,6 +663,7 @@ export default function TimelinePage() {
       <style jsx global>{`
         .paint-reveal {
           position: relative;
+          isolation: isolate; /* garantiza que el cover supere siblings con z-index menor */
           /* Estado inicial oculto por máscara */
           -webkit-mask-image: linear-gradient(90deg, black 0 0);
           -webkit-mask-size: 0% 100%;
@@ -677,13 +682,32 @@ export default function TimelinePage() {
           position: absolute;
           inset: 0;
           pointer-events: none;
-          background-image: radial-gradient(ellipse at center, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.12) 40%, transparent 70%);
+          background-image: radial-gradient(60% 50% at 50% 50%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.18) 45%, transparent 75%);
           mix-blend-mode: multiply;
-          transform: translateX(-20%) rotate(0.2deg);
+          transform: translateX(-25%) rotate(0.4deg);
           opacity: 0;
+          z-index: 91;
         }
         .paint-reveal.pr-revealed::before {
-          animation: pr-brush var(--pr-brush-duration, 800ms) ease-out var(--pr-delay, 0ms) forwards;
+          animation: pr-brush var(--pr-brush-duration, 900ms) cubic-bezier(0.16, 1, 0.3, 1) var(--pr-delay, 0ms) forwards;
+        }
+        /* Capa de cobertura para tapar también overlays externos (marcos) */
+        .paint-reveal::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 90; /* por encima de FramesOverlay (z bajo) y por debajo de modales */
+          background: #fff9f4; /* color base del fondo de timeline */
+          /* Añade borde rugoso al frente del barrido */
+          -webkit-mask-image: linear-gradient(90deg, black 85%, transparent 100%);
+          mask-image: linear-gradient(90deg, black 85%, transparent 100%);
+          -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+          transform: translateX(0);
+        }
+        .paint-reveal.pr-revealed::after {
+          animation: pr-cover-wipe var(--pr-duration, 900ms) cubic-bezier(0.16, 1, 0.3, 1) var(--pr-delay, 0ms) forwards;
         }
         /* Keyframes */
         @keyframes pr-wipe {
@@ -691,9 +715,13 @@ export default function TimelinePage() {
           100% { -webkit-mask-size: 100% 100%; mask-size: 100% 100%; opacity: 1; }
         }
         @keyframes pr-brush {
-          0% { transform: translateX(-20%) rotate(0.2deg); opacity: 0.85; }
-          70% { transform: translateX(100%) rotate(0.6deg); opacity: 0.6; }
-          100% { transform: translateX(120%) rotate(0.6deg); opacity: 0; }
+          0% { transform: translateX(-25%) rotate(0.4deg); opacity: 0.95; }
+          65% { transform: translateX(100%) rotate(0.7deg); opacity: 0.7; }
+          100% { transform: translateX(125%) rotate(0.7deg); opacity: 0; }
+        }
+        @keyframes pr-cover-wipe {
+          0% { clip-path: inset(0% 0% 0% 0%); }
+          100% { clip-path: inset(0% 100% 0% 0%); }
         }
         /* Fallback sin mask: simple fade-slide */
         @supports not ((mask-size: 100% 100%) or (-webkit-mask-size: 100% 100%)) {
