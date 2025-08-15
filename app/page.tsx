@@ -665,10 +665,10 @@ export default function TimelinePage() {
           position: relative;
           isolation: isolate; /* garantiza que el cover supere siblings con z-index menor */
           /* Estado inicial oculto por máscara */
-          -webkit-mask-image: linear-gradient(90deg, black 0 0);
+          -webkit-mask-image: url('/brush/brush-mask.svg');
           -webkit-mask-size: 0% 100%;
           -webkit-mask-repeat: no-repeat;
-          mask-image: linear-gradient(90deg, black 0 0);
+          mask-image: url('/brush/brush-mask.svg');
           mask-size: 0% 100%;
           mask-repeat: no-repeat;
           opacity: 0;
@@ -699,9 +699,9 @@ export default function TimelinePage() {
           pointer-events: none;
           z-index: 90; /* por encima de FramesOverlay (z bajo) y por debajo de modales */
           background: #fff9f4; /* color base del fondo de timeline */
-          /* Añade borde rugoso al frente del barrido */
-          -webkit-mask-image: linear-gradient(90deg, black 85%, transparent 100%);
-          mask-image: linear-gradient(90deg, black 85%, transparent 100%);
+          /* Borde rugoso de cobertura con la misma máscara */
+          -webkit-mask-image: url('/brush/brush-mask.svg');
+          mask-image: url('/brush/brush-mask.svg');
           -webkit-mask-size: 100% 100%;
           mask-size: 100% 100%;
           transform: translateX(0);

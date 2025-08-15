@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 200" preserveAspectRatio="none">
+  <!-- White shape used as mask (white = visible, transparent = hidden). The right edge is jagged to simulate a paint brush stroke. -->
+  <path d="M0 0 L900 0 L930 12 L900 24 L945 36 L900 54 L965 70 L900 86 L940 104 L900 122 L935 140 L900 156 L925 176 L900 200 L0 200 Z" fill="white"/>
+</svg>
+
