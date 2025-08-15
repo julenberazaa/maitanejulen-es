@@ -705,6 +705,15 @@ export default function TimelinePage() {
           }
           .paint-reveal::before { display: none; }
         }
+        /* Shake horizontal para error de contraseña */
+        @keyframes shakeX {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-10px); }
+          40% { transform: translateX(10px); }
+          60% { transform: translateX(-8px); }
+          80% { transform: translateX(8px); }
+        }
+        .animate-shake-x { animation: shakeX 0.6s ease; }
       `}</style>
       {/* Overlay inline SSR (antes del montaje) para evitar FOUC */}
       {!hasMounted && (
@@ -743,16 +752,7 @@ export default function TimelinePage() {
               )}
             </form>
           </div>
-          <style jsx>{`
-            @keyframes shakeX {
-              0%, 100% { transform: translateX(0); }
-              20% { transform: translateX(-10px); }
-              40% { transform: translateX(10px); }
-              60% { transform: translateX(-8px); }
-              80% { transform: translateX(8px); }
-            }
-            .animate-shake-x { animation: shakeX 0.6s ease; }
-          `}</style>
+          
         </div>
       )}
       {overlayVisible && hasMounted && createPortal((
@@ -802,17 +802,7 @@ export default function TimelinePage() {
             </form>
           </div>
 
-          {/* Animaciones locales */}
-          <style jsx>{`
-            @keyframes shakeX {
-              0%, 100% { transform: translateX(0); }
-              20% { transform: translateX(-10px); }
-              40% { transform: translateX(10px); }
-              60% { transform: translateX(-8px); }
-              80% { transform: translateX(8px); }
-            }
-            .animate-shake-x { animation: shakeX 0.6s ease; }
-          `}</style>
+          
         </div>
       ), document.body)}
       {/* Static frames overlay, above base content but below modal/video */}
