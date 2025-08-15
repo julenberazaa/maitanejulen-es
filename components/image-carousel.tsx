@@ -123,6 +123,8 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
                 draggable={false}
                 className={`transition-transform duration-500 ease-in-out ${index === activeIndex ? 'hover:scale-105' : ''}`}
                 style={commonStyle}
+                loading="lazy"
+                decoding="async"
               />
             )
           }
@@ -136,6 +138,7 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
               muted
               className={`transition-transform duration-500 ease-in-out ${index === activeIndex ? 'hover:scale-105' : ''}`}
               style={commonStyle}
+              preload={index === activeIndex ? 'auto' : 'metadata'}
             />
           )
         })}
