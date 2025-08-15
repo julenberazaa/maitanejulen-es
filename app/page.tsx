@@ -70,8 +70,8 @@ export default function TimelinePage() {
     const unlock = setTimeout(() => {
       // Mantener bloqueo si el overlay sigue visible
       if (!overlayVisibleRef.current) {
-        document.documentElement.style.overflow = prevHtmlOverflow || 'auto'
-        document.body.style.overflow = prevBodyOverflow || 'auto'
+        document.documentElement.style.overflow = prevHtmlOverflow || ''
+        document.body.style.overflow = prevBodyOverflow || ''
       }
     }, 1000)
     return () => clearTimeout(unlock)
@@ -216,7 +216,7 @@ export default function TimelinePage() {
       }
     }
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
 
     return () => {
       window.removeEventListener("scroll", handleScroll)
@@ -232,20 +232,14 @@ export default function TimelinePage() {
     } catch {}
   }, [])
 
-  // Bloquear scroll mientras el overlay esté visible
+  // Bloquear scroll mientras el overlay esté visible (robusto)
   useEffect(() => {
-    const prevHtmlOverflow = document.documentElement.style.overflow
-    const prevBodyOverflow = document.body.style.overflow
     if (overlayVisible) {
-      document.documentElement.style.overflow = 'hidden'
-      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflowY = 'hidden'
+      document.body.style.overflowY = 'hidden'
     } else {
-      document.documentElement.style.overflow = prevHtmlOverflow || 'auto'
-      document.body.style.overflow = prevBodyOverflow || 'auto'
-    }
-    return () => {
-      document.documentElement.style.overflow = prevHtmlOverflow
-      document.body.style.overflow = prevBodyOverflow
+      document.documentElement.style.overflowY = ''
+      document.body.style.overflowY = ''
     }
   }, [overlayVisible])
 
@@ -263,6 +257,12 @@ export default function TimelinePage() {
         setTimeout(() => {
           try { localStorage.setItem('access-granted', '1') } catch {}
           setOverlayVisible(false)
+          // Forzar reflujo y reactivar scroll tras ocultar el overlay
+          requestAnimationFrame(() => {
+            document.documentElement.style.overflowY = ''
+            document.body.style.overflowY = ''
+            window.dispatchEvent(new Event('scroll'))
+          })
         }, 600)
       } else {
         setOverlayError('Contraseña incorrecta')
