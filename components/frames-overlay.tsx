@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { OVERLAY_FRAMES } from "@/lib/frame-config"
 
 // Base design width - same as the #fixed-layout element
@@ -10,6 +10,9 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const [isMobile, setIsMobile] = useState(false)
   const [containerHeight, setContainerHeight] = useState('100%')
   const [visibleFrameIds, setVisibleFrameIds] = useState<Set<string>>(new Set())
+  const [retryCounts, setRetryCounts] = useState<Record<string, number>>({})
+  const [prefetchedIds, setPrefetchedIds] = useState<Set<string>>(new Set())
+  const prefetchTimersRef = useRef<Record<string, number>>({})
 
   useEffect(() => {
     const checkMobile = () => {
@@ -27,6 +30,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     if (!isMobile) {
       // Render all frames on desktop
       setVisibleFrameIds(new Set(OVERLAY_FRAMES.filter(f => f.visible !== false).map(f => f.id)))
+      // Prefetch all frames (sequentially via loop, with retry)
+      OVERLAY_FRAMES.forEach((f) => ensurePrefetch(f.id, f.src))
       return
     }
 
@@ -36,14 +41,21 @@ export default function FramesOverlay(): React.JSX.Element | null {
       const currentScrollTop = window.scrollY || document.documentElement.scrollTop || 0
       const viewportHeight = window.innerHeight || 0
       const next = new Set<string>()
+      const toPrefetchIds: string[] = []
       for (const frame of OVERLAY_FRAMES) {
         if (frame.visible === false) continue
         const finalY = (frame.y ?? 0) + (frame.mobileOffsetY ?? 0)
         if (finalY >= currentScrollTop - PRELOAD_MARGIN && finalY <= currentScrollTop + viewportHeight + PRELOAD_MARGIN) {
           next.add(frame.id)
+          toPrefetchIds.push(frame.id)
         }
       }
       setVisibleFrameIds(next)
+      // Kick off prefetch for candidates
+      for (const id of toPrefetchIds) {
+        const frame = OVERLAY_FRAMES.find(f => f.id === id)
+        if (frame) ensurePrefetch(frame.id, frame.src)
+      }
     }
 
     updateVisible()
@@ -56,6 +68,64 @@ export default function FramesOverlay(): React.JSX.Element | null {
       timers.forEach(clearTimeout)
     }
   }, [isMobile])
+
+  // Cleanup any scheduled prefetch timers on unmount
+  useEffect(() => {
+    return () => {
+      const timers = prefetchTimersRef.current
+      Object.values(timers).forEach((t) => clearTimeout(t))
+      prefetchTimersRef.current = {}
+    }
+  }, [])
+
+  const MAX_RETRIES = 3
+
+  const ensurePrefetch = (id: string, src: string) => {
+    if (prefetchedIds.has(id)) return
+    // Avoid starting multiple timers for same id
+    if (prefetchTimersRef.current[id]) return
+    const attempts = retryCounts[id] ?? 0
+    if (attempts >= MAX_RETRIES) return
+
+    const start = () => {
+      // Use a unique URL per attempt to bypass any bad cached entry
+      const cacheBustSrc = attempts > 0 ? `${src}?pf=${attempts}` : src
+      const img = new Image()
+      img.decoding = 'async' as any
+      img.loading = 'eager' as any
+      img.src = cacheBustSrc
+      const onLoad = () => {
+        setPrefetchedIds((prev) => new Set(prev).add(id))
+        delete prefetchTimersRef.current[id]
+      }
+      const onError = () => scheduleRetry()
+      img.addEventListener('load', onLoad, { once: true })
+      img.addEventListener('error', onError, { once: true })
+    }
+
+    const scheduleRetry = () => {
+      const nextAttempt = (retryCounts[id] ?? 0) + 1
+      if (nextAttempt > MAX_RETRIES) {
+        delete prefetchTimersRef.current[id]
+        return
+      }
+      setRetryCounts((prev) => ({ ...prev, [id]: nextAttempt }))
+      const backoff = Math.min(2000 * nextAttempt, 6000)
+      const timer = window.setTimeout(() => {
+        delete prefetchTimersRef.current[id]
+        ensurePrefetch(id, src)
+      }, backoff)
+      prefetchTimersRef.current[id] = timer
+    }
+
+    // Start immediately
+    start()
+  }
+
+  const getSrcForRender = (id: string, src: string): string => {
+    const attempts = retryCounts[id] ?? 0
+    return attempts > 0 ? `${src}?rt=${attempts}` : src
+  }
 
   // Calcular altura máxima basada en el final de la sección del video
   useEffect(() => {
@@ -132,7 +202,32 @@ export default function FramesOverlay(): React.JSX.Element | null {
         if (typeof width === "number") style.width = `${width}px`
         if (typeof height === "number") style.height = `${height}px`
 
-        return <img key={id} id={`overlay-${id}`} src={src} alt="" style={style} loading="lazy" decoding="async" fetchPriority={isMobile ? 'low' : 'auto'} />
+        const isNearViewport = visibleFrameIds.has(id)
+        const renderSrc = getSrcForRender(id, src)
+        const handleImgError: React.ReactEventHandler<HTMLImageElement> = () => {
+          setRetryCounts((prev) => {
+            const prevAttempts = prev[id] ?? 0
+            if (prevAttempts >= MAX_RETRIES) return prev
+            const next = { ...prev, [id]: prevAttempts + 1 }
+            return next
+          })
+          // Also schedule a background prefetch retry
+          ensurePrefetch(id, src)
+        }
+
+        return (
+          <img
+            key={id}
+            id={`overlay-${id}`}
+            src={renderSrc}
+            alt=""
+            style={style}
+            loading="lazy"
+            decoding="async"
+            fetchPriority={isNearViewport ? 'high' : (isMobile ? 'low' : 'auto')}
+            onError={handleImgError}
+          />
+        )
       })}
     </div>
   )
