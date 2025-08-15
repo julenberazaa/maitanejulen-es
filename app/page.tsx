@@ -663,7 +663,7 @@ export default function TimelinePage() {
                     className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
                     aria-label="Entrar"
                   >
-                    <Heart className="w-6 h-6" />
+                    <Heart className="w-6 h-6 -ml-1 hover:scale-125 transition-transform" />
                   </button>
                 </div>
               </div>
@@ -721,7 +721,7 @@ export default function TimelinePage() {
                     className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
                     aria-label="Entrar"
                   >
-                    <Heart className="w-6 h-6" />
+                    <Heart className="w-6 h-6 -ml-1 hover:scale-125 transition-transform" />
                   </button>
                 </div>
               </div>
