@@ -172,48 +172,24 @@ export default function TimelinePage() {
 
   useEffect(() => {
     if (overlayVisible) return
-    // Initialize animations cuando el overlay ya no está visible
+    // Initialize scroll animations cuando el overlay ya no está visible
     const observerOptions = {
-      threshold: 0.25,
-      rootMargin: "0px 0px -10% 0px",
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
     }
-
-    // Preparar items para efecto "brocha"
-    const items = Array.from(document.querySelectorAll('.timeline-item')) as HTMLElement[]
-    items.forEach((el) => {
-      el.classList.add('paint-reveal')
-      el.style.setProperty('--pr-duration', '1000ms')
-      el.style.setProperty('--pr-brush-duration', '950ms')
-    })
-
-    // Calcular los que ya están a la vista y asignar una cascada inicial
-    const viewportH = window.innerHeight
-    const initiallyVisible = items.filter((el) => {
-      const r = el.getBoundingClientRect()
-      return r.top < viewportH && r.bottom > 0
-    }).sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)
-    initiallyVisible.forEach((el, idx) => {
-      el.dataset.prSeq = String(idx)
-    })
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        const el = entry.target as HTMLElement
-        if (!entry.isIntersecting) return
-        if (el.dataset.prRevealed === '1') return
-        // Cascada si se marcó en la carga inicial
-        const seq = parseInt(el.dataset.prSeq || '0', 10)
-        const delayMs = Number.isFinite(seq) ? seq * 200 : 0
-        el.style.setProperty('--pr-delay', `${delayMs}ms`)
-        el.classList.add('pr-revealed')
-        el.classList.add('animate-in')
-        el.dataset.prRevealed = '1'
-        observer.unobserve(el)
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate-in")
+        }
       })
     }, observerOptions)
 
     // Observe all timeline items
-    items.forEach((item) => observer.observe(item))
+    document.querySelectorAll(".timeline-item").forEach((item) => {
+      observer.observe(item)
+    })
 
     // Zoom effect for hero on scroll
     const handleScroll = () => {
@@ -659,90 +635,6 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
-      {/* CSS para efecto brocha de pintura (reutilizable) */}
-      <style jsx global>{`
-        .paint-reveal {
-          position: relative;
-          isolation: isolate; /* garantiza que el cover supere siblings con z-index menor */
-          /* Estado inicial oculto por máscara */
-          -webkit-mask-image: url('/brush/brush-mask.svg');
-          -webkit-mask-size: 0% 100%;
-          -webkit-mask-repeat: no-repeat;
-          mask-image: url('/brush/brush-mask.svg');
-          mask-size: 0% 100%;
-          mask-repeat: no-repeat;
-          opacity: 0;
-        }
-        .paint-reveal.pr-revealed {
-          animation: pr-wipe var(--pr-duration, 900ms) ease-out var(--pr-delay, 0ms) forwards;
-        }
-        /* Cabeza de brocha */
-        .paint-reveal::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          background-image: radial-gradient(60% 50% at 50% 50%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.18) 45%, transparent 75%);
-          mix-blend-mode: multiply;
-          transform: translateX(-25%) rotate(0.4deg);
-          opacity: 0;
-          z-index: 91;
-        }
-        .paint-reveal.pr-revealed::before {
-          animation: pr-brush var(--pr-brush-duration, 900ms) cubic-bezier(0.16, 1, 0.3, 1) var(--pr-delay, 0ms) forwards;
-        }
-        /* Capa de cobertura para tapar también overlays externos (marcos) */
-        .paint-reveal::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 90; /* por encima de FramesOverlay (z bajo) y por debajo de modales */
-          background: #fff9f4; /* color base del fondo de timeline */
-          /* Borde rugoso de cobertura con la misma máscara */
-          -webkit-mask-image: url('/brush/brush-mask.svg');
-          mask-image: url('/brush/brush-mask.svg');
-          -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
-          transform: translateX(0);
-        }
-        .paint-reveal.pr-revealed::after {
-          animation: pr-cover-wipe var(--pr-duration, 900ms) cubic-bezier(0.16, 1, 0.3, 1) var(--pr-delay, 0ms) forwards;
-        }
-        /* Keyframes */
-        @keyframes pr-wipe {
-          0% { -webkit-mask-size: 0% 100%; mask-size: 0% 100%; opacity: 1; }
-          100% { -webkit-mask-size: 100% 100%; mask-size: 100% 100%; opacity: 1; }
-        }
-        @keyframes pr-brush {
-          0% { transform: translateX(-25%) rotate(0.4deg); opacity: 0.95; }
-          65% { transform: translateX(100%) rotate(0.7deg); opacity: 0.7; }
-          100% { transform: translateX(125%) rotate(0.7deg); opacity: 0; }
-        }
-        @keyframes pr-cover-wipe {
-          0% { clip-path: inset(0% 0% 0% 0%); }
-          100% { clip-path: inset(0% 100% 0% 0%); }
-        }
-        /* Fallback sin mask: simple fade-slide */
-        @supports not ((mask-size: 100% 100%) or (-webkit-mask-size: 100% 100%)) {
-          .paint-reveal { opacity: 0; transform: translateY(8px); }
-          .paint-reveal.pr-revealed { animation: pr-fade var(--pr-duration, 900ms) ease-out var(--pr-delay, 0ms) forwards; }
-          @keyframes pr-fade {
-            0% { opacity: 0; transform: translateY(8px); }
-            100% { opacity: 1; transform: translateY(0); }
-          }
-          .paint-reveal::before { display: none; }
-        }
-        /* Shake horizontal para error de contraseña */
-        @keyframes shakeX {
-          0%, 100% { transform: translateX(0); }
-          20% { transform: translateX(-10px); }
-          40% { transform: translateX(10px); }
-          60% { transform: translateX(-8px); }
-          80% { transform: translateX(8px); }
-        }
-        .animate-shake-x { animation: shakeX 0.6s ease; }
-      `}</style>
       {/* Overlay inline SSR (antes del montaje) para evitar FOUC */}
       {!hasMounted && (
         <div className={`fixed inset-0 z-[1000] ${fadeToBlack ? 'pointer-events-none' : ''}`}>
@@ -752,7 +644,7 @@ export default function TimelinePage() {
           />
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
           <div className="absolute inset-0 bg-black transition-opacity duration-1000" style={{ opacity: fadeToBlack ? 1 : 0.1 }} />
-          <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+          <div className="relative z-10 w-full h-full flex items-center justify-center px-6 transition-opacity duration-1000" style={{ opacity: fadeToBlack ? 0 : 1 }}>
             <form
               onSubmit={(e) => { e.preventDefault() }}
               className={`${isShakingOverlay ? 'animate-shake-x' : ''}`}
@@ -768,10 +660,10 @@ export default function TimelinePage() {
                   />
                   <button
                     type="button"
-                    className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 transition-transform focus:outline-none"
+                    className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
                     aria-label="Entrar"
                   >
-                    →
+                    <Heart className="w-6 h-6" />
                   </button>
                 </div>
               </div>
@@ -780,7 +672,16 @@ export default function TimelinePage() {
               )}
             </form>
           </div>
-          
+          <style jsx>{`
+            @keyframes shakeX {
+              0%, 100% { transform: translateX(0); }
+              20% { transform: translateX(-10px); }
+              40% { transform: translateX(10px); }
+              60% { transform: translateX(-8px); }
+              80% { transform: translateX(8px); }
+            }
+            .animate-shake-x { animation: shakeX 0.6s ease; }
+          `}</style>
         </div>
       )}
       {overlayVisible && hasMounted && createPortal((
@@ -796,7 +697,7 @@ export default function TimelinePage() {
           <div className="absolute inset-0 bg-black transition-opacity duration-1000" style={{ opacity: fadeToBlack ? 1 : 0.1 }} />
 
           {/* Contenido central */}
-          <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+          <div className="relative z-10 w-full h-full flex items-center justify-center px-6 transition-opacity duration-1000" style={{ opacity: fadeToBlack ? 0 : 1 }}>
             <form
               onSubmit={handleOverlaySubmit}
               className={`${isShakingOverlay ? 'animate-shake-x' : ''}`}
@@ -817,10 +718,10 @@ export default function TimelinePage() {
                   {/* Botón circular */}
                   <button
                     type="submit"
-                    className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 transition-transform focus:outline-none"
+                    className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
                     aria-label="Entrar"
                   >
-                    →
+                    <Heart className="w-6 h-6" />
                   </button>
                 </div>
               </div>
@@ -830,7 +731,17 @@ export default function TimelinePage() {
             </form>
           </div>
 
-          
+          {/* Animaciones locales */}
+          <style jsx>{`
+            @keyframes shakeX {
+              0%, 100% { transform: translateX(0); }
+              20% { transform: translateX(-10px); }
+              40% { transform: translateX(10px); }
+              60% { transform: translateX(-8px); }
+              80% { transform: translateX(8px); }
+            }
+            .animate-shake-x { animation: shakeX 0.6s ease; }
+          `}</style>
         </div>
       ), document.body)}
       {/* Static frames overlay, above base content but below modal/video */}
