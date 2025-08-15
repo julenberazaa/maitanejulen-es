@@ -39,6 +39,17 @@ export default function TimelinePage() {
   const [tuentiStarted, setTuentiStarted] = useState(false)
   // HARD CUT aplicado en FixedZoom - no necesitamos lógica de scroll compleja
 
+  // Overlay de contraseña (pantalla previa)
+  const [overlayVisible, setOverlayVisible] = useState(true)
+  const [inputPass, setInputPass] = useState('')
+  const [isShakingOverlay, setIsShakingOverlay] = useState(false)
+  const [overlayError, setOverlayError] = useState('')
+  const [fadeToBlack, setFadeToBlack] = useState(false)
+  const [hasMounted, setHasMounted] = useState(false)
+  const overlayVisibleRef = useRef(overlayVisible)
+  useEffect(() => { overlayVisibleRef.current = overlayVisible }, [overlayVisible])
+  useEffect(() => { setHasMounted(true) }, [])
+
   // Forzar scroll al top en cada recarga de la página sin animación
   useEffect(() => {
     // Evitar que el navegador restaure la posición de scroll anterior
@@ -52,10 +63,16 @@ export default function TimelinePage() {
     document.body.scrollTop = 0
 
     // Bloquear scroll durante el primer segundo para estabilizar marcos
-    const prevOverflow = document.body.style.overflow
+    const prevHtmlOverflow = document.documentElement.style.overflow
+    const prevBodyOverflow = document.body.style.overflow
+    document.documentElement.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
     const unlock = setTimeout(() => {
-      document.body.style.overflow = prevOverflow || 'auto'
+      // Mantener bloqueo si el overlay sigue visible
+      if (!overlayVisibleRef.current) {
+        document.documentElement.style.overflow = prevHtmlOverflow || 'auto'
+        document.body.style.overflow = prevBodyOverflow || 'auto'
+      }
     }, 1000)
     return () => clearTimeout(unlock)
   }, [])
@@ -154,7 +171,8 @@ export default function TimelinePage() {
   }, [showVideo])
 
   useEffect(() => {
-    // Initialize scroll animations
+    if (overlayVisible) return
+    // Initialize scroll animations cuando el overlay ya no está visible
     const observerOptions = {
       threshold: 0.1,
       rootMargin: "0px 0px -50px 0px",
@@ -204,7 +222,59 @@ export default function TimelinePage() {
       window.removeEventListener("scroll", handleScroll)
       observer.disconnect()
     }
+  }, [overlayVisible])
+
+  // Leer permiso previo desde localStorage
+  useEffect(() => {
+    try {
+      const granted = localStorage.getItem('access-granted')
+      if (granted === '1') setOverlayVisible(false)
+    } catch {}
   }, [])
+
+  // Bloquear scroll mientras el overlay esté visible
+  useEffect(() => {
+    const prevHtmlOverflow = document.documentElement.style.overflow
+    const prevBodyOverflow = document.body.style.overflow
+    if (overlayVisible) {
+      document.documentElement.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.documentElement.style.overflow = prevHtmlOverflow || 'auto'
+      document.body.style.overflow = prevBodyOverflow || 'auto'
+    }
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow
+      document.body.style.overflow = prevBodyOverflow
+    }
+  }, [overlayVisible])
+
+  const handleOverlaySubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    try {
+      const res = await fetch('/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pass: inputPass })
+      })
+      if (res.ok) {
+        setOverlayError('')
+        setFadeToBlack(true)
+        setTimeout(() => {
+          try { localStorage.setItem('access-granted', '1') } catch {}
+          setOverlayVisible(false)
+        }, 600)
+      } else {
+        setOverlayError('Contraseña incorrecta')
+        setIsShakingOverlay(true)
+        setTimeout(() => setIsShakingOverlay(false), 600)
+      }
+    } catch {
+      setOverlayError('Error de conexión')
+      setIsShakingOverlay(true)
+      setTimeout(() => setIsShakingOverlay(false), 600)
+    }
+  }
 
   // Sin overlay dinámico. Los marcos se renderizan estáticamente dentro de cada carrusel.
 
@@ -565,6 +635,115 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
+      {/* Overlay inline SSR (antes del montaje) para evitar FOUC */}
+      {!hasMounted && (
+        <div className={`fixed inset-0 z-[1000] ${fadeToBlack ? 'pointer-events-none' : ''}`}>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url('/a12.jpg')` }}
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
+          <div className={`absolute inset-0 ${fadeToBlack ? 'bg-black opacity-100 transition-opacity duration-500' : 'bg-black/10'}`} />
+          <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+            <form
+              onSubmit={(e) => { e.preventDefault() }}
+              className={`${isShakingOverlay ? 'animate-shake-x' : ''}`}
+            >
+              <div className="flex items-center">
+                <div className="bg-terracotta rounded-full p-1.5 flex items-center">
+                  <input
+                    type="password"
+                    value={inputPass}
+                    onChange={(e) => setInputPass(e.target.value)}
+                    placeholder="Contraseña"
+                    className="rounded-full bg-white text-midnight placeholder-midnight/60 px-6 h-12 w-[260px] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 transition-transform focus:outline-none"
+                    aria-label="Entrar"
+                  >
+                    →
+                  </button>
+                </div>
+              </div>
+              {overlayError && (
+                <div className="text-ivory/90 text-sm mt-3 text-center">{overlayError}</div>
+              )}
+            </form>
+          </div>
+          <style jsx>{`
+            @keyframes shakeX {
+              0%, 100% { transform: translateX(0); }
+              20% { transform: translateX(-10px); }
+              40% { transform: translateX(10px); }
+              60% { transform: translateX(-8px); }
+              80% { transform: translateX(8px); }
+            }
+            .animate-shake-x { animation: shakeX 0.6s ease; }
+          `}</style>
+        </div>
+      )}
+      {overlayVisible && hasMounted && createPortal((
+        <div className={`fixed inset-0 z-[1000] ${fadeToBlack ? 'pointer-events-none' : ''}`}>
+          {/* Fondo imagen adaptativo */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url('/a12.jpg')` }}
+          />
+          {/* Gradiente como en la sección final */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
+          {/* +10% negro */}
+          <div className={`absolute inset-0 ${fadeToBlack ? 'bg-black opacity-100 transition-opacity duration-500' : 'bg-black/10'}`} />
+
+          {/* Contenido central */}
+          <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+            <form
+              onSubmit={handleOverlaySubmit}
+              className={`${isShakingOverlay ? 'animate-shake-x' : ''}`}
+            >
+              <div className="flex items-center">
+                {/* Contenedor terracotta */}
+                <div className="bg-terracotta rounded-full p-1.5 flex items-center">
+                  {/* Input blanco */}
+                  <input
+                    type="password"
+                    value={inputPass}
+                    onChange={(e) => setInputPass(e.target.value)}
+                    placeholder="Contraseña"
+                    className="rounded-full bg-white text-midnight placeholder-midnight/60 px-6 h-12 w-[260px] focus:outline-none"
+                    autoFocus
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleOverlaySubmit() }}
+                  />
+                  {/* Botón circular */}
+                  <button
+                    type="submit"
+                    className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 transition-transform focus:outline-none"
+                    aria-label="Entrar"
+                  >
+                    →
+                  </button>
+                </div>
+              </div>
+              {overlayError && (
+                <div className="text-ivory/90 text-sm mt-3 text-center">{overlayError}</div>
+              )}
+            </form>
+          </div>
+
+          {/* Animaciones locales */}
+          <style jsx>{`
+            @keyframes shakeX {
+              0%, 100% { transform: translateX(0); }
+              20% { transform: translateX(-10px); }
+              40% { transform: translateX(10px); }
+              60% { transform: translateX(-8px); }
+              80% { transform: translateX(8px); }
+            }
+            .animate-shake-x { animation: shakeX 0.6s ease; }
+          `}</style>
+        </div>
+      ), document.body)}
       {/* Static frames overlay, above base content but below modal/video */}
       <FramesOverlay />
       {/* Image Modal via portal to escape transformed ancestors */}
