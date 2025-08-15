@@ -1,9 +1,9 @@
-export const onRequest: PagesFunction = async (ctx) => {
+export const onRequest = async (ctx: any) => {
   const { request, env, next } = ctx;
   const url = new URL(request.url);
 
   // Rutas públicas opcionales (no requieren auth)
-  const PUBLIC_PATHS = new Set<string>(['/robots.txt']);
+  const PUBLIC_PATHS = new Set<string>(['/robots.txt', '/verify']);
   if (PUBLIC_PATHS.has(url.pathname)) {
     return next();
   }

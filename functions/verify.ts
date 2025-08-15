@@ -1,4 +1,4 @@
-export const onRequest: PagesFunction = async (ctx) => {
+export const onRequest = async (ctx: any) => {
   const { request, env } = ctx;
   if (request.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405, headers: { 'Allow': 'POST' } });
