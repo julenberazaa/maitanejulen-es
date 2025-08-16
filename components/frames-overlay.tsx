@@ -15,6 +15,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const [enableFrameLoading, setEnableFrameLoading] = useState(false)
   const [slowConnection, setSlowConnection] = useState(false)
   const prefetchTimersRef = useRef<Record<string, number>>({})
+  const [scale, setScale] = useState(1)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -238,10 +239,14 @@ export default function FramesOverlay(): React.JSX.Element | null {
     return isMobile ? `${optimizedSrc}?mobile=1` : optimizedSrc
   }
 
-  // Calcular altura máxima basada en el final de la sección del video
+  // Calcular escala al ancho del viewport y altura interna no escalada para evitar recortes
   useEffect(() => {
-    const updateContainerHeight = () => {
-      // Altura total robusta del documento (no depende de una sección específica)
+    const updateScaleAndHeight = () => {
+      const viewportWidth = document.documentElement.clientWidth || window.innerWidth
+      const newScale = viewportWidth > 0 ? viewportWidth / BASE_DESIGN_WIDTH : 1
+      setScale(newScale)
+
+      // Altura total robusta del documento (visible) y convertirla al espacio no escalado
       const doc = document.documentElement
       const body = document.body
       const totalHeight = Math.max(
@@ -251,15 +256,16 @@ export default function FramesOverlay(): React.JSX.Element | null {
         body ? body.scrollHeight : 0,
         body ? body.offsetHeight : 0
       )
-      setContainerHeight(`${totalHeight}px`)
+      const unscaledHeight = newScale > 0 ? Math.ceil(totalHeight / newScale) : totalHeight
+      setContainerHeight(`${unscaledHeight}px`)
     }
 
     // Cálculo inicial y en eventos relevantes
-    updateContainerHeight()
+    updateScaleAndHeight()
 
-    const onResize = () => updateContainerHeight()
-    const onOrientationChange = () => setTimeout(updateContainerHeight, 100)
-    const onLoad = () => updateContainerHeight()
+    const onResize = () => updateScaleAndHeight()
+    const onOrientationChange = () => setTimeout(updateScaleAndHeight, 100)
+    const onLoad = () => updateScaleAndHeight()
 
     window.addEventListener('resize', onResize, { passive: true })
     window.addEventListener('orientationchange', onOrientationChange)
@@ -267,12 +273,12 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
     // Observa cambios en el DOM que puedan alterar la altura (imágenes que aparecen, etc.)
     const mutationObserver = new MutationObserver(() => {
-      updateContainerHeight()
+      updateScaleAndHeight()
     })
     mutationObserver.observe(document.body, { childList: true, subtree: true, attributes: false })
 
     // Recalcular en varias pasadas para cubrir cargas diferidas
-    const timers = [50, 200, 600, 1200, 2000].map(ms => setTimeout(updateContainerHeight, ms))
+    const timers = [50, 200, 600, 1200, 2000].map(ms => setTimeout(updateScaleAndHeight, ms))
 
     return () => {
       timers.forEach(clearTimeout)
@@ -290,13 +296,14 @@ export default function FramesOverlay(): React.JSX.Element | null {
         top: 0,
         left: 0,
         width: `${BASE_DESIGN_WIDTH}px`, // Same as #fixed-layout base width
-        height: containerHeight, // Altura dinámica basada en el final del video
-        maxHeight: containerHeight, // Reforzar límite máximo
+        height: containerHeight, // Altura no escalada para evitar recortes tras aplicar transform
+        maxHeight: containerHeight,
         overflow: 'hidden', // Evita que frames absolutos alarguen el scroll por debajo del video
         overflowY: 'hidden', // Explícitamente bloquear scroll vertical
         pointerEvents: "none",
         zIndex: 50,
-        // NO transform - the parent #fixed-layout already handles scaling
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
       }}
     >
       {enableFrameLoading ? OVERLAY_FRAMES.filter((f) => f.visible !== false && (visibleFrameIds.has(f.id))).map((frame) => {
