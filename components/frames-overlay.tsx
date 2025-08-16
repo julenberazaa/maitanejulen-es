@@ -12,6 +12,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const [visibleFrameIds, setVisibleFrameIds] = useState<Set<string>>(new Set())
   const [retryCounts, setRetryCounts] = useState<Record<string, number>>({})
   const [prefetchedIds, setPrefetchedIds] = useState<Set<string>>(new Set())
+  const [enableFrameLoading, setEnableFrameLoading] = useState(false)
+  const [slowConnection, setSlowConnection] = useState(false)
   const prefetchTimersRef = useRef<Record<string, number>>({})
 
   useEffect(() => {
@@ -25,8 +27,51 @@ export default function FramesOverlay(): React.JSX.Element | null {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  // Detect slow connection and delay frame loading
+  useEffect(() => {
+    // Check connection speed
+    const connection = (navigator as any)?.connection
+    const isSlowConnection = connection && (
+      connection.effectiveType === 'slow-2g' || 
+      connection.effectiveType === '2g' ||
+      connection.downlink < 1.5
+    )
+    setSlowConnection(isSlowConnection)
+
+    // Aggressive delay for frame loading to avoid blocking critical resources
+    const delay = isSlowConnection ? 12000 : (isMobile ? 5000 : 1000)
+    
+    // Also wait for user interaction to ensure critical content loads first
+    let hasUserInteracted = false
+    const enableOnInteraction = () => {
+      hasUserInteracted = true
+      if (!isSlowConnection || hasUserInteracted) {
+        setEnableFrameLoading(true)
+      }
+    }
+    
+    // Listen for any user interaction
+    const events = ['scroll', 'touchstart', 'click', 'keydown']
+    events.forEach(event => {
+      window.addEventListener(event, enableOnInteraction, { once: true, passive: true })
+    })
+    
+    const timer = setTimeout(() => {
+      setEnableFrameLoading(true)
+    }, delay)
+
+    return () => {
+      clearTimeout(timer)
+      events.forEach(event => {
+        window.removeEventListener(event, enableOnInteraction)
+      })
+    }
+  }, [isMobile])
+
   // Virtualize frame rendering on mobile: only render frames near viewport
   useEffect(() => {
+    if (!enableFrameLoading) return
+
     if (!isMobile) {
       // Render all frames on desktop
       setVisibleFrameIds(new Set(OVERLAY_FRAMES.filter(f => f.visible !== false).map(f => f.id)))
@@ -67,7 +112,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
       window.removeEventListener('resize', updateVisible)
       timers.forEach(clearTimeout)
     }
-  }, [isMobile])
+  }, [isMobile, enableFrameLoading])
 
   // Cleanup any scheduled prefetch timers on unmount
   useEffect(() => {
@@ -80,6 +125,14 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
   const MAX_RETRIES = 3
 
+  const getOptimizedSrc = (src: string): string => {
+    // Try WebP first for better compression
+    if (src.endsWith('.png')) {
+      return src.replace('.png', '.webp')
+    }
+    return src
+  }
+
   const ensurePrefetch = (id: string, src: string) => {
     if (prefetchedIds.has(id)) return
     // Avoid starting multiple timers for same id
@@ -88,19 +141,33 @@ export default function FramesOverlay(): React.JSX.Element | null {
     if (attempts >= MAX_RETRIES) return
 
     const start = () => {
-      // Use a unique URL per attempt to bypass any bad cached entry
-      const cacheBustSrc = attempts > 0 ? `${src}?pf=${attempts}` : src
+      // Try WebP first, fallback to PNG
+      const optimizedSrc = getOptimizedSrc(src)
+      const cacheBustSrc = attempts > 0 ? `${optimizedSrc}?pf=${attempts}` : optimizedSrc
       const img = new Image()
       img.decoding = 'async' as any
       img.loading = 'eager' as any
-      img.src = cacheBustSrc
+      
       const onLoad = () => {
         setPrefetchedIds((prev) => new Set(prev).add(id))
         delete prefetchTimersRef.current[id]
       }
-      const onError = () => scheduleRetry()
+      
+      const onError = () => {
+        // If WebP fails, try original PNG
+        if (optimizedSrc !== src && attempts === 0) {
+          const fallbackImg = new Image()
+          fallbackImg.src = src
+          fallbackImg.onload = onLoad
+          fallbackImg.onerror = scheduleRetry
+        } else {
+          scheduleRetry()
+        }
+      }
+      
       img.addEventListener('load', onLoad, { once: true })
       img.addEventListener('error', onError, { once: true })
+      img.src = cacheBustSrc
     }
 
     const scheduleRetry = () => {
@@ -124,7 +191,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
   const getSrcForRender = (id: string, src: string): string => {
     const attempts = retryCounts[id] ?? 0
-    return attempts > 0 ? `${src}?rt=${attempts}` : src
+    const optimizedSrc = getOptimizedSrc(src)
+    return attempts > 0 ? `${optimizedSrc}?rt=${attempts}` : optimizedSrc
   }
 
   // Calcular altura máxima basada en el final de la sección del video
@@ -177,7 +245,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
         // NO transform - the parent #fixed-layout already handles scaling
       }}
     >
-      {OVERLAY_FRAMES.filter((f) => f.visible !== false && (visibleFrameIds.has(f.id))).map((frame) => {
+      {enableFrameLoading ? OVERLAY_FRAMES.filter((f) => f.visible !== false && (visibleFrameIds.has(f.id))).map((frame) => {
         const { id, src, fit = 'cover', x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetY = 0 } = frame
 
         // Position relative to the center of the base design (1920px width)
@@ -204,7 +272,16 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
         const isNearViewport = visibleFrameIds.has(id)
         const renderSrc = getSrcForRender(id, src)
-        const handleImgError: React.ReactEventHandler<HTMLImageElement> = () => {
+        const handleImgError: React.ReactEventHandler<HTMLImageElement> = (e) => {
+          const img = e.currentTarget
+          const currentSrc = img.src
+          
+          // If WebP failed, try PNG fallback immediately
+          if (currentSrc.includes('.webp') && !currentSrc.includes('?rt=')) {
+            img.src = src // Use original PNG
+            return
+          }
+          
           setRetryCounts((prev) => {
             const prevAttempts = prev[id] ?? 0
             if (prevAttempts >= MAX_RETRIES) return prev
@@ -228,7 +305,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
             onError={handleImgError}
           />
         )
-      })}
+      }) : null}
     </div>
   )
 }
