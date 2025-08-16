@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint, Eye, EyeOff } from "lucide-react"
+import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint, Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react"
 import ImageCarousel from "@/components/image-carousel"
 import FramesOverlay from "@/components/frames-overlay"
 
@@ -109,7 +109,7 @@ export default function TimelinePage() {
     if (!currentMediaItem || currentMediaItem.type !== 'image') return
     const interval = setInterval(() => {
       setMediaActiveIndex((prev) => (prev === selectedMedia.items.length - 1 ? 0 : prev + 1))
-    }, 3500)
+    }, 4000)
     return () => clearInterval(interval)
   }, [selectedMedia, currentMediaItem])
 
@@ -159,7 +159,7 @@ export default function TimelinePage() {
           }))
           return nextIndex
         })
-      }, 3500) // Match carousel timing
+      }, 4000) // Match carousel timing
 
       return () => clearInterval(interval)
     }
@@ -455,6 +455,32 @@ export default function TimelinePage() {
     }, 300) // Match transition duration
   }
 
+  const nextImage = () => {
+    if (!selectedImage.images || selectedImage.images.length <= 1) return
+    setModalImageIndex((prevIndex) => {
+      const nextIndex = prevIndex === selectedImage.images!.length - 1 ? 0 : prevIndex + 1
+      setSelectedImage(prev => ({ 
+        ...prev, 
+        src: selectedImage.images![nextIndex],
+        currentIndex: nextIndex 
+      }))
+      return nextIndex
+    })
+  }
+
+  const prevImage = () => {
+    if (!selectedImage.images || selectedImage.images.length <= 1) return
+    setModalImageIndex((prevIndex) => {
+      const nextIndex = prevIndex === 0 ? selectedImage.images!.length - 1 : prevIndex - 1
+      setSelectedImage(prev => ({ 
+        ...prev, 
+        src: selectedImage.images![nextIndex],
+        currentIndex: nextIndex 
+      }))
+      return nextIndex
+    })
+  }
+
   const openVideoFromCarousel = (_videoSrc: string, rect: DOMRect) => {
     setSelectedVideo({ src: _videoSrc, rect })
   }
@@ -632,6 +658,16 @@ export default function TimelinePage() {
       setIsClosingMedia(false)
       setMediaActiveIndex(0)
     }, 300)
+  }
+
+  const nextMediaItem = () => {
+    if (!selectedMedia || selectedMedia.items.length <= 1) return
+    setMediaActiveIndex((prev) => (prev === selectedMedia.items.length - 1 ? 0 : prev + 1))
+  }
+
+  const prevMediaItem = () => {
+    if (!selectedMedia || selectedMedia.items.length <= 1) return
+    setMediaActiveIndex((prev) => (prev === 0 ? selectedMedia.items.length - 1 : prev - 1))
   }
 
   return (
@@ -835,6 +871,39 @@ export default function TimelinePage() {
             >
               <X className="w-6 h-6" />
             </button>
+            
+            {/* Navigation buttons for carousel */}
+            {selectedImage.images && selectedImage.images.length > 1 && (
+              <>
+                {/* Previous button */}
+                <button
+                  onClick={prevImage}
+                  className={`absolute w-8 h-8 bg-terracotta/80 hover:bg-terracotta rounded-full flex items-center justify-center shadow-lg text-ivory transition-all duration-300 hover:scale-110 ${isAnimating && !isClosing ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+                  style={{
+                    top: '50%',
+                    left: '20px',
+                    transform: 'translateY(-50%)',
+                    zIndex: 101
+                  }}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                
+                {/* Next button */}
+                <button
+                  onClick={nextImage}
+                  className={`absolute w-8 h-8 bg-terracotta/80 hover:bg-terracotta rounded-full flex items-center justify-center shadow-lg text-ivory transition-all duration-300 hover:scale-110 ${isAnimating && !isClosing ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+                  style={{
+                    top: '50%',
+                    right: '20px',
+                    transform: 'translateY(-50%)',
+                    zIndex: 101
+                  }}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
         </div>
         ),
@@ -931,6 +1000,39 @@ export default function TimelinePage() {
               >
                 <X className="w-6 h-6" />
               </button>
+              
+              {/* Navigation buttons for unified media carousel */}
+              {selectedMedia && selectedMedia.items.length > 1 && (
+                <>
+                  {/* Previous button */}
+                  <button
+                    onClick={prevMediaItem}
+                    className={`absolute w-8 h-8 bg-terracotta/80 hover:bg-terracotta rounded-full flex items-center justify-center shadow-lg text-ivory transition-all duration-300 hover:scale-110 ${isAnimatingMedia && !isClosingMedia ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+                    style={{
+                      top: '50%',
+                      left: '20px',
+                      transform: 'translateY(-50%)',
+                      zIndex: 101
+                    }}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  
+                  {/* Next button */}
+                  <button
+                    onClick={nextMediaItem}
+                    className={`absolute w-8 h-8 bg-terracotta/80 hover:bg-terracotta rounded-full flex items-center justify-center shadow-lg text-ivory transition-all duration-300 hover:scale-110 ${isAnimatingMedia && !isClosingMedia ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+                    style={{
+                      top: '50%',
+                      right: '20px',
+                      transform: 'translateY(-50%)',
+                      zIndex: 101
+                    }}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              )}
             </div>
         </div>
         ),
@@ -943,7 +1045,7 @@ export default function TimelinePage() {
           ref={heroRef}
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
-            backgroundImage: `url('/imagen_principal.jpeg')`,
+            backgroundImage: `url('/nueva_imagenprincipal.png')`,
           }}
         />
         <div className="absolute inset-0 bg-black/10" />
@@ -1336,6 +1438,7 @@ export default function TimelinePage() {
                       { type: 'image', src: '/ilun/ILUN_01.jpeg' },
                       { type: 'image', src: '/ilun_6.png' },
                       { type: 'video', src: 'https://res.cloudinary.com/dgevq0wwq/video/upload/v1755167850/VID-20250806-WA0000_cuzzkr.mp4' },
+                      { type: 'video', src: 'https://res.cloudinary.com/dgevq0wwq/video/upload/v1755357104/VID-20250816-WA0014_fwf3ov.mp4' },
                       { type: 'image', src: '/ilun/ILUN6.png' },
                       { type: 'image', src: '/ilun/ILUN7.png' },
                       { type: 'image', src: '/ilun/ILUN8.png' },

@@ -38,8 +38,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     )
     setSlowConnection(isSlowConnection)
 
-    // Moderate delay for frame loading to avoid blocking critical resources
-    const delay = isSlowConnection ? 6000 : (isMobile ? 2000 : 500)
+    // DEBUG: Aggressive delay reduction for testing
+    const delay = isSlowConnection ? 3000 : (isMobile ? 1000 : 200)
     
     // Also wait for user interaction to ensure critical content loads first
     let hasUserInteracted = false
@@ -57,6 +57,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
     })
     
     const timer = setTimeout(() => {
+      console.log(`[FRAMES] Enabling frame loading after ${delay}ms delay`)
       setEnableFrameLoading(true)
     }, delay)
 
@@ -70,16 +71,31 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
   // Virtualize frame rendering on mobile: only render frames near viewport
   useEffect(() => {
-    if (!enableFrameLoading) return
+    if (!enableFrameLoading) {
+      console.log(`[FRAMES] Frame loading not enabled yet`)
+      return
+    }
+
+    console.log(`[FRAMES] Initializing frame loading, isMobile: ${isMobile}`)
 
     if (!isMobile) {
       // Render all frames on desktop
-      setVisibleFrameIds(new Set(OVERLAY_FRAMES.filter(f => f.visible !== false).map(f => f.id)))
+      const allFrameIds = OVERLAY_FRAMES.filter(f => f.visible !== false).map(f => f.id)
+      console.log(`[FRAMES] Desktop - rendering all frames:`, allFrameIds)
+      setVisibleFrameIds(new Set(allFrameIds))
       // Prefetch all frames (sequentially via loop, with retry)
       OVERLAY_FRAMES.forEach((f) => ensurePrefetch(f.id, f.src))
       return
     }
 
+    // DEBUG: For now, render ALL frames on mobile to test if virtualization is the issue
+    console.log(`[FRAMES] Mobile - rendering ALL frames for debugging`)
+    const allFrameIds = OVERLAY_FRAMES.filter(f => f.visible !== false).map(f => f.id)
+    setVisibleFrameIds(new Set(allFrameIds))
+    OVERLAY_FRAMES.forEach((f) => ensurePrefetch(f.id, f.src))
+    return
+
+    // ORIGINAL virtualization code (commented for testing)
     const PRELOAD_MARGIN = 1200 // px before/after viewport
 
     const updateVisible = () => {
@@ -128,7 +144,9 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const getOptimizedSrc = (src: string): string => {
     // Now we have WebP files, try them first for better compression
     if (src.endsWith('.png')) {
-      return src.replace('.png', '.webp')
+      const webpSrc = src.replace('.png', '.webp')
+      console.log(`[FRAMES] Converting ${src} → ${webpSrc}`)
+      return webpSrc
     }
     return src
   }

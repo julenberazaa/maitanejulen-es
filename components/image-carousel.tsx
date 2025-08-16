@@ -40,7 +40,7 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
 
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex === totalItems - 1 ? 0 : prevIndex + 1))
-    }, 3500)
+    }, 4000)
     return () => clearInterval(interval)
   }, [totalItems, isVideoActive])
 
