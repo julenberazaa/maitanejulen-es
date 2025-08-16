@@ -139,14 +139,20 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
   }, [])
 
-  const MAX_RETRIES = 3
+  const MAX_RETRIES = isMobile ? 5 : 3  // More retries for mobile WebP-only strategy
 
-  const getOptimizedSrc = (src: string): string => {
-    // Now we have WebP files, try them first for better compression
+  const getOptimizedSrc = (src: string, forMobile: boolean = isMobile): string => {
     if (src.endsWith('.png')) {
       const webpSrc = src.replace('.png', '.webp')
-      console.log(`[FRAMES] Converting ${src} → ${webpSrc}`)
-      return webpSrc
+      if (forMobile) {
+        // MOBILE: ONLY WebP, never fallback to heavy PNG
+        console.log(`[FRAMES] Mobile - FORCING WebP: ${src} → ${webpSrc}`)
+        return webpSrc
+      } else {
+        // DESKTOP: Try WebP first, allow PNG fallback
+        console.log(`[FRAMES] Desktop - trying WebP: ${src} → ${webpSrc}`)
+        return webpSrc
+      }
     }
     return src
   }
@@ -159,27 +165,37 @@ export default function FramesOverlay(): React.JSX.Element | null {
     if (attempts >= MAX_RETRIES) return
 
     const start = () => {
-      // Try WebP first, fallback to PNG
-      const optimizedSrc = getOptimizedSrc(src)
-      const cacheBustSrc = attempts > 0 ? `${optimizedSrc}?pf=${attempts}` : optimizedSrc
+      const optimizedSrc = getOptimizedSrc(src, isMobile)
+      // Aggressive cache busting for mobile WebP
+      const cacheBustSrc = attempts > 0 ? `${optimizedSrc}?retry=${attempts}&t=${Date.now()}` : optimizedSrc
       const img = new Image()
       img.decoding = 'async' as any
       img.loading = 'eager' as any
       
       const onLoad = () => {
+        console.log(`[FRAMES] Successfully loaded: ${cacheBustSrc}`)
         setPrefetchedIds((prev) => new Set(prev).add(id))
         delete prefetchTimersRef.current[id]
       }
       
       const onError = () => {
-        // If WebP fails, try original PNG
-        if (optimizedSrc !== src && attempts === 0) {
-          const fallbackImg = new Image()
-          fallbackImg.src = src
-          fallbackImg.onload = onLoad
-          fallbackImg.onerror = scheduleRetry
-        } else {
+        console.warn(`[FRAMES] Failed to load: ${cacheBustSrc}`)
+        
+        if (isMobile) {
+          // MOBILE: NO PNG fallback, just retry WebP with more aggressive cache busting
+          console.log(`[FRAMES] Mobile - retrying WebP only (attempt ${attempts + 1}/${MAX_RETRIES})`)
           scheduleRetry()
+        } else {
+          // DESKTOP: Allow PNG fallback
+          if (optimizedSrc !== src && attempts === 0) {
+            console.log(`[FRAMES] Desktop - trying PNG fallback: ${src}`)
+            const fallbackImg = new Image()
+            fallbackImg.src = src
+            fallbackImg.onload = onLoad
+            fallbackImg.onerror = scheduleRetry
+          } else {
+            scheduleRetry()
+          }
         }
       }
       
@@ -191,11 +207,14 @@ export default function FramesOverlay(): React.JSX.Element | null {
     const scheduleRetry = () => {
       const nextAttempt = (retryCounts[id] ?? 0) + 1
       if (nextAttempt > MAX_RETRIES) {
+        console.error(`[FRAMES] Max retries reached for ${id}, giving up`)
         delete prefetchTimersRef.current[id]
         return
       }
       setRetryCounts((prev) => ({ ...prev, [id]: nextAttempt }))
-      const backoff = Math.min(2000 * nextAttempt, 6000)
+      // More aggressive retries for mobile (shorter backoff)
+      const backoff = isMobile ? Math.min(1500 * nextAttempt, 4000) : Math.min(2000 * nextAttempt, 6000)
+      console.log(`[FRAMES] Scheduling retry ${nextAttempt}/${MAX_RETRIES} for ${id} in ${backoff}ms`)
       const timer = window.setTimeout(() => {
         delete prefetchTimersRef.current[id]
         ensurePrefetch(id, src)
@@ -209,8 +228,14 @@ export default function FramesOverlay(): React.JSX.Element | null {
 
   const getSrcForRender = (id: string, src: string): string => {
     const attempts = retryCounts[id] ?? 0
-    const optimizedSrc = getOptimizedSrc(src)
-    return attempts > 0 ? `${optimizedSrc}?rt=${attempts}` : optimizedSrc
+    const optimizedSrc = getOptimizedSrc(src, isMobile)
+    // Enhanced cache busting for mobile
+    if (attempts > 0) {
+      return isMobile 
+        ? `${optimizedSrc}?mobile=1&rt=${attempts}&t=${Date.now()}`
+        : `${optimizedSrc}?rt=${attempts}`
+    }
+    return isMobile ? `${optimizedSrc}?mobile=1` : optimizedSrc
   }
 
   // Calcular altura máxima basada en el final de la sección del video
@@ -294,22 +319,42 @@ export default function FramesOverlay(): React.JSX.Element | null {
           const img = e.currentTarget
           const currentSrc = img.src
           
-          // If WebP failed, try PNG fallback immediately
-          if (currentSrc.includes('.webp') && !currentSrc.includes('?rt=')) {
-            console.log(`WebP failed for ${id}, trying PNG fallback`)
-            img.src = src // Use original PNG
-            return
+          console.warn(`[FRAMES] Image error for ${id}: ${currentSrc}`)
+          
+          if (isMobile) {
+            // MOBILE: NEVER fallback to PNG, only retry WebP
+            console.log(`[FRAMES] Mobile - retrying WebP for ${id}`)
+            setRetryCounts((prev) => {
+              const prevAttempts = prev[id] ?? 0
+              if (prevAttempts >= MAX_RETRIES) {
+                console.error(`[FRAMES] Mobile - giving up on ${id} after ${MAX_RETRIES} attempts`)
+                return prev
+              }
+              const next = { ...prev, [id]: prevAttempts + 1 }
+              return next
+            })
+            // Force reload with new cache-buster
+            setTimeout(() => {
+              img.src = getSrcForRender(id, src)
+            }, 500)
+          } else {
+            // DESKTOP: Allow PNG fallback only once
+            if (currentSrc.includes('.webp') && !currentSrc.includes('?rt=')) {
+              console.log(`[FRAMES] Desktop - WebP failed for ${id}, trying PNG fallback`)
+              img.src = src // Use original PNG
+              return
+            }
+            
+            console.warn(`[FRAMES] Desktop - frame loading failed after fallback: ${id}`)
+            setRetryCounts((prev) => {
+              const prevAttempts = prev[id] ?? 0
+              if (prevAttempts >= MAX_RETRIES) return prev
+              const next = { ...prev, [id]: prevAttempts + 1 }
+              return next
+            })
           }
           
-          console.warn(`Frame loading failed after fallback: ${id}`, currentSrc)
-          
-          setRetryCounts((prev) => {
-            const prevAttempts = prev[id] ?? 0
-            if (prevAttempts >= MAX_RETRIES) return prev
-            const next = { ...prev, [id]: prevAttempts + 1 }
-            return next
-          })
-          // Also schedule a background prefetch retry
+          // Background prefetch retry for both mobile and desktop
           ensurePrefetch(id, src)
         }
 

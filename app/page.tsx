@@ -1045,7 +1045,7 @@ export default function TimelinePage() {
           ref={heroRef}
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
-            backgroundImage: `url('/nueva_imagenprincipal.png')`,
+            backgroundImage: `url('/2_9_imageninicial.png')`,
           }}
         />
         <div className="absolute inset-0 bg-black/10" />
@@ -1401,7 +1401,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-terracotta">Independizarse</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Llegó la primera llave compartida y con ella las pequeñas grandes decisiones: pintar la pared del salón, elegir una mesa con historia y aprender a combinar agendas y silencios. El piso se convirtió en hogar cuando entendieron que el mejor lugar siempre era el que construían juntos.
+              Tras 12 años juntos, con Julen asentado en su trabajo y Maitane centrada en su segundo MIR, sintieron que necesitaban más tiempo y decidieron buscar su primer "nidito de amor". Vieron la opción de instalarse en un piso de la prima de Maitane, antes de su abuela, y tras adaptarlo iniciaron su vida como pareja independizada. Todo marchó de maravilla, eran felices y empezaron a vislumbrar sus años compartiéndolo todo. Maitane realizó el examen que le abrió la posibilidad de quedarse en Bilbao y añadieron a la pareja algo que les dio un plus de felicidad, Ilun.
             </p>
           </div>
         </section>
@@ -1416,7 +1416,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-moss">Ilun</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Entonces apareció Ilun, un torbellino negro de ojos dulces. Con él llegaron paseos bajo la lluvia, sofás compartidos y risas mañaneras. No tardaron en darse cuenta de que Ilun no llenó la casa: la multiplicó.
+              Ilun nació el 25 de agosto de 2021. Antes ya habían decidido que querían un labrador retriever chocolate. Lo recogieron en Espinosa de los Monteros y camino a casa ya estaban llenos de amor. La familia se llevó una gran sorpresa al encontrarlo en su camita en la casa de Trauko. De cachorro hizo travesuras pero le enseñaron a comportarse para una buena convivencia. Lo más difícil sigue siendo que mantenga la compostura con comida cerca. Tras cuatro años sigue siendo un amor. Es dócil, juguetón, tranquilo y sociable, se adapta a todo y puede ir a cualquier sitio. Julen y Maitane disfrutan de su compañía y él les muestra lo feliz que es. Con Ilun son una pareja de tres.
             </p>
           </div>
           <div className="col-span-6">
