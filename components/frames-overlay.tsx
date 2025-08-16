@@ -241,34 +241,45 @@ export default function FramesOverlay(): React.JSX.Element | null {
   // Calcular altura máxima basada en el final de la sección del video
   useEffect(() => {
     const updateContainerHeight = () => {
-      const finalSection = document.getElementById('final-video-section')
-      if (finalSection) {
-        const rect = finalSection.getBoundingClientRect()
-        const finalBottom = window.scrollY + rect.bottom
-        setContainerHeight(`${finalBottom}px`)
-      }
+      // Altura total robusta del documento (no depende de una sección específica)
+      const doc = document.documentElement
+      const body = document.body
+      const totalHeight = Math.max(
+        doc.scrollHeight,
+        doc.offsetHeight,
+        doc.clientHeight,
+        body ? body.scrollHeight : 0,
+        body ? body.offsetHeight : 0
+      )
+      setContainerHeight(`${totalHeight}px`)
     }
 
-    // Calcular inicialmente y en cambios de tamaño
+    // Cálculo inicial y en eventos relevantes
     updateContainerHeight()
-    
-    const resizeObserver = new ResizeObserver(updateContainerHeight)
-    const finalSection = document.getElementById('final-video-section')
-    if (finalSection) {
-      resizeObserver.observe(finalSection)
-    }
 
-    window.addEventListener('resize', updateContainerHeight)
-    window.addEventListener('load', updateContainerHeight)
-    
+    const onResize = () => updateContainerHeight()
+    const onOrientationChange = () => setTimeout(updateContainerHeight, 100)
+    const onLoad = () => updateContainerHeight()
+
+    window.addEventListener('resize', onResize, { passive: true })
+    window.addEventListener('orientationchange', onOrientationChange)
+    window.addEventListener('load', onLoad)
+
+    // Observa cambios en el DOM que puedan alterar la altura (imágenes que aparecen, etc.)
+    const mutationObserver = new MutationObserver(() => {
+      updateContainerHeight()
+    })
+    mutationObserver.observe(document.body, { childList: true, subtree: true, attributes: false })
+
     // Recalcular en varias pasadas para cubrir cargas diferidas
-    const timers = [50, 200, 600, 1200].map(ms => setTimeout(updateContainerHeight, ms))
+    const timers = [50, 200, 600, 1200, 2000].map(ms => setTimeout(updateContainerHeight, ms))
 
     return () => {
       timers.forEach(clearTimeout)
-      window.removeEventListener('resize', updateContainerHeight)
-      window.removeEventListener('load', updateContainerHeight)
-      resizeObserver.disconnect()
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onOrientationChange)
+      window.removeEventListener('load', onLoad)
+      mutationObserver.disconnect()
     }
   }, [])
   return (
