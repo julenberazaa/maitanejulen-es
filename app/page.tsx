@@ -652,25 +652,27 @@ export default function TimelinePage() {
             >
               <div className="flex items-center">
                 <div className="bg-terracotta rounded-full p-1.5 flex items-center">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={inputPass}
-                    onChange={(e) => setInputPass(e.target.value)}
-                    placeholder="Contraseña"
-                    className="rounded-full bg-white text-midnight placeholder-midnight/60 px-6 h-12 w-[260px] focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="ml-2 bg-white text-midnight rounded-full w-10 h-10 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
-                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={inputPass}
+                      onChange={(e) => setInputPass(e.target.value)}
+                      placeholder="Contraseña"
+                      className="rounded-full bg-white text-midnight placeholder-midnight/60 pl-6 pr-12 h-12 w-[260px] focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-midnight/60 hover:text-midnight active:scale-95 hover:scale-110 transition-all focus:outline-none"
+                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
                   <button
                     type="button"
                     className="ml-2 bg-terracotta text-ivory rounded-full w-12 h-12 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
@@ -718,28 +720,30 @@ export default function TimelinePage() {
               <div className="flex items-center">
                 {/* Contenedor terracotta */}
                 <div className="bg-terracotta rounded-full p-1.5 flex items-center">
-                  {/* Input blanco */}
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={inputPass}
-                    onChange={(e) => setInputPass(e.target.value)}
-                    placeholder="Contraseña"
-                    className="rounded-full bg-white text-midnight placeholder-midnight/60 px-6 h-12 w-[260px] focus:outline-none"
-                    autoFocus
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleOverlaySubmit() }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="ml-2 bg-white text-midnight rounded-full w-10 h-10 flex items-center justify-center active:scale-95 hover:scale-110 transition-transform focus:outline-none"
-                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
+                  <div className="relative">
+                    {/* Input blanco */}
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={inputPass}
+                      onChange={(e) => setInputPass(e.target.value)}
+                      placeholder="Contraseña"
+                      className="rounded-full bg-white text-midnight placeholder-midnight/60 pl-6 pr-12 h-12 w-[260px] focus:outline-none"
+                      autoFocus
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleOverlaySubmit() }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-midnight/60 hover:text-midnight active:scale-95 hover:scale-110 transition-all focus:outline-none"
+                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
                   {/* Botón circular */}
                   <button
                     type="submit"
