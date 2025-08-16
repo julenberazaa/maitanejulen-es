@@ -38,8 +38,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     )
     setSlowConnection(isSlowConnection)
 
-    // DEBUG: Aggressive delay reduction for testing
-    const delay = isSlowConnection ? 3000 : (isMobile ? 1000 : 200)
+    // Minimal delay since component is only rendered after overlay is hidden
+    const delay = isSlowConnection ? 2000 : (isMobile ? 500 : 100)
     
     // Also wait for user interaction to ensure critical content loads first
     let hasUserInteracted = false

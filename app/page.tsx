@@ -810,7 +810,7 @@ export default function TimelinePage() {
         </div>
       ), document.body)}
       {/* Static frames overlay, above base content but below modal/video */}
-      <FramesOverlay />
+      {!overlayVisible && <FramesOverlay />}
       {/* Image Modal via portal to escape transformed ancestors */}
       {selectedImage.src && createPortal(
         (
