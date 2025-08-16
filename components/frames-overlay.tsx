@@ -38,8 +38,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     )
     setSlowConnection(isSlowConnection)
 
-    // Aggressive delay for frame loading to avoid blocking critical resources
-    const delay = isSlowConnection ? 12000 : (isMobile ? 5000 : 1000)
+    // Moderate delay for frame loading to avoid blocking critical resources
+    const delay = isSlowConnection ? 6000 : (isMobile ? 2000 : 500)
     
     // Also wait for user interaction to ensure critical content loads first
     let hasUserInteracted = false
@@ -126,7 +126,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const MAX_RETRIES = 3
 
   const getOptimizedSrc = (src: string): string => {
-    // Try WebP first for better compression
+    // Now we have WebP files, try them first for better compression
     if (src.endsWith('.png')) {
       return src.replace('.png', '.webp')
     }
@@ -278,9 +278,12 @@ export default function FramesOverlay(): React.JSX.Element | null {
           
           // If WebP failed, try PNG fallback immediately
           if (currentSrc.includes('.webp') && !currentSrc.includes('?rt=')) {
+            console.log(`WebP failed for ${id}, trying PNG fallback`)
             img.src = src // Use original PNG
             return
           }
+          
+          console.warn(`Frame loading failed after fallback: ${id}`, currentSrc)
           
           setRetryCounts((prev) => {
             const prevAttempts = prev[id] ?? 0

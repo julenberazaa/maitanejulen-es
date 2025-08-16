@@ -943,7 +943,7 @@ export default function TimelinePage() {
           ref={heroRef}
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
-            backgroundImage: `url('/a10.jpg')`,
+            backgroundImage: `url('/imagen_principal.jpeg')`,
           }}
         />
         <div className="absolute inset-0 bg-black/10" />
@@ -1111,6 +1111,8 @@ export default function TimelinePage() {
                     images={[
                       "/estudios/ESTUDIOS.jpeg",
                       "/estudios/ESTUDIOS.png",
+                      "/estudios_.png",
+                      "/estudios_2.png",
                       "/mir/MIR4.jpeg",
                     ]}
                     alt="Estudios universitarios"
@@ -1242,6 +1244,8 @@ export default function TimelinePage() {
                     images={[
                       "/hobbies/HOBBIES.jpeg",
                       "/hobbies/HOBBIES.png",
+                      "/hobbie_.png",
+                      "/hobbie_2.png",
                       "/hobbies/HOBBIE_FUTBOL.jpeg",
                     ]}
                     alt="Hobbies"
@@ -1321,10 +1325,16 @@ export default function TimelinePage() {
                     media={[
                       { type: 'image', src: '/ilun/ILUN.png' },
                       { type: 'image', src: '/ilun/ILUN2.png' },
+                      { type: 'image', src: '/ilun_.jpeg' },
+                      { type: 'image', src: '/ilun_2.png' },
                       { type: 'image', src: '/ilun/ILUN3.png' },
+                      { type: 'image', src: '/ilun_3.png' },
                       { type: 'image', src: '/ilun/ILUN4.png' },
+                      { type: 'image', src: '/ilun_4.png' },
                       { type: 'image', src: '/ilun/ILUN5.png' },
+                      { type: 'image', src: '/ilun_5.png' },
                       { type: 'image', src: '/ilun/ILUN_01.jpeg' },
+                      { type: 'image', src: '/ilun_6.png' },
                       { type: 'video', src: 'https://res.cloudinary.com/dgevq0wwq/video/upload/v1755167850/VID-20250806-WA0000_cuzzkr.mp4' },
                       { type: 'image', src: '/ilun/ILUN6.png' },
                       { type: 'image', src: '/ilun/ILUN7.png' },
@@ -1379,7 +1389,7 @@ export default function TimelinePage() {
           <div className="col-span-6 order-2 pl-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-midnight mr-4">
-                <img src="/pedida/anillos.svg" className="w-6 h-5" alt="Anillos" />
+                <img src="/pedida/anillos.svg" className="w-6 h-4" alt="Anillos" />
               </div>
               <h3 className="text-5xl font-script text-midnight">Pedida de mano</h3>
             </div>
