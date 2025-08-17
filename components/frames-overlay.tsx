@@ -117,18 +117,35 @@ export default function FramesOverlay(): React.JSX.Element | null {
       return
     }
 
-    // ORIGINAL virtualization code
+    // ORIGINAL virtualization code (adjusted for fixed-layout scale)
     const PRELOAD_MARGIN = 1200 // px before/after viewport
+
+    const getFixedLayoutScale = (): number => {
+      const el = document.getElementById('fixed-layout')
+      if (!el) return 1
+      const style = window.getComputedStyle(el)
+      const t = style.transform
+      if (t && t !== 'none') {
+        const m = t.match(/matrix\(([^)]+)\)/)
+        if (m && m[1]) {
+          const parts = m[1].split(',').map(v => parseFloat(v.trim()))
+          if (!Number.isNaN(parts[0])) return parts[0]
+        }
+      }
+      return 1
+    }
 
     const updateVisible = () => {
       const currentScrollTop = window.scrollY || document.documentElement.scrollTop || 0
       const viewportHeight = window.innerHeight || 0
+      const scale = getFixedLayoutScale()
       const next = new Set<string>()
       const toPrefetchIds: string[] = []
       for (const frame of OVERLAY_FRAMES) {
         if (frame.visible === false) continue
         const finalY = (frame.y ?? 0) + (frame.mobileOffsetY ?? 0)
-        if (finalY >= currentScrollTop - PRELOAD_MARGIN && finalY <= currentScrollTop + viewportHeight + PRELOAD_MARGIN) {
+        const cssY = finalY * scale
+        if (cssY >= currentScrollTop - PRELOAD_MARGIN && cssY <= currentScrollTop + viewportHeight + PRELOAD_MARGIN) {
           next.add(frame.id)
           toPrefetchIds.push(frame.id)
         }
