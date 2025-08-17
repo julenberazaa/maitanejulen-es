@@ -121,7 +121,7 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
                 src={item.src}
                 alt={`${alt} - Imagen ${index + 1}`}
                 draggable={false}
-                className={`transition-transform duration-500 ease-in-out ${index === activeIndex ? 'hover:scale-105' : ''}`}
+                className={`transition-transform duration-500 ease-in-out transform-gpu will-change-transform ${index === activeIndex ? 'hover:scale-105' : ''}`}
                 style={commonStyle}
                 loading="lazy"
                 decoding="async"
@@ -136,7 +136,7 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
               playsInline
               controls={false}
               muted
-              className={`transition-transform duration-500 ease-in-out ${index === activeIndex ? 'hover:scale-105' : ''}`}
+              className={`transition-transform duration-500 ease-in-out transform-gpu will-change-transform ${index === activeIndex ? 'hover:scale-105' : ''}`}
               style={commonStyle}
               preload={index === activeIndex ? 'auto' : 'metadata'}
             />

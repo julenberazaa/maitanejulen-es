@@ -1502,7 +1502,7 @@ export default function TimelinePage() {
           <div className="col-span-6 order-2 pl-12">
             <div className="flex items-center mb-6">
               <div className="timeline-icon-circle bg-midnight mr-4">
-                <img src="/pedida/anillos.svg" className="w-6 h-4" alt="Anillos" />
+                <img src="/pedida/anillos.svg" className="w-7 h-5" alt="Anillos" />
               </div>
               <h3 className="text-5xl font-script text-midnight">Pedida de mano</h3>
             </div>

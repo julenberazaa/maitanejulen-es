@@ -36,9 +36,9 @@ export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Hobbies
   { id: 'carousel-frame-anchor-hobbies', src: '/frames/frame-05.png', x: 158, y: 4218, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.50, mobileOffsetY: 0, visible: true },
   // Independizarse
-  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-06.png', x: -496, y: 4840, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-06.png', x: -494, y: 4858, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, mobileOffsetY: 0, visible: true },
   // Ilun
-  { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 150, y: 5464, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 150, y: 5552, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
   // Pedida
-  { id: 'carousel-frame-anchor-pedida', src: '/frames/frame-04.png', x: -488, y: 6084, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.54, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-pedida', src: '/frames/frame-04.png', x: -488, y: 6304, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.54, mobileOffsetY: 0, visible: true },
 ]
