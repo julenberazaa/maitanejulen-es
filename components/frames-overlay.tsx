@@ -15,7 +15,6 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const [enableFrameLoading, setEnableFrameLoading] = useState(false)
   const [slowConnection, setSlowConnection] = useState(false)
   const prefetchTimersRef = useRef<Record<string, number>>({})
-  const [scale, setScale] = useState(1)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -89,14 +88,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
       return
     }
 
-    // DEBUG: For now, render ALL frames on mobile to test if virtualization is the issue
-    console.log(`[FRAMES] Mobile - rendering ALL frames for debugging`)
-    const allFrameIds = OVERLAY_FRAMES.filter(f => f.visible !== false).map(f => f.id)
-    setVisibleFrameIds(new Set(allFrameIds))
-    OVERLAY_FRAMES.forEach((f) => ensurePrefetch(f.id, f.src))
-    return
-
-    // ORIGINAL virtualization code (commented for testing)
+    // ORIGINAL virtualization code
     const PRELOAD_MARGIN = 1200 // px before/after viewport
 
     const updateVisible = () => {
@@ -239,14 +231,9 @@ export default function FramesOverlay(): React.JSX.Element | null {
     return isMobile ? `${optimizedSrc}?mobile=1` : optimizedSrc
   }
 
-  // Calcular escala al ancho del viewport y altura interna no escalada para evitar recortes
+  // Calcular altura del contenedor de forma robusta (sin aplicar transformaciones propias)
   useEffect(() => {
-    const updateScaleAndHeight = () => {
-      const viewportWidth = document.documentElement.clientWidth || window.innerWidth
-      const newScale = viewportWidth > 0 ? viewportWidth / BASE_DESIGN_WIDTH : 1
-      setScale(newScale)
-
-      // Altura total robusta del documento (visible) y convertirla al espacio no escalado
+    const updateContainerHeight = () => {
       const doc = document.documentElement
       const body = document.body
       const totalHeight = Math.max(
@@ -256,29 +243,25 @@ export default function FramesOverlay(): React.JSX.Element | null {
         body ? body.scrollHeight : 0,
         body ? body.offsetHeight : 0
       )
-      const unscaledHeight = newScale > 0 ? Math.ceil(totalHeight / newScale) : totalHeight
-      setContainerHeight(`${unscaledHeight}px`)
+      setContainerHeight(`${totalHeight}px`)
     }
 
-    // Cálculo inicial y en eventos relevantes
-    updateScaleAndHeight()
+    updateContainerHeight()
 
-    const onResize = () => updateScaleAndHeight()
-    const onOrientationChange = () => setTimeout(updateScaleAndHeight, 100)
-    const onLoad = () => updateScaleAndHeight()
+    const onResize = () => updateContainerHeight()
+    const onOrientationChange = () => setTimeout(updateContainerHeight, 100)
+    const onLoad = () => updateContainerHeight()
 
     window.addEventListener('resize', onResize, { passive: true })
     window.addEventListener('orientationchange', onOrientationChange)
     window.addEventListener('load', onLoad)
 
-    // Observa cambios en el DOM que puedan alterar la altura (imágenes que aparecen, etc.)
     const mutationObserver = new MutationObserver(() => {
-      updateScaleAndHeight()
+      updateContainerHeight()
     })
     mutationObserver.observe(document.body, { childList: true, subtree: true, attributes: false })
 
-    // Recalcular en varias pasadas para cubrir cargas diferidas
-    const timers = [50, 200, 600, 1200, 2000].map(ms => setTimeout(updateScaleAndHeight, ms))
+    const timers = [50, 200, 600, 1200, 2000].map(ms => setTimeout(updateContainerHeight, ms))
 
     return () => {
       timers.forEach(clearTimeout)
@@ -296,14 +279,13 @@ export default function FramesOverlay(): React.JSX.Element | null {
         top: 0,
         left: 0,
         width: `${BASE_DESIGN_WIDTH}px`, // Same as #fixed-layout base width
-        height: containerHeight, // Altura no escalada para evitar recortes tras aplicar transform
+        height: containerHeight, // Altura acorde a documento
         maxHeight: containerHeight,
         overflow: 'hidden', // Evita que frames absolutos alarguen el scroll por debajo del video
         overflowY: 'hidden', // Explícitamente bloquear scroll vertical
         pointerEvents: "none",
         zIndex: 50,
-        transform: `scale(${scale})`,
-        transformOrigin: 'top left',
+        // No transform: el layout de la página se encarga de la adaptación responsiva
       }}
     >
       {enableFrameLoading ? OVERLAY_FRAMES.filter((f) => f.visible !== false && (visibleFrameIds.has(f.id))).map((frame) => {
