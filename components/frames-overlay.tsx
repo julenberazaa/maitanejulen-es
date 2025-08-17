@@ -15,6 +15,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const [enableFrameLoading, setEnableFrameLoading] = useState(false)
   const [slowConnection, setSlowConnection] = useState(false)
   const prefetchTimersRef = useRef<Record<string, number>>({})
+  const [webpSupported, setWebpSupported] = useState<boolean | null>(null)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -68,6 +69,17 @@ export default function FramesOverlay(): React.JSX.Element | null {
       })
     }
   }, [isMobile])
+
+  // Detect WebP support at runtime
+  useEffect(() => {
+    let cancelled = false
+    const testImg = new Image()
+    testImg.onload = () => { if (!cancelled) setWebpSupported(true) }
+    testImg.onerror = () => { if (!cancelled) setWebpSupported(false) }
+    // 1x1 webp data URI
+    testImg.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBgAAAAwAQCdASoEAAQAAVAfCWkAQUxQAA=="
+    return () => { cancelled = true }
+  }, [])
 
   // Virtualize frame rendering on mobile: only render frames near viewport
   useEffect(() => {
@@ -132,22 +144,18 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
   }, [])
 
-  const MAX_RETRIES = isMobile ? 5 : 3  // More retries for mobile WebP-only strategy
+  const MAX_RETRIES = isMobile ? 4 : 3
 
   const getOptimizedSrc = (src: string, forMobile: boolean = isMobile): string => {
-    if (src.endsWith('.png')) {
-      const webpSrc = src.replace('.png', '.webp')
-      if (forMobile) {
-        // MOBILE: ONLY WebP, never fallback to heavy PNG
-        console.log(`[FRAMES] Mobile - FORCING WebP: ${src} → ${webpSrc}`)
-        return webpSrc
-      } else {
-        // DESKTOP: Try WebP first, allow PNG fallback
-        console.log(`[FRAMES] Desktop - trying WebP: ${src} → ${webpSrc}`)
-        return webpSrc
-      }
+    if (!src.endsWith('.png')) return src
+    const webpSrc = src.replace('.png', '.webp')
+    // Prefer WebP when supported; otherwise use PNG directly
+    if (forMobile) {
+      if (webpSupported === false) return src
+      return webpSrc
     }
-    return src
+    // Desktop: prefer webp
+    return webpSrc
   }
 
   const ensurePrefetch = (id: string, src: string) => {
@@ -173,23 +181,23 @@ export default function FramesOverlay(): React.JSX.Element | null {
       
       const onError = () => {
         console.warn(`[FRAMES] Failed to load: ${cacheBustSrc}`)
-        
-        if (isMobile) {
-          // MOBILE: NO PNG fallback, just retry WebP with more aggressive cache busting
-          console.log(`[FRAMES] Mobile - retrying WebP only (attempt ${attempts + 1}/${MAX_RETRIES})`)
-          scheduleRetry()
-        } else {
-          // DESKTOP: Allow PNG fallback
-          if (optimizedSrc !== src && attempts === 0) {
-            console.log(`[FRAMES] Desktop - trying PNG fallback: ${src}`)
-            const fallbackImg = new Image()
-            fallbackImg.src = src
-            fallbackImg.onload = onLoad
-            fallbackImg.onerror = scheduleRetry
-          } else {
-            scheduleRetry()
-          }
+        // If mobile without WebP support, don't loop: try PNG immediately
+        if (isMobile && webpSupported === false) {
+          const fallbackImg = new Image()
+          fallbackImg.src = src
+          fallbackImg.onload = onLoad
+          fallbackImg.onerror = scheduleRetry
+          return
         }
+        // If desktop or mobile with support: after first failure of WebP, try PNG fallback once
+        if (optimizedSrc !== src && attempts === 0) {
+          const fallbackImg = new Image()
+          fallbackImg.src = src
+          fallbackImg.onload = onLoad
+          fallbackImg.onerror = scheduleRetry
+          return
+        }
+        scheduleRetry()
       }
       
       img.addEventListener('load', onLoad, { once: true })
@@ -322,8 +330,12 @@ export default function FramesOverlay(): React.JSX.Element | null {
           console.warn(`[FRAMES] Image error for ${id}: ${currentSrc}`)
           
           if (isMobile) {
-            // MOBILE: NEVER fallback to PNG, only retry WebP
-            console.log(`[FRAMES] Mobile - retrying WebP for ${id}`)
+            // MOBILE: If no WebP support, switch to PNG immediately
+            if (webpSupported === false) {
+              img.src = src
+              return
+            }
+            // Otherwise retry with cache-buster; if repeated, PNG fallback will be attempted upstream
             setRetryCounts((prev) => {
               const prevAttempts = prev[id] ?? 0
               if (prevAttempts >= MAX_RETRIES) {
