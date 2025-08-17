@@ -1248,7 +1248,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-terracotta">Estudios universitarios</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Julen y Maitane se conocieron en la ikastola Kirikiño, donde estudiaron juntos. Julen cursó un grado en Publicidad y Recursos Humanos. Maitane, con vocación médica, afrontó un camino más duro: no logró la nota para Medicina, entró en Odontología y, tras un año, inició por fin Medicina. Fueron años exigentes: la distancia y el ritmo de estudio convertían cada encuentro en un esfuerzo compartido. Ella pasaba horas entre libros; él compaginaba clases con entrenamientos y partidos de fútbol.
+              Julen y Maitane se conocieron en la ikastola Kirikiño, donde estudiaron juntos. Julen cursó un grado en Publicidad y Recursos Humanos. Maitane, con vocación médica, afrontó un camino más duro: no logró la nota para Medicina, entró en Odontología y, tras un año, inició por fin Medicina. Fueron años exigentes📚: la distancia y el ritmo de estudio convertían cada encuentro en un esfuerzo compartido. Ella pasaba horas entre libros; él compaginaba clases con entrenamientos y partidos de fútbol⚽.
             </p>
           </div>
         </section>
@@ -1263,7 +1263,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-midnight">Oposiciones de policía · 2019-2022</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Al terminar el grado, Julen sorprendió a todos inscribiéndose a oposiciones de Policía Local de Bilbao, sin contarlo ni a su padre, que había ocupado ese puesto durante años. Se volcó: horas de estudio, recorridos por Bilbao para memorizar calles, apoyo de Maitane en el temario y entrenamiento físico riguroso. Incluso dejó el fútbol para evitar lesiones. Aprobó la oposición y, tras siete meses de academia, empezó de policía con 24 años.
+              Al terminar el grado, Julen sorprendió a todos inscribiéndose a oposiciones de Policía Local de Bilbao👮‍♂️, sin contarlo ni a su padre, que había ocupado ese puesto durante años. Se volcó: horas de estudio, recorridos por Bilbao para memorizar calles, apoyo de Maitane en el temario y entrenamiento físico riguroso. Incluso dejó el fútbol para evitar lesiones. Aprobó la oposición y, tras siete meses de academia, empezó de policía con 24 años💪.
             </p>
           </div>
           <div className="col-span-6">
@@ -1329,7 +1329,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-moss">MIR · 2020-2023</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Mientras tanto, Maitane seguía volcada en su carrera. La exigencia continuó tras titularse: para ejercer en la sanidad pública y quedarse cerca de Julen, necesitaba buena nota en el MIR. Eso implicó un año de estudio intensivo, casi sin pausas. Julen, cuando no trabajaba, aprovechaba cada respiro para acompañarla unos minutos y apoyarla. Aunque no logró el objetivo a la primera, repitió otro año con mayor serenidad. Fue una prueba de amor y compromiso mutuo.
+              Mientras tanto, Maitane seguía volcada en su carrera🩺. La exigencia continuó tras titularse: para ejercer en la sanidad pública y quedarse cerca de Julen, necesitaba buena nota en el MIR. Eso implicó un año de estudio intensivo📖, casi sin pausas. Julen, cuando no trabajaba, aprovechaba cada respiro para acompañarla unos minutos y apoyarla. Aunque no logró el objetivo a la primera, repitió otro año con mayor serenidad. Fue una prueba de amor y compromiso mutuo.
             </p>
           </div>
         </section>
@@ -1344,7 +1344,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-pine">Hobbies</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Los hobbies son clave para la salud física y mental: permiten salir de las “obligaciones” y disfrutar por elección. A lo largo de su vida, Julen y Maitane han tenido varios. A Maitane le gustan la decoración y la pintura, y durante años practicó equitación, actividad que añora y retomaría si pudiera. Hoy Julen dedica horas al crossfit, aunque durante mucho tiempo su gran pasión fue el fútbol: vivía pegado al balón y disfrutaba chutar y marcar.
+              Los hobbies son clave para la salud física y mental: permiten salir de las “obligaciones” y disfrutar por elección. A lo largo de su vida, Julen y Maitane han tenido varios. A Maitane le gustan la decoración y la pintura🎨, y durante años practicó equitación, actividad que añora y retomaría si pudiera. Hoy Julen dedica horas al crossfit, aunque durante mucho tiempo su gran pasión fue el fútbol⚽: vivía pegado al balón y disfrutaba chutar y marcar.
             </p>
           </div>
           <div className="col-span-6">
@@ -1411,7 +1411,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-terracotta">Independizarse</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Tras 12 años juntos, con Julen asentado en su trabajo y Maitane centrada en su segundo MIR, sintieron que necesitaban más tiempo y decidieron buscar su primer "nidito de amor". Vieron la opción de instalarse en un piso de la prima de Maitane, antes de su abuela, y tras adaptarlo iniciaron su vida como pareja independizada. Todo marchó de maravilla, eran felices y empezaron a vislumbrar sus años compartiéndolo todo. Maitane realizó el examen que le abrió la posibilidad de quedarse en Bilbao y añadieron a la pareja algo que les dio un plus de felicidad, Ilun.
+              Tras 12 años juntos, con Julen asentado en su trabajo y Maitane centrada en su segundo MIR, sintieron que necesitaban más tiempo y decidieron buscar su primer "nidito de amor"🏠. Vieron la opción de instalarse en un piso de la prima de Maitane, antes de su abuela, y tras adaptarlo iniciaron su vida como pareja independizada. Todo marchó de maravilla, eran felices y empezaron a vislumbrar sus años compartiéndolo todo. Maitane realizó el examen que le abrió la posibilidad de quedarse en Bilbao y añadieron a la pareja algo que les dio un plus de felicidad, Ilun🐶.
             </p>
           </div>
         </section>
@@ -1426,7 +1426,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-moss">Ilun</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Ilun nació el 25 de agosto de 2021. Antes ya habían decidido que querían un labrador retriever chocolate. Lo recogieron en Espinosa de los Monteros y camino a casa ya estaban llenos de amor. La familia se llevó una gran sorpresa al encontrarlo en su camita en la casa de Trauko. De cachorro hizo travesuras pero le enseñaron a comportarse para una buena convivencia. Lo más difícil sigue siendo que mantenga la compostura con comida cerca. Tras cuatro años sigue siendo un amor. Es dócil, juguetón, tranquilo y sociable, se adapta a todo y puede ir a cualquier sitio. Julen y Maitane disfrutan de su compañía y él les muestra lo feliz que es. Con Ilun son una pareja de tres.
+              Ilun nació el 25 de agosto de 2021🐾. Antes ya habían decidido que querían un labrador retriever chocolate🤎. Lo recogieron en Espinosa de los Monteros y camino a casa ya estaban llenos de amor. La familia se llevó una gran sorpresa al encontrarlo en su camita en la casa de Trauko. De cachorro hizo travesuras pero le enseñaron a comportarse para una buena convivencia. Lo más difícil sigue siendo que mantenga la compostura con comida cerca. Tras cuatro años sigue siendo un amor. Es dócil, juguetón, tranquilo y sociable, se adapta a todo y puede ir a cualquier sitio. Julen y Maitane disfrutan de su compañía y él les muestra lo feliz que es. Con Ilun son una pareja de tres.
             </p>
           </div>
           <div className="col-span-6">
@@ -1507,7 +1507,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-midnight">Pedida de mano</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              En cuanto tuvieron su vivienda en Bolueta, en febrero de 2022, Julen, Maitane e Ilun se mudaron. Antes de entrar distribuyeron el piso a su gusto y añadieron muebles, accesorios y detalles hasta crear un hogar acogedor y con personalidad para los tres. Además de disfrutarlo, han recibido a familia y amigos, que aprecian el piso y a sus anfitriones. Ya asentados, llegó el momento de avanzar. El 9 de enero de 2024, día que Maitane cumplía 29, Julen se arrodilló y le pidió matrimonio. Ella dijo que sí. Durante 19 meses han organizado el gran día. Hoy, 23 de agosto de 2025, nos reunimos para celebrar que su amor, nacido hace 16 años, sigue como al principio y con la ilusión de seguir haciendo grandes cosas juntos.
+              En cuanto tuvieron su vivienda en Bolueta, en febrero de 2022, Julen, Maitane e Ilun se mudaron. Antes de entrar distribuyeron el piso a su gusto y añadieron muebles, accesorios y detalles hasta crear un hogar acogedor y con personalidad para los tres. Además de disfrutarlo, han recibido a familia y amigos, que aprecian el piso y a sus anfitriones. Ya asentados, llegó el momento de avanzar. El 9 de enero de 2024, día que Maitane cumplía 29, Julen se arrodilló y le pidió matrimonio💍. Ella dijo que sí. Durante 19 meses han organizado el gran día. Hoy, 23 de agosto de 2025, nos reunimos para celebrar que su amor, nacido hace 16 años, sigue como al principio y con la ilusión de seguir haciendo grandes cosas juntos✨.
             </p>
           </div>
         </section>
