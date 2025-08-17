@@ -47,7 +47,7 @@ export default function FixedZoom() {
           fixedLayout.style.transform = `scale(${scale})`
           fixedLayout.style.transformOrigin = 'top left'
 
-          // Bloquear overflow horizontal. Scroll principal en html; ocultar scroll en body
+          // Scroll principal en html; ocultar en body
           document.documentElement.style.overflowX = 'hidden'
           document.documentElement.style.overflowY = 'auto'
           document.body.style.overflowX = 'hidden'
@@ -88,7 +88,7 @@ export default function FixedZoom() {
             wrapper.style.overflow = 'hidden'
             wrapper.style.overflowY = 'hidden'
             
-            // No fijar altura en html: dejar que sea auto para que el scroll funcione en html
+            // No fijar altura en html (dejar flujo natural)
             document.documentElement.style.height = ''
             document.documentElement.style.maxHeight = ''
             document.body.style.height = `${totalDocumentHeight}px`

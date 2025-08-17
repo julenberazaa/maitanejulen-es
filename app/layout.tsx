@@ -36,7 +36,7 @@ export default function RootLayout({
               margin: 0;
               padding: 0;
               overflow-x: hidden;
-              overflow-y: hidden; /* ocultar scroll en body */
+              overflow-y: hidden; /* ocultar barra en body */
               width: 100vw;
               /* HARD CUT controla la altura - no fijar min-height aquí */
               -webkit-overflow-scrolling: touch; /* suaviza en iOS */
