@@ -24,7 +24,7 @@ export default function RootLayout({
             /* Sistema de zoom fijo - CSS base */
             html {
               overflow-x: hidden;
-              overflow-y: hidden; /* ocultar barra en html */
+              overflow-y: auto; /* scroll principal en html */
               margin: 0;
               padding: 0;
               scroll-behavior: smooth; /* scroll suave */
@@ -36,7 +36,7 @@ export default function RootLayout({
               margin: 0;
               padding: 0;
               overflow-x: hidden;
-              overflow-y: auto; /* scroll principal en body */
+              overflow-y: hidden; /* ocultar scroll en body */
               width: 100vw;
               /* HARD CUT controla la altura - no fijar min-height aquí */
               -webkit-overflow-scrolling: touch; /* suaviza en iOS */
