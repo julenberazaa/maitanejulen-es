@@ -225,9 +225,18 @@ export default function TimelinePage() {
     }
   }, [overlayVisible])
 
-  // Leer permiso previo desde localStorage
+  // Leer permiso previo desde localStorage y omitir contraseña en localhost
   useEffect(() => {
     try {
+      const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
+      const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || /^192\.168\./.test(hostname) || /^10\./.test(hostname)
+
+      if (isLocalhost) {
+        try { localStorage.setItem('access-granted', '1') } catch {}
+        setOverlayVisible(false)
+        return
+      }
+
       const granted = localStorage.getItem('access-granted')
       if (granted === '1') setOverlayVisible(false)
     } catch {}
