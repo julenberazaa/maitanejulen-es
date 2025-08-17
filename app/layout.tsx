@@ -24,6 +24,7 @@ export default function RootLayout({
             /* Sistema de zoom fijo - CSS base */
             html {
               overflow-x: hidden;
+              overflow-y: hidden; /* evita segunda barra en html */
               margin: 0;
               padding: 0;
               scroll-behavior: smooth; /* scroll suave */

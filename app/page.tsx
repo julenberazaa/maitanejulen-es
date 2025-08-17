@@ -1379,6 +1379,7 @@ export default function TimelinePage() {
                       "/independizarse/INDEP4.png",
                       "/independizarse/INDEP5.png",
                       "/independizarse/INDEP6.png",
+                      "/independizarse/casa.png",
                     ]}
                     alt="Independizarse"
                     experienceId="independizarse"
@@ -1497,7 +1498,7 @@ export default function TimelinePage() {
               <h3 className="text-5xl font-script text-midnight">Pedida de mano</h3>
             </div>
             <p className="text-xl font-semibold leading-relaxed text-midnight/80 text-justify font-manuscript">
-              Sin focos ni guión, solo el rumor del mar y dos manos temblorosas. Una pregunta sencilla, una respuesta que lo cambia todo. Desde entonces, cada campanada les recuerda que el sí fue, es y será su mejor decisión.
+              En cuanto tuvieron su vivienda en Bolueta, en febrero de 2022, Julen, Maitane e Ilun se mudaron. Antes de entrar distribuyeron el piso a su gusto y añadieron muebles, accesorios y detalles hasta crear un hogar acogedor y con personalidad para los tres. Además de disfrutarlo, han recibido a familia y amigos, que aprecian el piso y a sus anfitriones. Ya asentados, llegó el momento de avanzar. El 9 de enero de 2024, día que Maitane cumplía 29, Julen se arrodilló y le pidió matrimonio. Ella dijo que sí. Durante 19 meses han organizado el gran día. Hoy, 23 de agosto de 2025, nos reunimos para celebrar que su amor, nacido hace 16 años, sigue como al principio y con la ilusión de seguir haciendo grandes cosas juntos.
             </p>
           </div>
         </section>

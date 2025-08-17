@@ -47,8 +47,9 @@ export default function FixedZoom() {
           fixedLayout.style.transform = `scale(${scale})`
           fixedLayout.style.transformOrigin = 'top left'
 
-          // Bloquear overflow horizontal global
+          // Bloquear overflow en html; el scroll vertical quedará solo en body
           document.documentElement.style.overflowX = 'hidden'
+          document.documentElement.style.overflowY = 'hidden'
           document.body.style.overflowX = 'hidden'
           document.documentElement.style.width = '100vw'
           document.body.style.width = '100vw'
