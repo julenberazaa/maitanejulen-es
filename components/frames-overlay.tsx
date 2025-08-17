@@ -273,8 +273,23 @@ export default function FramesOverlay(): React.JSX.Element | null {
     return isMobile ? `${optimizedSrc}?mobile=1` : optimizedSrc
   }
 
-  // Calcular altura del contenedor de forma robusta (sin aplicar transformaciones propias)
+  // Calcular altura del contenedor en espacio de diseño (dividir por escala de #fixed-layout)
   useEffect(() => {
+    const getFixedLayoutScale = (): number => {
+      const el = document.getElementById('fixed-layout')
+      if (!el) return 1
+      const style = window.getComputedStyle(el)
+      const t = style.transform
+      if (t && t !== 'none') {
+        const m = t.match(/matrix\(([^)]+)\)/)
+        if (m && m[1]) {
+          const parts = m[1].split(',').map(v => parseFloat(v.trim()))
+          if (!Number.isNaN(parts[0])) return parts[0]
+        }
+      }
+      return 1
+    }
+
     const updateContainerHeight = () => {
       const doc = document.documentElement
       const body = document.body
@@ -285,7 +300,9 @@ export default function FramesOverlay(): React.JSX.Element | null {
         body ? body.scrollHeight : 0,
         body ? body.offsetHeight : 0
       )
-      setContainerHeight(`${totalHeight}px`)
+      const scale = getFixedLayoutScale()
+      const designSpaceHeight = scale > 0 ? Math.ceil(totalHeight / scale) : totalHeight
+      setContainerHeight(`${designSpaceHeight}px`)
     }
 
     updateContainerHeight()
