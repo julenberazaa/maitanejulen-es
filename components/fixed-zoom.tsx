@@ -15,6 +15,17 @@ export default function FixedZoom() {
     let observerTimeout: NodeJS.Timeout | null = null
     let resizeObserver: ResizeObserver | null = null
 
+    let fixedZoomReadyDispatched = false
+
+    function dispatchFixedZoomReadyOnce() {
+      if (fixedZoomReadyDispatched) return
+      fixedZoomReadyDispatched = true
+      try {
+        ;(window as any).__fixedZoomReady = true
+        window.dispatchEvent(new CustomEvent('fixed-zoom-ready'))
+      } catch {}
+    }
+
     function applyZoom() {
       try {
         const documentWidth = document.documentElement.clientWidth
@@ -66,11 +77,16 @@ export default function FixedZoom() {
             document.body.style.maxHeight = `${totalDocumentHeight}px`
             document.body.style.overflow = 'hidden'
             document.body.style.overflowY = 'auto'
+
+            // Señal global: el primer corte de altura está listo
+            dispatchFixedZoomReadyOnce()
           } else {
             // Fallback si no encuentra la sección del video
             const visualHeight = Math.max(0, Math.ceil(fixedLayout.getBoundingClientRect().height))
             wrapper.style.height = `${visualHeight}px`
             wrapper.style.minHeight = `${visualHeight}px`
+            // También podemos despachar en fallback para no bloquear
+            dispatchFixedZoomReadyOnce()
           }
         }
       } catch (error) {

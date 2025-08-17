@@ -28,7 +28,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Detect slow connection and delay frame loading
+  // Detect slow connection and delay frame loading, but only after FixedZoom signals ready
   useEffect(() => {
     // Check connection speed
     const connection = (navigator as any)?.connection
@@ -39,8 +39,9 @@ export default function FramesOverlay(): React.JSX.Element | null {
     )
     setSlowConnection(isSlowConnection)
 
-    // Minimal delay since component is only rendered after overlay is hidden
-    const delay = isSlowConnection ? 2000 : (isMobile ? 500 : 100)
+    // Minimal delay once FixedZoom is ready (first hard cut applied)
+    const delay = isSlowConnection ? 1200 : (isMobile ? 400 : 100)
+    let cleanupFns: Array<() => void> = []
     
     // Also wait for user interaction to ensure critical content loads first
     let hasUserInteracted = false
@@ -56,17 +57,33 @@ export default function FramesOverlay(): React.JSX.Element | null {
     events.forEach(event => {
       window.addEventListener(event, enableOnInteraction, { once: true, passive: true })
     })
+    cleanupFns.push(() => events.forEach(event => window.removeEventListener(event, enableOnInteraction)))
     
-    const timer = setTimeout(() => {
-      console.log(`[FRAMES] Enabling frame loading after ${delay}ms delay`)
-      setEnableFrameLoading(true)
-    }, delay)
+    const enableAfterDelay = () => {
+      const t = setTimeout(() => {
+        setEnableFrameLoading(true)
+      }, delay)
+      cleanupFns.push(() => clearTimeout(t))
+    }
+
+    // If FixedZoom already signaled ready, proceed; else wait for the event
+    if ((window as any).__fixedZoomReady) {
+      enableAfterDelay()
+    } else {
+      const onReady = () => {
+        enableAfterDelay()
+      }
+      window.addEventListener('fixed-zoom-ready', onReady, { once: true })
+      cleanupFns.push(() => window.removeEventListener('fixed-zoom-ready', onReady))
+      // Safety fallback: if event never fires, still proceed after a max timeout
+      const safety = setTimeout(() => {
+        enableAfterDelay()
+      }, 2500)
+      cleanupFns.push(() => clearTimeout(safety))
+    }
 
     return () => {
-      clearTimeout(timer)
-      events.forEach(event => {
-        window.removeEventListener(event, enableOnInteraction)
-      })
+      cleanupFns.forEach(fn => { try { fn() } catch {} })
     }
   }, [isMobile])
 
@@ -297,7 +314,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
       }}
     >
       {enableFrameLoading ? OVERLAY_FRAMES.filter((f) => f.visible !== false && (visibleFrameIds.has(f.id))).map((frame) => {
-        const { id, src, fit = 'cover', x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetY = 0 } = frame
+        const { id, src, fit = 'contain', x = 0, y = 0, width, height, scaleX = 1, scaleY = 1, mobileOffsetY = 0 } = frame
 
         // Position relative to the center of the base design (1920px width)
         const baseCenterX = BASE_DESIGN_WIDTH / 2
