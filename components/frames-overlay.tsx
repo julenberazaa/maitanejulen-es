@@ -377,7 +377,6 @@ export default function FramesOverlay(): React.JSX.Element | null {
             src={renderSrc}
             alt=""
             style={style}
-            loading="lazy"
             decoding="async"
             fetchPriority={isNearViewport ? 'high' : (isMobile ? 'low' : 'auto')}
             onError={handleImgError}
