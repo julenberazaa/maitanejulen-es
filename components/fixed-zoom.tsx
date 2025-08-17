@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
+import { OVERLAY_FRAMES } from '@/lib/frame-config'
 
 export default function FixedZoom() {
   const [isClient, setIsClient] = useState(false)
@@ -61,7 +62,23 @@ export default function FixedZoom() {
             // Necesitamos convertir eso a posición absoluta en el documento
             const currentScrollY = window.scrollY
             const videoBottomAbsolute = currentScrollY + videoRect.bottom
-            const totalDocumentHeight = Math.max(0, Math.ceil(videoBottomAbsolute))
+
+            // Calcular el fondo absoluto requerido por los marcos (overlay)
+            const isMobileViewport = (window.innerWidth || 0) <= 768
+            let overlayBottomCSS = 0
+            try {
+              for (const frame of OVERLAY_FRAMES) {
+                if (frame.visible === false) continue
+                const yBase = (frame.y ?? 0) + (isMobileViewport ? (frame.mobileOffsetY ?? 0) : 0)
+                const heightBase = (frame.height ?? 400) * (frame.scaleY ?? 1)
+                const bottomBase = yBase + (heightBase / 2)
+                const bottomCSS = bottomBase * scale // convertir a coordenadas CSS
+                if (bottomCSS > overlayBottomCSS) overlayBottomCSS = bottomCSS
+              }
+            } catch {}
+
+            const framesBottomAbsolute = Math.max(0, Math.ceil(overlayBottomCSS))
+            const totalDocumentHeight = Math.max(0, Math.ceil(Math.max(videoBottomAbsolute, framesBottomAbsolute)))
             
             // FORZAR altura absoluta - HARD CUT sin excepciones
             wrapper.style.height = `${totalDocumentHeight}px`
@@ -83,8 +100,22 @@ export default function FixedZoom() {
           } else {
             // Fallback si no encuentra la sección del video
             const visualHeight = Math.max(0, Math.ceil(fixedLayout.getBoundingClientRect().height))
-            wrapper.style.height = `${visualHeight}px`
-            wrapper.style.minHeight = `${visualHeight}px`
+            // Considerar también la altura necesaria por marcos
+            const isMobileViewport = (window.innerWidth || 0) <= 768
+            let overlayBottomCSS = 0
+            try {
+              for (const frame of OVERLAY_FRAMES) {
+                if (frame.visible === false) continue
+                const yBase = (frame.y ?? 0) + (isMobileViewport ? (frame.mobileOffsetY ?? 0) : 0)
+                const heightBase = (frame.height ?? 400) * (frame.scaleY ?? 1)
+                const bottomBase = yBase + (heightBase / 2)
+                const bottomCSS = bottomBase * scale
+                if (bottomCSS > overlayBottomCSS) overlayBottomCSS = bottomCSS
+              }
+            } catch {}
+            const needed = Math.max(visualHeight, Math.ceil(overlayBottomCSS))
+            wrapper.style.height = `${needed}px`
+            wrapper.style.minHeight = `${needed}px`
             // También podemos despachar en fallback para no bloquear
             dispatchFixedZoomReadyOnce()
           }
