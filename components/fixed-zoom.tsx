@@ -88,11 +88,11 @@ export default function FixedZoom() {
             wrapper.style.overflow = 'hidden'
             wrapper.style.overflowY = 'hidden'
             
-            // No fijar altura en html (dejar flujo natural)
+            // No fijar altura en html/body para evitar barras duplicadas; el wrapper marca el alto
             document.documentElement.style.height = ''
             document.documentElement.style.maxHeight = ''
-            document.body.style.height = `${totalDocumentHeight}px`
-            document.body.style.maxHeight = `${totalDocumentHeight}px`
+            document.body.style.height = ''
+            document.body.style.maxHeight = ''
             document.body.style.overflow = 'hidden'
             document.body.style.overflowY = 'hidden'
 
