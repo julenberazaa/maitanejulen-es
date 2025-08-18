@@ -47,10 +47,7 @@ export default function FixedZoom() {
           fixedLayout.style.transform = `scale(${scale})`
           fixedLayout.style.transformOrigin = 'top left'
 
-          // Scroll principal en html; ocultar en body
-          document.documentElement.style.overflowX = 'hidden'
-          document.documentElement.style.overflowY = 'auto'
-          document.body.style.overflowX = 'hidden'
+          // Mantener anchos consistentes
           document.documentElement.style.width = '100vw'
           document.body.style.width = '100vw'
 
@@ -88,13 +85,25 @@ export default function FixedZoom() {
             wrapper.style.overflow = 'hidden'
             wrapper.style.overflowY = 'hidden'
             
-            // No fijar altura en html/body para evitar barras duplicadas; el wrapper marca el alto
-            document.documentElement.style.height = ''
-            document.documentElement.style.maxHeight = ''
-            document.body.style.height = ''
-            document.body.style.maxHeight = ''
-            document.body.style.overflow = 'hidden'
-            document.body.style.overflowY = 'hidden'
+            // Política de scroll por dispositivo
+            if ((window.innerWidth || 0) <= 768) {
+              // Móvil: CSS ya define html hidden y body auto; no tocar heights
+              document.documentElement.style.overflowY = 'hidden'
+              document.body.style.overflowY = 'auto'
+              document.documentElement.style.height = ''
+              document.documentElement.style.maxHeight = ''
+              document.body.style.height = ''
+              document.body.style.maxHeight = ''
+            } else {
+              // Desktop: solo body scrollea; html sin barra
+              document.documentElement.style.overflowY = 'hidden'
+              document.documentElement.style.height = '100%'
+              document.documentElement.style.maxHeight = ''
+              document.body.style.height = `${totalDocumentHeight}px`
+              document.body.style.maxHeight = `${totalDocumentHeight}px`
+              document.body.style.overflow = 'hidden'
+              document.body.style.overflowY = 'auto'
+            }
 
             // Señal global: el primer corte de altura está listo
             dispatchFixedZoomReadyOnce()

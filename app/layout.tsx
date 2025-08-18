@@ -24,7 +24,7 @@ export default function RootLayout({
             /* Sistema de zoom fijo - CSS base */
             html {
               overflow-x: hidden;
-              overflow-y: hidden; /* ocultar barra en html */
+              overflow-y: auto; /* por defecto, dejar scroll en html */
               margin: 0;
               padding: 0;
               scroll-behavior: smooth; /* scroll suave */
@@ -48,6 +48,7 @@ export default function RootLayout({
               width: 100vw;
               /* HARD CUT en FixedZoom controla la altura exacta */
               overflow-x: hidden; /* solo evita scroll horizontal */
+              overflow-y: hidden; /* evitamos scroll del wrapper */
             }
             
             #fixed-layout {

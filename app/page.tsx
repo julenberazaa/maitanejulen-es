@@ -64,14 +64,11 @@ export default function TimelinePage() {
     document.body.scrollTop = 0
 
     // Bloquear scroll durante el primer segundo para estabilizar marcos
-    const prevHtmlOverflow = document.documentElement.style.overflow
     const prevBodyOverflow = document.body.style.overflow
-    document.documentElement.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
     const unlock = setTimeout(() => {
       // Mantener bloqueo si el overlay sigue visible
       if (!overlayVisibleRef.current) {
-        document.documentElement.style.overflow = prevHtmlOverflow || ''
         document.body.style.overflow = prevBodyOverflow || ''
       }
     }, 1000)
