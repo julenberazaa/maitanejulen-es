@@ -243,15 +243,12 @@ export default function TimelinePage() {
     } catch {}
   }, [])
 
-  // Bloquear scroll mientras el overlay esté visible (robusto)
+  // Bloquear scroll mientras el overlay esté visible (Política scroller único: #scroll-root)
   useEffect(() => {
-    if (overlayVisible) {
-      document.documentElement.style.overflowY = 'hidden'
-      document.body.style.overflowY = 'hidden'
-    } else {
-      document.documentElement.style.overflowY = ''
-      document.body.style.overflowY = ''
-    }
+    const scroller = document.getElementById('scroll-root') as HTMLElement | null
+    if (!scroller) return
+    if (overlayVisible) scroller.style.overflowY = 'hidden'
+    else scroller.style.overflowY = 'auto'
   }, [overlayVisible])
 
   const handleOverlaySubmit = async (e?: React.FormEvent) => {

@@ -35,6 +35,7 @@ export default function FixedZoom() {
         const scale = viewport / EFFECTIVE_BASE_WIDTH
         const fixedLayout = document.getElementById('fixed-layout') as HTMLElement | null
         const wrapper = document.getElementById('fixed-layout-wrapper') as HTMLElement | null
+        const scroller = document.getElementById('scroll-root') as HTMLElement | null
         
         if (fixedLayout && wrapper) {
           // Fijar ancho base del lienzo
@@ -58,7 +59,7 @@ export default function FixedZoom() {
             const videoRect = finalSection.getBoundingClientRect()
             // videoRect.bottom da la posición final real de la sección en viewport
             // Necesitamos convertir eso a posición absoluta en el documento
-            const currentScrollY = window.scrollY
+            const currentScrollY = scroller ? scroller.scrollTop : window.scrollY
             const videoBottomAbsolute = currentScrollY + videoRect.bottom
 
             // Calcular el fondo absoluto requerido por los marcos (overlay)
@@ -85,7 +86,7 @@ export default function FixedZoom() {
             wrapper.style.overflow = 'hidden'
             wrapper.style.overflowY = 'hidden'
             
-            // No forzar alturas ni overflow en html/body; el wrapper marca el alto, CSS gobierna el scroll
+            // No forzar alturas/overflow en html; el wrapper marca el alto. Body scrollea por CSS
             document.documentElement.style.height = ''
             document.documentElement.style.maxHeight = ''
             document.body.style.height = ''

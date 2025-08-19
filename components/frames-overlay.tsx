@@ -117,7 +117,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
       return
     }
 
-    // ORIGINAL virtualization code (adjusted for fixed-layout scale)
+    // ORIGINAL virtualization code (adjusted for fixed-layout scale and custom scroller)
     const PRELOAD_MARGIN = 1200 // px before/after viewport
 
     const getFixedLayoutScale = (): number => {
@@ -135,9 +135,11 @@ export default function FramesOverlay(): React.JSX.Element | null {
       return 1
     }
 
+    const scroller = document.getElementById('scroll-root')
+
     const updateVisible = () => {
-      const currentScrollTop = window.scrollY || document.documentElement.scrollTop || 0
-      const viewportHeight = window.innerHeight || 0
+      const currentScrollTop = scroller ? scroller.scrollTop : (window.scrollY || document.documentElement.scrollTop || 0)
+      const viewportHeight = scroller ? scroller.clientHeight : (window.innerHeight || 0)
       const scale = getFixedLayoutScale()
       const next = new Set<string>()
       const toPrefetchIds: string[] = []
@@ -159,11 +161,13 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
 
     updateVisible()
-    window.addEventListener('scroll', updateVisible, { passive: true })
+    if (scroller) scroller.addEventListener('scroll', updateVisible, { passive: true })
+    else window.addEventListener('scroll', updateVisible, { passive: true })
     window.addEventListener('resize', updateVisible)
     const timers = [50, 200, 600].map(ms => setTimeout(updateVisible, ms))
     return () => {
-      window.removeEventListener('scroll', updateVisible)
+      if (scroller) scroller.removeEventListener('scroll', updateVisible)
+      else window.removeEventListener('scroll', updateVisible)
       window.removeEventListener('resize', updateVisible)
       timers.forEach(clearTimeout)
     }
@@ -291,15 +295,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
 
     const updateContainerHeight = () => {
-      const doc = document.documentElement
-      const body = document.body
-      const totalHeight = Math.max(
-        doc.scrollHeight,
-        doc.offsetHeight,
-        doc.clientHeight,
-        body ? body.scrollHeight : 0,
-        body ? body.offsetHeight : 0
-      )
+      const wrapper = document.getElementById('fixed-layout-wrapper') as HTMLElement | null
+      const totalHeight = wrapper ? wrapper.offsetHeight : (document.documentElement.scrollHeight || 0)
       const scale = getFixedLayoutScale()
       const designSpaceHeight = scale > 0 ? Math.ceil(totalHeight / scale) : totalHeight
       setContainerHeight(`${designSpaceHeight}px`)

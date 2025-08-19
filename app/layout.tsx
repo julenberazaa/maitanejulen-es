@@ -22,25 +22,18 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{
           __html: `
             /* Sistema de zoom fijo - CSS base */
-            html {
-              overflow-x: hidden;
-              overflow-y: auto; /* html con scroll (barra buena) */
-              margin: 0;
-              padding: 0;
-              scroll-behavior: smooth; /* scroll suave */
-              overscroll-behavior: none; /* evita estiramiento */
-              /* HARD CUT controla la altura - no fijar min-height aquí */
-            }
-            
-            body {
-              margin: 0;
-              padding: 0;
-              overflow-x: hidden;
-              overflow-y: hidden; /* ocultar barra en body (barra mala) */
+            html { overflow: hidden; margin: 0; padding: 0; }
+            body { margin: 0; padding: 0; overflow: hidden; background: #ffffff; }
+
+            /* Único scroller explícito */
+            #scroll-root {
+              position: relative;
+              height: 100vh;
               width: 100vw;
-              /* HARD CUT controla la altura - no fijar min-height aquí */
-              -webkit-overflow-scrolling: touch; /* suaviza en iOS */
-              background: #ffffff; /* coherente */
+              overflow-y: auto; /* barra buena aquí */
+              overflow-x: hidden;
+              overscroll-behavior: none;
+              -webkit-overflow-scrolling: touch;
             }
             
             #fixed-layout-wrapper {
@@ -63,9 +56,11 @@ export default function RootLayout({
         }} />
       </head>
       <body>
-        <div id="fixed-layout-wrapper">
-          <div id="fixed-layout">
-            {children}
+        <div id="scroll-root">
+          <div id="fixed-layout-wrapper">
+            <div id="fixed-layout">
+              {children}
+            </div>
           </div>
         </div>
         <FixedZoom />
