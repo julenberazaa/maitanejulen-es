@@ -17,7 +17,6 @@ interface ImageState {
 export default function TimelinePage() {
   const heroRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLIFrameElement>(null)
-  const videoContainerRef = useRef<HTMLDivElement>(null)
   const finalSectionRef = useRef<HTMLElement>(null)
   const finalSectionBgRef = useRef<HTMLDivElement>(null)
   const finalSectionImageRef = useRef<HTMLDivElement>(null)
@@ -1546,16 +1545,13 @@ export default function TimelinePage() {
             <button 
               onClick={() => {
                 setShowVideo(true)
-                // Scroll to center the video container after animation completes
+                // Scroll automático 60px hacia abajo después de la animación
                 setTimeout(() => {
-                  if (videoContainerRef.current) {
-                    videoContainerRef.current.scrollIntoView({
-                      behavior: 'smooth',
-                      block: 'center',
-                      inline: 'nearest'
-                    })
-                  }
-                }, 800) // Wait for animation to complete (700ms + 100ms buffer)
+                  window.scrollBy({
+                    top: 60,
+                    behavior: 'smooth'
+                  })
+                }, 750) // Esperar 750ms para que termine la animación de 700ms
               }}
               className="bg-terracotta hover:bg-terracotta/90 text-ivory px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2 mx-auto"
             >
@@ -1564,7 +1560,7 @@ export default function TimelinePage() {
             </button>
           )}
 
-          <div ref={videoContainerRef} className={`w-full max-w-4xl transition-all duration-700 ease-in-out ${showVideo ? 'max-h-[600px] mt-8' : 'max-h-0 overflow-hidden'}`}>
+          <div className={`w-full max-w-4xl transition-all duration-700 ease-in-out ${showVideo ? 'max-h-[600px] mt-8' : 'max-h-0 overflow-hidden'}`}>
             <div className="p-6">
               <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom-large hover:custom-shadow-right-bottom-large-hover transition-all duration-500">
                 <iframe
