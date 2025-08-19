@@ -16,6 +16,13 @@ export default function FixedZoom() {
     let observerTimeout: NodeJS.Timeout | null = null
     let resizeObserver: ResizeObserver | null = null
 
+    // Detección específica de iOS Safari
+    const isIOSSafari = () => {
+      const userAgent = navigator.userAgent
+      return /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream
+    }
+
+    const isIOS = isIOSSafari()
     let fixedZoomReadyDispatched = false
 
     function dispatchFixedZoomReadyOnce() {
@@ -38,6 +45,12 @@ export default function FixedZoom() {
         const scroller = document.getElementById('scroll-root') as HTMLElement | null
         
         if (fixedLayout && wrapper) {
+          // Optimización iOS: Batch DOM operations
+          if (isIOS) {
+            fixedLayout.style.willChange = 'transform'
+            wrapper.style.willChange = 'height'
+          }
+
           // Fijar ancho base del lienzo
           fixedLayout.style.width = `${EFFECTIVE_BASE_WIDTH}px`
 
@@ -71,16 +84,31 @@ export default function FixedZoom() {
             // Calcular el fondo absoluto requerido por los marcos (overlay)
             const isMobileViewport = (window.innerWidth || 0) <= 768
             let overlayBottomCSS = 0
-            try {
-              for (const frame of OVERLAY_FRAMES) {
-                if (frame.visible === false) continue
-                const yBase = (frame.y ?? 0) + (isMobileViewport ? (frame.mobileOffsetY ?? 0) : 0)
-                const heightBase = (frame.height ?? 400) * (frame.scaleY ?? 1)
-                const bottomBase = yBase + (heightBase / 2)
-                const bottomCSS = bottomBase * scale // convertir a coordenadas CSS
-                if (bottomCSS > overlayBottomCSS) overlayBottomCSS = bottomCSS
-              }
-            } catch {}
+            
+            // Optimización iOS: Saltar cálculo de frames si no es crítico
+            if (!isIOS) {
+              try {
+                for (const frame of OVERLAY_FRAMES) {
+                  if (frame.visible === false) continue
+                  const yBase = (frame.y ?? 0) + (isMobileViewport ? (frame.mobileOffsetY ?? 0) : 0)
+                  const heightBase = (frame.height ?? 400) * (frame.scaleY ?? 1)
+                  const bottomBase = yBase + (heightBase / 2)
+                  const bottomCSS = bottomBase * scale // convertir a coordenadas CSS
+                  if (bottomCSS > overlayBottomCSS) overlayBottomCSS = bottomCSS
+                }
+              } catch {}
+            } else {
+              // iOS: Cálculo simplificado usando solo el último frame visible
+              try {
+                const lastFrame = OVERLAY_FRAMES.filter(f => f.visible !== false).pop()
+                if (lastFrame) {
+                  const yBase = (lastFrame.y ?? 0) + (isMobileViewport ? (lastFrame.mobileOffsetY ?? 0) : 0)
+                  const heightBase = (lastFrame.height ?? 400) * (lastFrame.scaleY ?? 1)
+                  const bottomBase = yBase + (heightBase / 2)
+                  overlayBottomCSS = bottomBase * scale
+                }
+              } catch {}
+            }
 
             const framesBottomAbsolute = Math.max(0, Math.ceil(overlayBottomCSS))
             // Añadir un pequeño buffer en móviles para evitar recortes por redondeos/transformaciones
@@ -102,6 +130,14 @@ export default function FixedZoom() {
             document.body.style.overflow = ''
             document.body.style.overflowY = ''
 
+            // Optimización iOS: Limpiar willChange después de operaciones
+            if (isIOS) {
+              setTimeout(() => {
+                fixedLayout.style.willChange = ''
+                wrapper.style.willChange = ''
+              }, 100)
+            }
+
             // Señal global: el primer corte de altura está listo
             dispatchFixedZoomReadyOnce()
           } else {
@@ -110,20 +146,37 @@ export default function FixedZoom() {
             // Considerar también la altura necesaria por marcos
             const isMobileViewport = (window.innerWidth || 0) <= 768
             let overlayBottomCSS = 0
-            try {
-              for (const frame of OVERLAY_FRAMES) {
-                if (frame.visible === false) continue
-                const yBase = (frame.y ?? 0) + (isMobileViewport ? (frame.mobileOffsetY ?? 0) : 0)
-                const heightBase = (frame.height ?? 400) * (frame.scaleY ?? 1)
-                const bottomBase = yBase + (heightBase / 2)
-                const bottomCSS = bottomBase * scale
-                if (bottomCSS > overlayBottomCSS) overlayBottomCSS = bottomCSS
-              }
-            } catch {}
+            
+            // iOS: Fallback simplificado
+            if (!isIOS) {
+              try {
+                for (const frame of OVERLAY_FRAMES) {
+                  if (frame.visible === false) continue
+                  const yBase = (frame.y ?? 0) + (isMobileViewport ? (frame.mobileOffsetY ?? 0) : 0)
+                  const heightBase = (frame.height ?? 400) * (frame.scaleY ?? 1)
+                  const bottomBase = yBase + (heightBase / 2)
+                  const bottomCSS = bottomBase * scale
+                  if (bottomCSS > overlayBottomCSS) overlayBottomCSS = bottomCSS
+                }
+              } catch {}
+            } else {
+              // iOS: Usar altura estimada más conservadora
+              overlayBottomCSS = Math.max(visualHeight, 6500 * scale)
+            }
+            
             const needed = Math.max(visualHeight, Math.ceil(overlayBottomCSS))
             const mobileBuffer = scroller ? 200 : 0
             wrapper.style.height = `${needed + mobileBuffer}px`
             wrapper.style.minHeight = `${needed}px`
+            
+            // iOS: Limpiar willChange en fallback también
+            if (isIOS) {
+              setTimeout(() => {
+                fixedLayout.style.willChange = ''
+                wrapper.style.willChange = ''
+              }, 100)
+            }
+            
             // También podemos despachar en fallback para no bloquear
             dispatchFixedZoomReadyOnce()
           }
@@ -135,14 +188,17 @@ export default function FixedZoom() {
 
     function handleResize() {
       if (resizeTimeout) clearTimeout(resizeTimeout)
+      // iOS: Throttling más agresivo para resize
+      const delay = isIOS ? 300 : 150
       resizeTimeout = setTimeout(() => {
         applyZoom()
-      }, 150)
+      }, delay)
     }
 
     // Observa cambios en el contenido y recalcula con debounce
     const fixedLayoutEl = document.getElementById('fixed-layout')
-    if (fixedLayoutEl && 'ResizeObserver' in window) {
+    if (fixedLayoutEl && 'ResizeObserver' in window && !isIOS) {
+      // iOS: Desactivar ResizeObserver para reducir overhead
       resizeObserver = new ResizeObserver(() => {
         if (observerTimeout) clearTimeout(observerTimeout)
         observerTimeout = setTimeout(() => {
@@ -156,30 +212,56 @@ export default function FixedZoom() {
     // Ejecutar inmediatamente sin delay
     applyZoom()
     
-    // Reforzar en cada frame durante los primeros segundos para asegurar el corte
-    const timeouts = [
-      setTimeout(applyZoom, 0),
-      setTimeout(applyZoom, 1),
-      setTimeout(applyZoom, 16),
-      setTimeout(applyZoom, 50),
-      setTimeout(applyZoom, 100),
-      setTimeout(applyZoom, 200),
-      setTimeout(applyZoom, 400),
-      setTimeout(applyZoom, 600),
-      setTimeout(applyZoom, 1000),
-      setTimeout(applyZoom, 1200),
-      setTimeout(applyZoom, 2000)
-    ]
+    let timeouts: NodeJS.Timeout[] = []
     
-    // Forzar en animation frames para capturar el primer render
-    let rafCount = 0
-    const hardCutRaf = () => {
-      applyZoom()
-      if (rafCount++ < 10) {
-        requestAnimationFrame(hardCutRaf)
+    if (isIOS) {
+      // iOS OPTIMIZADO: Estrategia conservadora para evitar crashes
+      timeouts = [
+        setTimeout(applyZoom, 100),   // Solo 3 timeouts espaciados
+        setTimeout(applyZoom, 500),
+        setTimeout(applyZoom, 1500)
+      ]
+      
+      // iOS: Solo 2 requestAnimationFrame espaciados
+      let rafCount = 0
+      const iosOptimizedRaf = () => {
+        if (rafCount === 0) {
+          setTimeout(applyZoom, 0) // Primer RAF inmediato
+        } else if (rafCount === 1) {
+          setTimeout(applyZoom, 0) // Segundo RAF tras delay
+        }
+        
+        if (rafCount++ < 2) {
+          setTimeout(() => requestAnimationFrame(iosOptimizedRaf), 100) // Espaciar RAFs
+        }
       }
+      requestAnimationFrame(iosOptimizedRaf)
+    } else {
+      // DESKTOP/ANDROID: Estrategia original agresiva
+      timeouts = [
+        setTimeout(applyZoom, 0),
+        setTimeout(applyZoom, 1),
+        setTimeout(applyZoom, 16),
+        setTimeout(applyZoom, 50),
+        setTimeout(applyZoom, 100),
+        setTimeout(applyZoom, 200),
+        setTimeout(applyZoom, 400),
+        setTimeout(applyZoom, 600),
+        setTimeout(applyZoom, 1000),
+        setTimeout(applyZoom, 1200),
+        setTimeout(applyZoom, 2000)
+      ]
+      
+      // Desktop: Animation frames agresivos originales
+      let rafCount = 0
+      const hardCutRaf = () => {
+        applyZoom()
+        if (rafCount++ < 10) {
+          requestAnimationFrame(hardCutRaf)
+        }
+      }
+      requestAnimationFrame(hardCutRaf)
     }
-    requestAnimationFrame(hardCutRaf)
 
     // Recalcular cuando todo cargue (imágenes, etc.)
     window.addEventListener('load', applyZoom)
@@ -191,7 +273,8 @@ export default function FixedZoom() {
     }
 
     window.addEventListener('resize', handleResize)
-    window.addEventListener('orientationchange', () => setTimeout(applyZoom, 200))
+    // iOS: Throttling más conservador para orientationchange
+    window.addEventListener('orientationchange', () => setTimeout(applyZoom, isIOS ? 500 : 200))
 
     return () => {
       timeouts.forEach(clearTimeout)

@@ -53,6 +53,9 @@ export default function TimelinePage() {
 
   // Forzar scroll al top en cada recarga de la página sin animación
   useEffect(() => {
+    // Detección de iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+    
     // Evitar que el navegador restaure la posición de scroll anterior
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual'
@@ -69,13 +72,16 @@ export default function TimelinePage() {
     // Bloquear scroll en html y body durante overlay
     document.documentElement.style.overflowY = 'hidden'
     document.body.style.overflowY = 'hidden'
+    
+    // iOS: Timeout más conservador para desbloqueo
+    const unlockDelay = isIOS ? 1500 : 1000
     const unlock = setTimeout(() => {
       // Mantener bloqueo si el overlay sigue visible
       if (!overlayVisibleRef.current) {
         document.documentElement.style.overflowY = prevHtmlOverflowY || ''
         document.body.style.overflowY = prevBodyOverflowY || ''
       }
-    }, 1000)
+    }, unlockDelay)
     return () => clearTimeout(unlock)
   }, [])
 

@@ -16,14 +16,21 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const [slowConnection, setSlowConnection] = useState(false)
   const prefetchTimersRef = useRef<Record<string, number>>({})
   const [webpSupported, setWebpSupported] = useState<boolean | null>(null)
-  const prefetchInFlightRef = useRef<number>(0)
+  const [isIOS, setIsIOS] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768)
     }
     
+    // Detección de iOS
+    const checkIOS = () => {
+      const userAgent = navigator.userAgent
+      setIsIOS(/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream)
+    }
+    
     checkMobile()
+    checkIOS()
     window.addEventListener('resize', checkMobile)
     
     return () => window.removeEventListener('resize', checkMobile)
@@ -41,21 +48,24 @@ export default function FramesOverlay(): React.JSX.Element | null {
     setSlowConnection(isSlowConnection)
 
     // Minimal delay once FixedZoom is ready (first hard cut applied)
-    // On mobile/iOS give more time to settle before loading heavy frames
-    const delay = isSlowConnection ? 1600 : (isMobile ? 900 : 100)
+    // iOS: Delay mucho más agresivo para evitar conflictos con FixedZoom
+    const delay = isIOS ? 2000 : (isSlowConnection ? 1200 : (isMobile ? 400 : 100))
     let cleanupFns: Array<() => void> = []
     
     // Also wait for user interaction to ensure critical content loads first
     let hasUserInteracted = false
     const enableOnInteraction = () => {
       hasUserInteracted = true
-      if (!isSlowConnection || hasUserInteracted) {
+      // iOS: Requerir interacción del usuario más estrictamente
+      if (isIOS) {
+        setTimeout(() => setEnableFrameLoading(true), 500) // Delay adicional para iOS
+      } else if (!isSlowConnection || hasUserInteracted) {
         setEnableFrameLoading(true)
       }
     }
     
-    // Listen for any user interaction (scroll a bit before enabling on mobile)
-    const events = ['touchstart', 'click', 'keydown', 'wheel', 'scroll']
+    // Listen for any user interaction
+    const events = ['scroll', 'touchstart', 'click', 'keydown']
     events.forEach(event => {
       window.addEventListener(event, enableOnInteraction, { once: true, passive: true })
     })
@@ -80,7 +90,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
       // Safety fallback: if event never fires, still proceed after a max timeout
       const safety = setTimeout(() => {
         enableAfterDelay()
-      }, isMobile ? 3200 : 2500)
+      }, 2500)
       cleanupFns.push(() => clearTimeout(safety))
     }
 
@@ -120,8 +130,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
 
     // ORIGINAL virtualization code (adjusted for fixed-layout scale and custom scroller)
-    // Reduce preload window on mobile to avoid decoding too many frames at once
-    const PRELOAD_MARGIN = 600 // px before/after viewport (was 1200)
+    const PRELOAD_MARGIN = 1200 // px before/after viewport
 
     const getFixedLayoutScale = (): number => {
       const el = document.getElementById('fixed-layout')
@@ -185,7 +194,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
   }, [])
 
-  const MAX_RETRIES = isMobile ? 4 : 3
+  // iOS: Menos retries para evitar saturación
+  const MAX_RETRIES = isIOS ? 2 : (isMobile ? 4 : 3)
 
   const getOptimizedSrc = (src: string, forMobile: boolean = isMobile): string => {
     if (!src.endsWith('.png')) return src
@@ -207,34 +217,21 @@ export default function FramesOverlay(): React.JSX.Element | null {
     if (attempts >= MAX_RETRIES) return
 
     const start = () => {
-      // Limit concurrent prefetches on mobile to reduce memory spikes
-      if (isMobile && prefetchInFlightRef.current >= 2) {
-        const timer = window.setTimeout(() => {
-          delete prefetchTimersRef.current[id]
-          ensurePrefetch(id, src)
-        }, 250)
-        prefetchTimersRef.current[id] = timer
-        return
-      }
-
       const optimizedSrc = getOptimizedSrc(src, isMobile)
       // Aggressive cache busting for mobile WebP
       const cacheBustSrc = attempts > 0 ? `${optimizedSrc}?retry=${attempts}&t=${Date.now()}` : optimizedSrc
       const img = new Image()
       img.decoding = 'async' as any
       img.loading = 'eager' as any
-      prefetchInFlightRef.current++
       
       const onLoad = () => {
         console.log(`[FRAMES] Successfully loaded: ${cacheBustSrc}`)
         setPrefetchedIds((prev) => new Set(prev).add(id))
         delete prefetchTimersRef.current[id]
-        prefetchInFlightRef.current = Math.max(0, prefetchInFlightRef.current - 1)
       }
       
       const onError = () => {
         console.warn(`[FRAMES] Failed to load: ${cacheBustSrc}`)
-        prefetchInFlightRef.current = Math.max(0, prefetchInFlightRef.current - 1)
         // If mobile without WebP support, don't loop: try PNG immediately
         if (isMobile && webpSupported === false) {
           const fallbackImg = new Image()
@@ -267,8 +264,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
         return
       }
       setRetryCounts((prev) => ({ ...prev, [id]: nextAttempt }))
-      // More aggressive retries for mobile (shorter backoff)
-      const backoff = isMobile ? Math.min(1500 * nextAttempt, 4000) : Math.min(2000 * nextAttempt, 6000)
+      // iOS: Backoff más conservador para evitar saturación
+      const backoff = isIOS ? Math.min(3000 * nextAttempt, 8000) : (isMobile ? Math.min(1500 * nextAttempt, 4000) : Math.min(2000 * nextAttempt, 6000))
       console.log(`[FRAMES] Scheduling retry ${nextAttempt}/${MAX_RETRIES} for ${id} in ${backoff}ms`)
       const timer = window.setTimeout(() => {
         delete prefetchTimersRef.current[id]
@@ -333,7 +330,9 @@ export default function FramesOverlay(): React.JSX.Element | null {
     })
     mutationObserver.observe(document.body, { childList: true, subtree: true, attributes: false })
 
-    const timers = [50, 200, 600, 1200, 2000].map(ms => setTimeout(updateContainerHeight, ms))
+    // iOS: Menos timers para reducir overhead
+    const timerDelays = isIOS ? [200, 1000, 3000] : [50, 200, 600, 1200, 2000]
+    const timers = timerDelays.map(ms => setTimeout(updateContainerHeight, ms))
 
     return () => {
       timers.forEach(clearTimeout)

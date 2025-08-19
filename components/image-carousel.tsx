@@ -19,11 +19,6 @@ interface ImageCarouselProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function ImageCarousel({ images, media, alt, onImageClick, onVideoClick, onOpenMediaCarousel, experienceId, className, ...rest }: ImageCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
-  const previousActiveIndexRef = useRef<number>(0)
-  const [loadedMap, setLoadedMap] = useState<Record<number, boolean>>({})
-  const [bgIndex, setBgIndex] = useState(0)
-  const bgTimerRef = useRef<number | null>(null)
-  const FADE_MS = 700
 
   // Build media list with backward compatibility
   const mediaItems: MediaItem[] = useMemo(() => {
@@ -38,47 +33,19 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
   // Keep refs for possible multiple videos
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({})
 
-  // Auto-advance for images only; for video wait until it finishes.
-  // Switch only when the next image is confirmed loaded to avoid white flashes on iOS.
+  // Auto-advance for images only; for video wait until it finishes
   useEffect(() => {
     if (totalItems <= 1) return
     if (isVideoActive) return // do not auto-advance while video is active
 
-    let timer: number | undefined
-    const schedule = (delay: number) => {
-      timer = window.setTimeout(tick, delay)
-    }
-    const tick = () => {
-      const nextIndex = (activeIndex + 1) % totalItems
-      const nextItem = mediaItems[nextIndex]
-      if (nextItem?.type === 'image' && !loadedMap[nextIndex]) {
-        // Ensure prefetch and retry soon until it's ready
-        const img = new Image()
-        img.decoding = 'async' as any
-        img.loading = 'eager' as any
-        img.onload = () => setLoadedMap((m) => ({ ...m, [nextIndex]: true }))
-        img.src = nextItem.src
-        schedule(200)
-        return
-      }
-      setActiveIndex(nextIndex)
-      schedule(4000)
-    }
-    schedule(4000)
-    return () => { if (timer) clearTimeout(timer) }
-  }, [totalItems, isVideoActive, activeIndex, mediaItems, loadedMap])
+    const interval = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex === totalItems - 1 ? 0 : prevIndex + 1))
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [totalItems, isVideoActive])
 
   // Handle video playback when its slide becomes active
   useEffect(() => {
-    // Pause previously active video if any
-    const prev = previousActiveIndexRef.current
-    if (prev !== activeIndex) {
-      const prevVideo = videoRefs.current[prev]
-      if (prevVideo) {
-        try { prevVideo.pause() } catch {}
-      }
-    }
-
     if (!isVideoActive) return
     const videoEl = videoRefs.current[activeIndex]
     if (!videoEl) return
@@ -105,42 +72,6 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
       } catch {}
     }
   }, [activeIndex, isVideoActive, totalItems])
-
-  // Track previous active index
-  useEffect(() => {
-    previousActiveIndexRef.current = activeIndex
-  }, [activeIndex])
-
-  // Delay background switch to preserve visible cross‑fade
-  useEffect(() => {
-    if (bgTimerRef.current) {
-      clearTimeout(bgTimerRef.current)
-      bgTimerRef.current = null
-    }
-    bgTimerRef.current = window.setTimeout(() => {
-      setBgIndex(activeIndex)
-      bgTimerRef.current = null
-    }, FADE_MS)
-    return () => {
-      if (bgTimerRef.current) {
-        clearTimeout(bgTimerRef.current)
-        bgTimerRef.current = null
-      }
-    }
-  }, [activeIndex])
-
-  // Preload the next image only to reduce memory footprint
-  useEffect(() => {
-    if (totalItems <= 1) return
-    const nextIndex = (activeIndex + 1) % totalItems
-    const nextItem = mediaItems[nextIndex]
-    if (nextItem && nextItem.type === 'image') {
-      const img = new Image()
-      img.decoding = 'async' as any
-      img.loading = 'eager' as any
-      img.src = nextItem.src
-    }
-  }, [activeIndex, totalItems, mediaItems])
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const current = mediaItems[activeIndex]
@@ -170,70 +101,47 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
       className={`relative w-full h-full cursor-pointer${className ? ` ${className}` : ''}`}
       onClick={handleContainerClick}
     >
-      <div
-        className="overflow-hidden w-full h-full relative"
-        style={{
-          backgroundImage: mediaItems[bgIndex]?.type === 'image' ? `url(${mediaItems[bgIndex].src})` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          // Small dark base to avoid any light flash while decoding
-          backgroundColor: '#000',
-        }}
-      >
-        {/* Background layer above ensures no gap; overlays cross-fade on top */}
-        {(() => {
-          const indicesToRender = new Set<number>()
-          indicesToRender.add(activeIndex)
-          if (totalItems > 1) {
-            indicesToRender.add((activeIndex - 1 + totalItems) % totalItems)
-            indicesToRender.add((activeIndex + 1) % totalItems)
+      <div className="overflow-hidden w-full h-full">
+        {mediaItems.map((item, index) => {
+          const commonStyle: React.CSSProperties = {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: index === activeIndex ? 1 : 0,
+            transition: 'opacity 1.5s ease-in-out, transform 0.5s ease-in-out',
+            zIndex: index === activeIndex ? 20 : 10,
           }
-
-          return Array.from(indicesToRender).map((index) => {
-            const item = mediaItems[index]
-            const commonStyle: React.CSSProperties = {
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              opacity: index === activeIndex ? 1 : 0,
-              transition: `opacity ${FADE_MS}ms ease-in-out`,
-              zIndex: index === activeIndex ? 20 : 10,
-            }
-            if (item.type === 'image') {
-              return (
-                <img
-                  key={`img-${item.src}-${index}`}
-                  src={item.src}
-                  alt={`${alt} - Imagen ${index + 1}`}
-                  draggable={false}
-                  className={``}
-                  style={commonStyle}
-                  loading="lazy"
-                  decoding="async"
-                  sizes="(max-width: 768px) 92vw, 640px"
-                  onLoad={() => setLoadedMap((m) => (m[index] ? m : { ...m, [index]: true }))}
-                />
-              )
-            }
+          if (item.type === 'image') {
             return (
-              <video
-                key={`vid-${item.src}-${index}`}
-                ref={(el) => { videoRefs.current[index] = el }}
+              <img
+                key={`img-${item.src}-${index}`}
                 src={item.src}
-                playsInline
-                controls={false}
-                muted
-                className={``}
+                alt={`${alt} - Imagen ${index + 1}`}
+                draggable={false}
+                className={`transition-transform duration-500 ease-in-out transform-gpu will-change-transform ${index === activeIndex ? 'hover:scale-105' : ''}`}
                 style={commonStyle}
-                preload={index === activeIndex ? 'auto' : 'none'}
+                loading="lazy"
+                decoding="async"
               />
             )
-          })
-        })()}
+          }
+          return (
+            <video
+              key={`vid-${item.src}-${index}`}
+              ref={(el) => { videoRefs.current[index] = el }}
+              src={item.src}
+              playsInline
+              controls={false}
+              muted
+              className={`transition-transform duration-500 ease-in-out transform-gpu will-change-transform ${index === activeIndex ? 'hover:scale-105' : ''}`}
+              style={commonStyle}
+              preload={index === activeIndex ? 'auto' : 'metadata'}
+            />
+          )
+        })}
       </div>
     </div>
   )
