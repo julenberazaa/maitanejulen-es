@@ -1445,7 +1445,6 @@ export default function TimelinePage() {
                       { type: 'image', src: '/ilun_5.png' },
                       { type: 'image', src: '/ilun/ILUN_01.jpeg' },
                       { type: 'image', src: '/ilun_6.png' },
-                      { type: 'video', src: 'https://res.cloudinary.com/dgevq0wwq/video/upload/v1755167850/VID-20250806-WA0000_cuzzkr.mp4' },
                       { type: 'video', src: 'https://res.cloudinary.com/dgevq0wwq/video/upload/v1755357104/VID-20250816-WA0014_fwf3ov.mp4' },
                       { type: 'image', src: '/ilun/ILUN6.png' },
                       { type: 'image', src: '/ilun/ILUN7.png' },

@@ -55,12 +55,18 @@ export default function FixedZoom() {
           // HARD CUT: Medir altura exacta hasta el final COMPLETO de la sección del video
           const finalSection = document.getElementById('final-video-section')
           if (finalSection) {
-            // Medir posición absoluta del final REAL del video en el espacio escalado
-            const videoRect = finalSection.getBoundingClientRect()
-            // videoRect.bottom da la posición final real de la sección en viewport
-            // Necesitamos convertir eso a posición absoluta en el documento
-            const currentScrollY = scroller ? scroller.scrollTop : window.scrollY
-            const videoBottomAbsolute = currentScrollY + videoRect.bottom
+            // Medición robusta para móviles con contenedor de scroll propio (#scroll-root)
+            let videoBottomAbsolute: number
+            if (scroller) {
+              // Usar offsets no transformados y convertir a CSS multiplicando por la escala
+              const bottomUnscaled = finalSection.offsetTop + finalSection.offsetHeight
+              videoBottomAbsolute = Math.max(0, Math.ceil(bottomUnscaled * scale))
+            } else {
+              // Fallback (desktop): usar bounding rect + window scroll
+              const videoRect = finalSection.getBoundingClientRect()
+              const currentScrollY = window.scrollY
+              videoBottomAbsolute = currentScrollY + videoRect.bottom
+            }
 
             // Calcular el fondo absoluto requerido por los marcos (overlay)
             const isMobileViewport = (window.innerWidth || 0) <= 768
