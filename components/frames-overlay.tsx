@@ -16,6 +16,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const [slowConnection, setSlowConnection] = useState(false)
   const prefetchTimersRef = useRef<Record<string, number>>({})
   const [webpSupported, setWebpSupported] = useState<boolean | null>(null)
+  const prefetchInFlightRef = useRef<number>(0)
 
   useEffect(() => {
     const checkMobile = () => {
@@ -40,7 +41,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     setSlowConnection(isSlowConnection)
 
     // Minimal delay once FixedZoom is ready (first hard cut applied)
-    const delay = isSlowConnection ? 1200 : (isMobile ? 400 : 100)
+    // On mobile/iOS give more time to settle before loading heavy frames
+    const delay = isSlowConnection ? 1600 : (isMobile ? 900 : 100)
     let cleanupFns: Array<() => void> = []
     
     // Also wait for user interaction to ensure critical content loads first
@@ -52,8 +54,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
       }
     }
     
-    // Listen for any user interaction
-    const events = ['scroll', 'touchstart', 'click', 'keydown']
+    // Listen for any user interaction (scroll a bit before enabling on mobile)
+    const events = ['touchstart', 'click', 'keydown', 'wheel', 'scroll']
     events.forEach(event => {
       window.addEventListener(event, enableOnInteraction, { once: true, passive: true })
     })
@@ -78,7 +80,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
       // Safety fallback: if event never fires, still proceed after a max timeout
       const safety = setTimeout(() => {
         enableAfterDelay()
-      }, 2500)
+      }, isMobile ? 3200 : 2500)
       cleanupFns.push(() => clearTimeout(safety))
     }
 
@@ -118,7 +120,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
 
     // ORIGINAL virtualization code (adjusted for fixed-layout scale and custom scroller)
-    const PRELOAD_MARGIN = 1200 // px before/after viewport
+    // Reduce preload window on mobile to avoid decoding too many frames at once
+    const PRELOAD_MARGIN = 600 // px before/after viewport (was 1200)
 
     const getFixedLayoutScale = (): number => {
       const el = document.getElementById('fixed-layout')
@@ -204,21 +207,34 @@ export default function FramesOverlay(): React.JSX.Element | null {
     if (attempts >= MAX_RETRIES) return
 
     const start = () => {
+      // Limit concurrent prefetches on mobile to reduce memory spikes
+      if (isMobile && prefetchInFlightRef.current >= 2) {
+        const timer = window.setTimeout(() => {
+          delete prefetchTimersRef.current[id]
+          ensurePrefetch(id, src)
+        }, 250)
+        prefetchTimersRef.current[id] = timer
+        return
+      }
+
       const optimizedSrc = getOptimizedSrc(src, isMobile)
       // Aggressive cache busting for mobile WebP
       const cacheBustSrc = attempts > 0 ? `${optimizedSrc}?retry=${attempts}&t=${Date.now()}` : optimizedSrc
       const img = new Image()
       img.decoding = 'async' as any
       img.loading = 'eager' as any
+      prefetchInFlightRef.current++
       
       const onLoad = () => {
         console.log(`[FRAMES] Successfully loaded: ${cacheBustSrc}`)
         setPrefetchedIds((prev) => new Set(prev).add(id))
         delete prefetchTimersRef.current[id]
+        prefetchInFlightRef.current = Math.max(0, prefetchInFlightRef.current - 1)
       }
       
       const onError = () => {
         console.warn(`[FRAMES] Failed to load: ${cacheBustSrc}`)
+        prefetchInFlightRef.current = Math.max(0, prefetchInFlightRef.current - 1)
         // If mobile without WebP support, don't loop: try PNG immediately
         if (isMobile && webpSupported === false) {
           const fallbackImg = new Image()
