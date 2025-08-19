@@ -16,7 +16,7 @@ interface ImageState {
 
 export default function TimelinePage() {
   const heroRef = useRef<HTMLDivElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const videoRef = useRef<HTMLIFrameElement>(null)
   const finalSectionRef = useRef<HTMLElement>(null)
   const finalSectionBgRef = useRef<HTMLDivElement>(null)
   const finalSectionImageRef = useRef<HTMLDivElement>(null)
@@ -168,7 +168,8 @@ export default function TimelinePage() {
 
   useEffect(() => {
     if (showVideo && videoRef.current) {
-      videoRef.current.play()
+      // YouTube iframe will handle playback controls automatically
+      // videoRef.current.play() // Not available for iframe elements
     }
   }, [showVideo])
 
@@ -1553,13 +1554,14 @@ export default function TimelinePage() {
           <div className={`w-full max-w-4xl transition-all duration-700 ease-in-out ${showVideo ? 'max-h-[600px] mt-8' : 'max-h-0 overflow-hidden'}`}>
             <div className="p-6">
               <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom-large hover:custom-shadow-right-bottom-large-hover transition-all duration-500">
-                <video
+                <iframe
                   ref={videoRef}
-                  src="https://res.cloudinary.com/dlyb3ahsq/video/upload/v1751704818/garaiona_video_4_v7dq3i.mp4"
-                  controls
-                  playsInline
+                  src="https://www.youtube.com/embed/bGx7OTMEubE"
+                  title="Video de la boda"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
                   className="w-full aspect-video"
-                ></video>
+                ></iframe>
               </div>
             </div>
           </div>

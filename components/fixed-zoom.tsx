@@ -83,7 +83,9 @@ export default function FixedZoom() {
             } catch {}
 
             const framesBottomAbsolute = Math.max(0, Math.ceil(overlayBottomCSS))
-            const totalDocumentHeight = Math.max(0, Math.ceil(Math.max(videoBottomAbsolute, framesBottomAbsolute)))
+            // Añadir un pequeño buffer en móviles para evitar recortes por redondeos/transformaciones
+            const mobileBuffer = scroller ? 200 : 0
+            const totalDocumentHeight = Math.max(0, Math.ceil(Math.max(videoBottomAbsolute, framesBottomAbsolute) + mobileBuffer))
             
             // FORZAR altura absoluta - HARD CUT sin excepciones
             wrapper.style.height = `${totalDocumentHeight}px`
@@ -119,7 +121,8 @@ export default function FixedZoom() {
               }
             } catch {}
             const needed = Math.max(visualHeight, Math.ceil(overlayBottomCSS))
-            wrapper.style.height = `${needed}px`
+            const mobileBuffer = scroller ? 200 : 0
+            wrapper.style.height = `${needed + mobileBuffer}px`
             wrapper.style.minHeight = `${needed}px`
             // También podemos despachar en fallback para no bloquear
             dispatchFixedZoomReadyOnce()
