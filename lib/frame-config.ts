@@ -38,7 +38,7 @@ export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Independizarse - Ahora usa el marco que antes tenía Pedida de mano
   { id: 'carousel-frame-anchor-indep', src: '/frames/frame-04.png', x: -496, y: 4872, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.54, mobileOffsetY: 0, visible: true },
   // Ilun
-  { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 150, y: 5552, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 142, y: 5610, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
   // Pedida - Ahora usa la nueva imagen
-  { id: 'carousel-frame-anchor-pedida', src: '/frames/ChatGPT Image 17 ago 2025, 18_48_23.webp', x: -488, y: 6304, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.54, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-pedida', src: '/frames/ChatGPT Image 17 ago 2025, 18_48_23.webp', x: -504, y: 6380, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.43, mobileOffsetY: 0, visible: true },
 ]
