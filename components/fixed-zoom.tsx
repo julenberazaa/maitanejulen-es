@@ -84,7 +84,7 @@ export default function FixedZoom() {
 
             const framesBottomAbsolute = Math.max(0, Math.ceil(overlayBottomCSS))
             // Añadir un pequeño buffer en móviles para evitar recortes por redondeos/transformaciones
-            const mobileBuffer = scroller ? 200 : 0
+            const mobileBuffer = scroller ? 40 : 0
             const totalDocumentHeight = Math.max(0, Math.ceil(Math.max(videoBottomAbsolute, framesBottomAbsolute) + mobileBuffer))
             
             // FORZAR altura absoluta - HARD CUT sin excepciones

@@ -36,7 +36,7 @@ export const OVERLAY_FRAMES: OverlayFrame[] = [
   // Hobbies
   { id: 'carousel-frame-anchor-hobbies', src: '/frames/frame-05.png', x: 152, y: 4218, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.50, mobileOffsetY: 0, visible: true },
   // Independizarse - Ahora usa el marco que antes tenía Pedida de mano
-  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-04.png', x: -492, y: 4858, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.45, scaleY: 1.455, mobileOffsetY: 0, visible: true },
+  { id: 'carousel-frame-anchor-indep', src: '/frames/frame-04.png', x: -496, y: 4872, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.44, scaleY: 1.54, mobileOffsetY: 0, visible: true },
   // Ilun
   { id: 'carousel-frame-anchor-ilun', src: '/frames/frame-07.png', x: 150, y: 5552, width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, scaleX: 1.36, scaleY: 1.45, mobileOffsetY: 0, visible: true },
   // Pedida - Ahora usa la nueva imagen
