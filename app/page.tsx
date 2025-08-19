@@ -1556,7 +1556,7 @@ export default function TimelinePage() {
               <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom-large hover:custom-shadow-right-bottom-large-hover transition-all duration-500">
                 <iframe
                   ref={videoRef}
-                  src="https://www.youtube.com/embed/bGx7OTMEubE"
+                  src="https://drive.google.com/file/d/1MoYgCEV_2CkhkUU8jZjIK9ZU5WXqbFGN/preview"
                   title="Video de la boda"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
