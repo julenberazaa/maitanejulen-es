@@ -1548,7 +1548,7 @@ export default function TimelinePage() {
                 // Scroll automático 60px hacia abajo después de la animación
                 setTimeout(() => {
                   window.scrollBy({
-                    top: 60,
+                    top: 160,
                     behavior: 'smooth'
                   })
                 }, 750) // Esperar 750ms para que termine la animación de 700ms
