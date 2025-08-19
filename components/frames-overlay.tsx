@@ -341,7 +341,13 @@ export default function FramesOverlay(): React.JSX.Element | null {
         height: containerHeight, // Altura acorde a documento
         maxHeight: containerHeight,
         overflow: 'hidden', // Evita que frames absolutos alarguen el scroll por debajo del video
-        overflowY: 'hidden', // Explícitamente bloquear scroll vertical
+        overflowY: 'hidden', // Bloquear scroll vertical dentro del overlay
+        overscrollBehavior: 'none', // Evita elastic scroll
+        // Ocultar cualquier scrollbar nativo en navegadores que lo muestren
+        // @ts-ignore
+        msOverflowStyle: 'none',
+        // @ts-ignore
+        scrollbarWidth: 'none',
         pointerEvents: "none",
         zIndex: 50,
         // No transform: el layout de la página se encarga de la adaptación responsiva
@@ -434,6 +440,9 @@ export default function FramesOverlay(): React.JSX.Element | null {
           />
         )
       }) : null}
+      <style jsx>{`
+        #frames-overlay::-webkit-scrollbar { display: none; }
+      `}</style>
     </div>
   )
 }

@@ -24,7 +24,7 @@ export default function RootLayout({
             /* Sistema de zoom fijo - CSS base */
             html {
               overflow-x: hidden;
-              overflow-y: auto; /* por defecto, dejar scroll en html */
+              overflow-y: auto; /* html con scroll (barra buena) */
               margin: 0;
               padding: 0;
               scroll-behavior: smooth; /* scroll suave */
@@ -36,7 +36,7 @@ export default function RootLayout({
               margin: 0;
               padding: 0;
               overflow-x: hidden;
-              overflow-y: auto; /* scroll principal en body */
+              overflow-y: hidden; /* ocultar barra en body (barra mala) */
               width: 100vw;
               /* HARD CUT controla la altura - no fijar min-height aquí */
               -webkit-overflow-scrolling: touch; /* suaviza en iOS */
@@ -48,7 +48,7 @@ export default function RootLayout({
               width: 100vw;
               /* HARD CUT en FixedZoom controla la altura exacta */
               overflow-x: hidden; /* solo evita scroll horizontal */
-              overflow-y: hidden; /* evitamos scroll del wrapper */
+              overflow-y: hidden; /* evita segunda barra en wrapper */
             }
             
             #fixed-layout {
@@ -57,6 +57,7 @@ export default function RootLayout({
               transform-origin: top left;
               position: relative;
               display: flow-root; /* evita colapso de márgenes */
+              overflow: hidden; /* evita scroll interno secundario en el lienzo */
             }
           `
         }} />
