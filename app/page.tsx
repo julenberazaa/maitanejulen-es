@@ -1536,9 +1536,6 @@ export default function TimelinePage() {
               <h2 className="text-7xl font-script">Nuestro Video</h2>
               <Heart className="w-10 h-10 ml-4 text-ivory" />
             </div>
-            <p className={`text-2xl leading-relaxed transition-all duration-700 ease-in-out font-manuscript ${showVideo ? 'mb-[44px]' : 'mb-12'}`}>
-              Un pequeño resumen de un día inolvidable. Gracias por formar parte de él.
-            </p>
           </div>
 
           {!showVideo && (
