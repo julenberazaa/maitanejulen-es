@@ -1543,7 +1543,19 @@ export default function TimelinePage() {
 
           {!showVideo && (
             <button 
-              onClick={() => setShowVideo(true)}
+              onClick={() => {
+                setShowVideo(true)
+                // Scroll to center the video after animation completes (700ms + small buffer)
+                setTimeout(() => {
+                  if (videoRef.current) {
+                    videoRef.current.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'center',
+                      inline: 'center'
+                    })
+                  }
+                }, 800) // Wait for animation to complete (700ms + 100ms buffer)
+              }}
               className="bg-terracotta hover:bg-terracotta/90 text-ivory px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2 mx-auto"
             >
               <Video className="w-6 h-6" />
