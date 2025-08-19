@@ -17,6 +17,7 @@ interface ImageState {
 export default function TimelinePage() {
   const heroRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLIFrameElement>(null)
+  const videoContainerRef = useRef<HTMLDivElement>(null)
   const finalSectionRef = useRef<HTMLElement>(null)
   const finalSectionBgRef = useRef<HTMLDivElement>(null)
   const finalSectionImageRef = useRef<HTMLDivElement>(null)
@@ -1545,13 +1546,13 @@ export default function TimelinePage() {
             <button 
               onClick={() => {
                 setShowVideo(true)
-                // Scroll to center the video after animation completes (700ms + small buffer)
+                // Scroll to center the video container after animation completes
                 setTimeout(() => {
-                  if (videoRef.current) {
-                    videoRef.current.scrollIntoView({
+                  if (videoContainerRef.current) {
+                    videoContainerRef.current.scrollIntoView({
                       behavior: 'smooth',
                       block: 'center',
-                      inline: 'center'
+                      inline: 'nearest'
                     })
                   }
                 }, 800) // Wait for animation to complete (700ms + 100ms buffer)
@@ -1563,7 +1564,7 @@ export default function TimelinePage() {
             </button>
           )}
 
-          <div className={`w-full max-w-4xl transition-all duration-700 ease-in-out ${showVideo ? 'max-h-[600px] mt-8' : 'max-h-0 overflow-hidden'}`}>
+          <div ref={videoContainerRef} className={`w-full max-w-4xl transition-all duration-700 ease-in-out ${showVideo ? 'max-h-[600px] mt-8' : 'max-h-0 overflow-hidden'}`}>
             <div className="p-6">
               <div className="overflow-hidden rounded-2xl custom-shadow-right-bottom-large hover:custom-shadow-right-bottom-large-hover transition-all duration-500">
                 <iframe
