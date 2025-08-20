@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import FixedZoom from '@/components/fixed-zoom'
+import IOSDebugLogger from '@/components/ios-debug-logger'
 
 export const metadata: Metadata = {
   title: 'Boda J&M',
@@ -64,6 +65,7 @@ export default function RootLayout({
           </div>
         </div>
         <FixedZoom />
+        <IOSDebugLogger />
       </body>
     </html>
   )

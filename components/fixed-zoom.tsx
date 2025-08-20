@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { OVERLAY_FRAMES } from '@/lib/frame-config'
+import { iOSDebugLog } from './ios-debug-logger'
 
 export default function FixedZoom() {
   const [isClient, setIsClient] = useState(false)
@@ -36,6 +37,8 @@ export default function FixedZoom() {
 
     function applyZoom() {
       try {
+        iOSDebugLog('info', 'FixedZoom applyZoom() started', 'FixedZoom')
+        
         const documentWidth = document.documentElement.clientWidth
         const innerWidth = window.innerWidth
         const viewport = documentWidth || innerWidth
@@ -43,6 +46,10 @@ export default function FixedZoom() {
         const fixedLayout = document.getElementById('fixed-layout') as HTMLElement | null
         const wrapper = document.getElementById('fixed-layout-wrapper') as HTMLElement | null
         const scroller = document.getElementById('scroll-root') as HTMLElement | null
+        
+        iOSDebugLog('info', `Elements found - fixedLayout: ${!!fixedLayout}, wrapper: ${!!wrapper}, scroller: ${!!scroller}`, 'FixedZoom', {
+          viewport, scale, documentWidth, innerWidth
+        })
         
         if (fixedLayout && wrapper) {
           // Optimización iOS: Batch DOM operations
@@ -116,6 +123,10 @@ export default function FixedZoom() {
             const totalDocumentHeight = Math.max(0, Math.ceil(Math.max(videoBottomAbsolute, framesBottomAbsolute) + mobileBuffer))
             
             // FORZAR altura absoluta - HARD CUT sin excepciones
+            iOSDebugLog('dom', `Applying HARD CUT: ${totalDocumentHeight}px`, 'FixedZoom', {
+              videoBottomAbsolute, framesBottomAbsolute, totalDocumentHeight, mobileBuffer
+            })
+            
             wrapper.style.height = `${totalDocumentHeight}px`
             wrapper.style.maxHeight = `${totalDocumentHeight}px`
             wrapper.style.minHeight = `${totalDocumentHeight}px`
@@ -181,8 +192,14 @@ export default function FixedZoom() {
             dispatchFixedZoomReadyOnce()
           }
         }
+        
+        iOSDebugLog('info', 'FixedZoom applyZoom() completed successfully', 'FixedZoom')
       } catch (error) {
         console.error('❌ FixedZoom - Error:', error)
+        iOSDebugLog('error', `FixedZoom critical error: ${error}`, 'FixedZoom', {
+          error: error,
+          stack: (error as Error).stack
+        })
       }
     }
 
@@ -216,15 +233,26 @@ export default function FixedZoom() {
     
     if (isIOS) {
       // iOS OPTIMIZADO: Estrategia conservadora para evitar crashes
+      iOSDebugLog('info', 'iOS detected - using conservative HARD CUT strategy', 'FixedZoom')
       timeouts = [
-        setTimeout(applyZoom, 100),   // Solo 3 timeouts espaciados
-        setTimeout(applyZoom, 500),
-        setTimeout(applyZoom, 1500)
+        setTimeout(() => {
+          iOSDebugLog('info', 'iOS HARD CUT timeout 1/3 (100ms)', 'FixedZoom')
+          applyZoom()
+        }, 100),
+        setTimeout(() => {
+          iOSDebugLog('info', 'iOS HARD CUT timeout 2/3 (500ms)', 'FixedZoom')
+          applyZoom()
+        }, 500),
+        setTimeout(() => {
+          iOSDebugLog('info', 'iOS HARD CUT timeout 3/3 (1500ms)', 'FixedZoom')
+          applyZoom()
+        }, 1500)
       ]
       
       // iOS: Solo 2 requestAnimationFrame espaciados
       let rafCount = 0
       const iosOptimizedRaf = () => {
+        iOSDebugLog('performance', `iOS RAF ${rafCount + 1}/2`, 'FixedZoom')
         if (rafCount === 0) {
           setTimeout(applyZoom, 0) // Primer RAF inmediato
         } else if (rafCount === 1) {

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { OVERLAY_FRAMES } from "@/lib/frame-config"
+import { iOSDebugLog } from './ios-debug-logger'
 
 // Base design width - same as the #fixed-layout element
 const BASE_DESIGN_WIDTH = 1920
@@ -50,6 +51,12 @@ export default function FramesOverlay(): React.JSX.Element | null {
     // Minimal delay once FixedZoom is ready (first hard cut applied)
     // iOS: Delay mucho más agresivo para evitar conflictos con FixedZoom
     const delay = isIOS ? 2000 : (isSlowConnection ? 1200 : (isMobile ? 400 : 100))
+    
+    if (isIOS) {
+      iOSDebugLog('info', `FramesOverlay detected iOS - using ${delay}ms delay`, 'FramesOverlay', {
+        isSlowConnection, isMobile
+      })
+    }
     let cleanupFns: Array<() => void> = []
     
     // Also wait for user interaction to ensure critical content loads first
@@ -58,7 +65,11 @@ export default function FramesOverlay(): React.JSX.Element | null {
       hasUserInteracted = true
       // iOS: Requerir interacción del usuario más estrictamente
       if (isIOS) {
-        setTimeout(() => setEnableFrameLoading(true), 500) // Delay adicional para iOS
+        iOSDebugLog('info', 'iOS user interaction detected - enabling frame loading with 500ms delay', 'FramesOverlay')
+        setTimeout(() => {
+          setEnableFrameLoading(true)
+          iOSDebugLog('info', 'iOS frame loading enabled after user interaction', 'FramesOverlay')
+        }, 500) // Delay adicional para iOS
       } else if (!isSlowConnection || hasUserInteracted) {
         setEnableFrameLoading(true)
       }
@@ -232,6 +243,12 @@ export default function FramesOverlay(): React.JSX.Element | null {
       
       const onError = () => {
         console.warn(`[FRAMES] Failed to load: ${cacheBustSrc}`)
+        iOSDebugLog('error', `Frame image failed to load: ${id}`, 'FramesOverlay', {
+          src: cacheBustSrc,
+          attempts,
+          webpSupported
+        })
+        
         // If mobile without WebP support, don't loop: try PNG immediately
         if (isMobile && webpSupported === false) {
           const fallbackImg = new Image()

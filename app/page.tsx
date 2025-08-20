@@ -5,6 +5,7 @@ import { createPortal } from "react-dom"
 import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as Ring, BookOpen, PartyPopper, X, PawPrint, Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react"
 import ImageCarousel from "@/components/image-carousel"
 import FramesOverlay from "@/components/frames-overlay"
+import { iOSDebugLog } from "@/components/ios-debug-logger"
 
 interface ImageState {
   src: string | null
@@ -56,15 +57,19 @@ export default function TimelinePage() {
     // Detección de iOS
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
     
+    iOSDebugLog('info', 'Page initialization started', 'TimelinePage', { isIOS })
+    
     // Evitar que el navegador restaure la posición de scroll anterior
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual'
+      iOSDebugLog('info', 'Scroll restoration set to manual', 'TimelinePage')
     }
     
     // Forzar posición al top inmediatamente sin animación
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
     document.documentElement.scrollTop = 0
     document.body.scrollTop = 0
+    iOSDebugLog('dom', 'Forced scroll to top', 'TimelinePage')
 
     // Bloquear scroll durante el primer segundo para estabilizar marcos
     const prevHtmlOverflowY = document.documentElement.style.overflowY
@@ -72,14 +77,20 @@ export default function TimelinePage() {
     // Bloquear scroll en html y body durante overlay
     document.documentElement.style.overflowY = 'hidden'
     document.body.style.overflowY = 'hidden'
+    iOSDebugLog('dom', 'Scroll blocked during overlay', 'TimelinePage')
     
     // iOS: Timeout más conservador para desbloqueo
     const unlockDelay = isIOS ? 1500 : 1000
+    iOSDebugLog('info', `Setting unlock delay: ${unlockDelay}ms`, 'TimelinePage')
+    
     const unlock = setTimeout(() => {
       // Mantener bloqueo si el overlay sigue visible
       if (!overlayVisibleRef.current) {
         document.documentElement.style.overflowY = prevHtmlOverflowY || ''
         document.body.style.overflowY = prevBodyOverflowY || ''
+        iOSDebugLog('dom', 'Scroll unlocked after timeout', 'TimelinePage')
+      } else {
+        iOSDebugLog('info', 'Scroll unlock skipped - overlay still visible', 'TimelinePage')
       }
     }, unlockDelay)
     return () => clearTimeout(unlock)
@@ -260,23 +271,44 @@ export default function TimelinePage() {
 
   const handleOverlaySubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault()
+    
+    iOSDebugLog('info', 'Password submit initiated', 'TimelinePage', { 
+      overlayVisible, inputPassLength: inputPass.length 
+    })
+    
     try {
       const res = await fetch('/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pass: inputPass })
       })
+      
+      iOSDebugLog('info', `Password verification response: ${res.status}`, 'TimelinePage')
+      
       if (res.ok) {
         setOverlayError('')
         setFadeToBlack(true)
+        
+        iOSDebugLog('info', 'Password correct - starting fade to black', 'TimelinePage')
+        
         setTimeout(() => {
-          try { localStorage.setItem('access-granted', '1') } catch {}
+          try { 
+            localStorage.setItem('access-granted', '1') 
+            iOSDebugLog('info', 'localStorage access-granted set', 'TimelinePage')
+          } catch (e) {
+            iOSDebugLog('error', `localStorage failed: ${e}`, 'TimelinePage')
+          }
+          
+          iOSDebugLog('warning', 'About to hide overlay - CRITICAL POINT', 'TimelinePage')
           setOverlayVisible(false)
+          
           // Forzar reflujo y reactivar scroll tras ocultar el overlay
           requestAnimationFrame(() => {
+            iOSDebugLog('dom', 'Reactivating scroll after overlay hidden', 'TimelinePage')
             document.documentElement.style.overflowY = ''
             document.body.style.overflowY = ''
             window.dispatchEvent(new Event('scroll'))
+            iOSDebugLog('info', 'Scroll reactivation completed', 'TimelinePage')
           })
         }, 1000) // Mantener fade 1s completo
       } else {
