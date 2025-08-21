@@ -1,8 +1,8 @@
-# iOS Debug Logger - Guía de Uso
+# iOS Debug Logger - Guía de USB-C Debugging
 
-## 🚨 Sistema de Logging para Crashes en iOS Safari
+## 🔌 Sistema de Logging vía Safari Web Inspector
 
-Este sistema detecta automáticamente condiciones problemáticas en iOS Safari (específicamente iPhone 14-15 con iOS 16-17) y muestra logs detallados **antes** de que ocurra el crash.
+Este sistema captura logs detallados **antes** del crash y los hace accesibles via cable USB-C conectado a Mac/PC para debugging con Safari Web Inspector.
 
 ## 🎯 Activación Automática
 
@@ -15,6 +15,23 @@ El logger se activa automáticamente **solo** en:
 - iPhone 16+ (iOS 18+) - No tiene el problema
 - Android devices
 - Desktop browsers
+
+## 🔌 Configuración USB-C Debugging
+
+### **1. Preparación del iPhone**
+1. Conectar iPhone al Mac/PC con cable USB-C/Lightning
+2. En iPhone: `Ajustes > Safari > Avanzado > Web Inspector` = **ON**
+3. Abrir la página web en Safari en el iPhone
+
+### **2. Acceso desde Mac**
+1. Abrir Safari en Mac
+2. `Menú Desarrollo > [Tu iPhone] > Safari > [página web]`
+3. Se abre Web Inspector con acceso a Console
+
+### **3. Acceso desde PC Windows**
+1. Descargar Safari para Windows o usar iTunes
+2. Habilitar modo desarrollo 
+3. Acceder al dispositivo conectado
 
 ## 🔍 Señales de Warning Detectadas
 
@@ -33,27 +50,51 @@ El logger se activa automáticamente **solo** en:
 - 🟣 **MEMORY**: Problemas de memoria
 - 🟠 **PERFORMANCE**: Tasks lentas (>50ms)
 
-## 📱 Cómo Usar el Overlay
+## 🖥️ Comandos de Debugging USB-C
 
-### **Aparición Automática**
-- El overlay aparece automáticamente cuando se detectan condiciones críticas
-- Icono 🚨 rojo aparece en la esquina superior derecha
+Una vez conectado con Safari Web Inspector, usar estos comandos en la **Console**:
 
-### **Controles**
-- **📋 Copy**: Copia todos los logs al clipboard
-- **✕ Hide**: Oculta el overlay (botón 🚨 permanece visible)
-- **🚨 Show**: Mostrar overlay oculto
+### **Comandos Básicos**
+```javascript
+// Ver todos los logs formateados
+iOSDebug.printLogs()
 
-### **Información Mostrada**
+// Exportar reporte completo
+iOSDebug.exportLogs()
+
+// Ver logs en crudo (array)
+iOSDebug.getLogs()
+
+// Limpiar logs
+iOSDebug.clearLogs()
 ```
-🚨 iOS Debug Logger
-═══════════════════
-iPhone 15 Series - iOS 16.4
-Errors: 3 | Perf Issues: 5
 
-[ERROR] 14:23:45 - FixedZoom critical error
-[WARNING] 14:23:46 - Critical error count reached
-[DOM] 14:23:47 - Applying HARD CUT: 8450px
+### **Al Abrir la Página por Primera Vez**
+El sistema automáticamente muestra en Console:
+```
+🚨 iOS DEBUG LOGGER ACTIVE
+========================
+Device: iPhone 15 Series - iOS 16.4
+
+USB-C DEBUGGING COMMANDS:
+iOSDebug.printLogs()       - Print all logs to console
+iOSDebug.exportLogs()      - Export full report
+iOSDebug.getLogs()         - Get raw logs array
+iOSDebug.clearLogs()       - Clear all logs
+
+WATCH FOR: Logs with emoji 🔴🟡 before crash
+CRITICAL: Look for "About to hide overlay - CRITICAL POINT"
+```
+
+### **Si la Página se Recarga/Crash**
+Al recargar, la consola muestra:
+```
+🔄 iOS DEBUG: LOGS FROM PREVIOUS SESSION DETECTED
+================================================
+This might be from a session that crashed/reloaded.
+
+To view previous logs, run:
+iOSDebug.printLogs()
 ```
 
 ## 📋 Formato del Reporte Completo
@@ -111,14 +152,24 @@ if ((window as any).__iOSDebugLogger?.isActive) {
 }
 ```
 
-## 🐛 Debugging Strategy
+## 🔍 Debugging Strategy con USB-C
 
-1. **Reproduce el crash** en iPhone 14-15
-2. **Observa el overlay** - aparecerá automáticamente antes del crash
-3. **Copia los logs** usando el botón 📋
-4. **Analiza la secuencia** de eventos antes del crash
-5. **Identifica el patrón** - qué operaciones coinciden siempre antes del crash
-6. **Implementa la solución específica** para ese patrón
+### **Proceso Paso a Paso:**
+
+1. **Conectar iPhone con cable USB-C**
+2. **Habilitar Web Inspector** en iPhone 
+3. **Abrir Safari Web Inspector** en Mac/PC
+4. **Abrir la página** en iPhone Safari
+5. **En Console ejecutar**: `iOSDebug.clearLogs()` para empezar limpio
+6. **Reproducir el crash** (introducir contraseña, etc.)
+7. **Si la página se recarga**, inmediatamente ejecutar: `iOSDebug.printLogs()`
+8. **Copiar los logs** de la consola para análisis
+
+### **Persistencia de Logs:**
+- **localStorage**: Logs sobreviven crashes/recargas
+- **Console Output**: Logs también en console con emojis para filtrar
+- **Remote Logging**: Opcional via endpoint `/api/ios-debug-log`
+- **Multi-layer**: Logs en 3 lugares simultáneamente para máxima captura
 
 ## 📊 Interpretación de Logs
 
@@ -136,10 +187,49 @@ if ((window as any).__iOSDebugLogger?.isActive) {
 - FixedZoom intenta aplicar HARD CUT cuando el DOM está inestable
 - Performance degradation indica saturación del render thread
 
-## 🛠️ Próximos Pasos
+### **Buscar Específicamente:**
+```
+🔴 - JavaScript errors críticos
+🟡 - "CRITICAL POINT" o "CRITICAL ERROR DETECTED"
+🟢 - "Applying HARD CUT" seguido de error
+🟠 - Tasks >100ms consecutivos
+🟣 - Memory warnings
 
-Una vez identificado el patrón específico de crash, implementar:
-- **Fallback graceful** para iOS 16-17
-- **Delay adicional** antes de FixedZoom activation
-- **DOM stability check** antes de HARD CUT
-- **Memory pressure detection** y reducir operaciones
+SECUENCIA CRÍTICA:
+"Password correct" → "About to hide overlay" → Error en FixedZoom
+```
+
+### **Comandos Útiles Console:**
+```javascript
+// Filtrar solo errores críticos
+iOSDebug.getLogs().filter(log => log.type === 'error')
+
+// Ver logs de últimos 10 segundos
+iOSDebug.getLogs().filter(log => Date.now() - log.timestamp < 10000)
+
+// Buscar logs específicos de componente
+iOSDebug.getLogs().filter(log => log.component === 'FixedZoom')
+
+// Ver memory info si disponible
+console.log(performance.memory)
+```
+
+## 🛠️ Soluciones Basadas en Logs
+
+Una vez identificado el patrón específico de crash:
+
+1. **Si error en FixedZoom HARD CUT:**
+   - Delay adicional antes de applyZoom() en iOS 16-17
+   - DOM stability check antes de DOM manipulation
+
+2. **Si error en overlay transition:**
+   - Throttle más agresivo en setOverlayVisible
+   - Graceful fallback sin animaciones
+
+3. **Si memory pressure:**
+   - Reducir número de frames/operaciones simultáneas
+   - Cleanup más frecuente de resources
+
+4. **Si performance degradation:**
+   - Espaciar más los timeouts/RAF
+   - Usar menos requestAnimationFrame consecutivos

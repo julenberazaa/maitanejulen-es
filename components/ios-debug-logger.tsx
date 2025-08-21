@@ -29,6 +29,44 @@ export default function IOSDebugLogger() {
   const lastErrorTimeRef = useRef(0)
   const performanceIssuesRef = useRef(0)
 
+  // Check for previous logs after page reload/crash
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    try {
+      const previousLogs = localStorage.getItem('ios-debug-formatted')
+      if (previousLogs && previousLogs.length > 100) {
+        console.warn(`
+🔄 iOS DEBUG: LOGS FROM PREVIOUS SESSION DETECTED
+================================================
+This might be from a session that crashed/reloaded.
+
+To view previous logs, run:
+iOSDebug.printLogs()
+
+To clear old logs:  
+iOSDebug.clearLogs()
+
+To export all data:
+iOSDebug.exportLogs()
+`)
+        
+        // Also check if logs contain critical indicators
+        if (previousLogs.includes('CRITICAL POINT') || 
+            previousLogs.includes('CRITICAL ERROR DETECTED') ||
+            previousLogs.includes('About to hide overlay')) {
+          console.error(`
+🚨 PREVIOUS SESSION HAD CRITICAL ERRORS!
+=======================================
+Run iOSDebug.printLogs() to see what happened before crash/reload
+`)
+        }
+      }
+    } catch (e) {
+      console.warn('Could not check for previous iOS debug logs')
+    }
+  }, [])
+
   // Detect iOS version and device
   useEffect(() => {
     const detectIOSInfo = (): IOSVersionInfo => {
@@ -92,10 +130,78 @@ export default function IOSDebugLogger() {
       details
     }
     
-    logsRef.current = [...logsRef.current.slice(-50), entry] // Keep last 50 logs
+    logsRef.current = [...logsRef.current.slice(-100), entry] // Keep last 100 logs
     setLogs([...logsRef.current])
     
-    // Auto-show overlay on critical conditions
+    // ============================================================================
+    // ROBUST LOGGING FOR USB-C SAFARI WEB INSPECTOR ACCESS
+    // ============================================================================
+    
+    // 1. Enhanced Console Logging - Visible in Safari Web Inspector
+    const timestamp = new Date(entry.timestamp).toISOString()
+    const componentStr = component ? `[${component}] ` : ''
+    const emoji = {
+      'error': '🔴',
+      'warning': '🟡', 
+      'info': '🔵',
+      'dom': '🟢',
+      'memory': '🟣',
+      'performance': '🟠'
+    }[type] || '⚪'
+    
+    const logMessage = `${emoji} iOS-DEBUG ${timestamp} [${type.toUpperCase()}] ${componentStr}${message}`
+    
+    // Use appropriate console method for visibility
+    switch(type) {
+      case 'error':
+        console.error(logMessage, details || '', stack ? `\nStack: ${stack}` : '')
+        break
+      case 'warning':
+        console.warn(logMessage, details || '')
+        break
+      default:
+        console.log(logMessage, details || '')
+    }
+    
+    // 2. Persist to localStorage (survives crashes/reloads)
+    try {
+      const existingLogs = localStorage.getItem('ios-debug-logs')
+      const logHistory: LogEntry[] = existingLogs ? JSON.parse(existingLogs) : []
+      const updatedHistory = [...logHistory.slice(-200), entry] // Keep last 200 in storage
+      localStorage.setItem('ios-debug-logs', JSON.stringify(updatedHistory))
+      
+      // Also store a formatted version for easy access
+      const formattedLog = `${timestamp} [${type.toUpperCase()}] ${componentStr}${message}${details ? `\nDetails: ${JSON.stringify(details, null, 2)}` : ''}${stack ? `\nStack: ${stack}` : ''}`
+      const existingFormatted = localStorage.getItem('ios-debug-formatted') || ''
+      const newFormatted = existingFormatted + '\n' + formattedLog
+      // Keep only last 50KB of formatted logs to avoid storage limits
+      const trimmedFormatted = newFormatted.slice(-50000)
+      localStorage.setItem('ios-debug-formatted', trimmedFormatted)
+    } catch (e) {
+      console.error('🔴 iOS-DEBUG: Failed to persist logs to localStorage', e)
+    }
+    
+    // 3. Network logging (if endpoint available)
+    try {
+      fetch('/api/ios-debug-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...entry,
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          devicePixelRatio: window.devicePixelRatio,
+          screenSize: `${window.screen.width}x${window.screen.height}`,
+          viewportSize: `${window.innerWidth}x${window.innerHeight}`
+        })
+      }).catch(() => {
+        // Silent fail - endpoint might not exist
+      })
+    } catch (e) {
+      // Silent fail
+    }
+    
+    // Auto-show overlay on critical conditions (if not already crashed)
     if (type === 'error') {
       const now = Date.now()
       if (now - lastErrorTimeRef.current < 1000) {
@@ -107,12 +213,14 @@ export default function IOSDebugLogger() {
       
       // Show overlay if 3+ errors in 1 second
       if (errorCountRef.current >= 3) {
-        setIsVisible(true)
-        addLog('warning', `⚠️ Critical error count reached: ${errorCountRef.current} errors in <1s`)
+        try {
+          setIsVisible(true)
+          // Don't call addLog here to avoid recursion
+        } catch (e) {
+          console.error('🔴 iOS-DEBUG: Failed to show overlay after critical errors', e)
+        }
       }
     }
-
-    console.log(`[iOS-DEBUG] ${type.toUpperCase()}: ${message}`, details || '')
   }
 
   // Global error handlers
@@ -123,16 +231,38 @@ export default function IOSDebugLogger() {
       addLog('error', `JavaScript Error: ${event.message}`, event.error?.stack, undefined, {
         filename: event.filename,
         lineno: event.lineno,
-        colno: event.colno
+        colno: event.colno,
+        stack: event.error?.stack
       })
       
       // Critical errors that often precede crashes
       if (event.message.includes('DOM') || 
           event.message.includes('transform') || 
           event.message.includes('height') ||
-          event.message.includes('overflow')) {
-        setIsVisible(true)
-        addLog('warning', '🚨 Critical DOM manipulation error detected')
+          event.message.includes('overflow') ||
+          event.message.includes('Cannot read property') ||
+          event.message.includes('Cannot set property') ||
+          event.message.includes('null') ||
+          event.message.includes('undefined')) {
+        
+        addLog('warning', '🚨 CRITICAL ERROR DETECTED - Potential crash imminent', undefined, 'ErrorHandler', {
+          errorMessage: event.message,
+          location: `${event.filename}:${event.lineno}:${event.colno}`,
+          stackTrace: event.error?.stack,
+          userAgent: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+          memoryInfo: (performance as any).memory ? {
+            usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
+            totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
+            jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit
+          } : 'not available'
+        })
+        
+        try {
+          setIsVisible(true)
+        } catch (e) {
+          console.error('🔴 Failed to show overlay after critical error')
+        }
       }
     }
 
@@ -264,21 +394,110 @@ ${logText}
     })
   }
 
-  // Expose addLog function to window for external components
+  // Expose comprehensive debug functions to window for external components and console access
   useEffect(() => {
     if (isActive) {
       (window as any).__iOSDebugLogger = {
         addLog,
         show: () => setIsVisible(true),
         hide: () => setIsVisible(false),
-        isActive: true
+        isActive: true,
+        
+        // Console-accessible functions for USB debugging
+        getLogs: () => {
+          try {
+            const stored = localStorage.getItem('ios-debug-logs')
+            return stored ? JSON.parse(stored) : []
+          } catch (e) {
+            console.error('Failed to retrieve logs:', e)
+            return []
+          }
+        },
+        
+        getFormattedLogs: () => {
+          try {
+            return localStorage.getItem('ios-debug-formatted') || 'No logs found'
+          } catch (e) {
+            console.error('Failed to retrieve formatted logs:', e)
+            return 'Error retrieving logs'
+          }
+        },
+        
+        exportLogs: () => {
+          try {
+            const logs = (window as any).__iOSDebugLogger.getLogs()
+            const deviceInfo = {
+              userAgent: navigator.userAgent,
+              url: window.location.href,
+              devicePixelRatio: window.devicePixelRatio,
+              screenSize: `${window.screen.width}x${window.screen.height}`,
+              viewportSize: `${window.innerWidth}x${window.innerHeight}`,
+              timestamp: new Date().toISOString()
+            }
+            
+            const fullReport = {
+              deviceInfo,
+              logs,
+              formatted: (window as any).__iOSDebugLogger.getFormattedLogs()
+            }
+            
+            console.log('📋 iOS DEBUG FULL EXPORT:')
+            console.log(JSON.stringify(fullReport, null, 2))
+            
+            return fullReport
+          } catch (e) {
+            console.error('Failed to export logs:', e)
+            return null
+          }
+        },
+        
+        clearLogs: () => {
+          try {
+            localStorage.removeItem('ios-debug-logs')
+            localStorage.removeItem('ios-debug-formatted')
+            setLogs([])
+            logsRef.current = []
+            console.log('🗑️ iOS DEBUG: All logs cleared')
+          } catch (e) {
+            console.error('Failed to clear logs:', e)
+          }
+        },
+        
+        // Quick access functions
+        printLogs: () => {
+          const formatted = (window as any).__iOSDebugLogger.getFormattedLogs()
+          console.log('📱 iOS DEBUG FORMATTED LOGS:\n' + formatted)
+        },
+        
+        getErrorCount: () => errorCountRef.current,
+        getPerformanceIssues: () => performanceIssuesRef.current
       }
+      
+      // Global console shortcuts
+      ;(window as any).iOSDebug = (window as any).__iOSDebugLogger
+      
+      // Auto-print instructions for USB debugging
+      console.log(`
+🚨 iOS DEBUG LOGGER ACTIVE
+========================
+Device: ${iosInfo?.deviceModel} - iOS ${iosInfo?.version}
+
+USB-C DEBUGGING COMMANDS:
+iOSDebug.printLogs()       - Print all logs to console
+iOSDebug.exportLogs()      - Export full report
+iOSDebug.getLogs()         - Get raw logs array
+iOSDebug.clearLogs()       - Clear all logs
+
+WATCH FOR: Logs with emoji 🔴🟡 before crash
+CRITICAL: Look for "About to hide overlay - CRITICAL POINT"
+`)
     }
 
     return () => {
       delete (window as any).__iOSDebugLogger
+      delete (window as any).iOSDebug
     }
-  }, [isActive])
+  }, [isActive, iosInfo])
 
   if (!isActive || !iosInfo?.isProblemVersion) {
     return null

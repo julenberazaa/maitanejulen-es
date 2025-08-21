@@ -264,9 +264,23 @@ export default function TimelinePage() {
   // Bloquear scroll mientras el overlay esté visible (Política scroller único: #scroll-root)
   useEffect(() => {
     const scroller = document.getElementById('scroll-root') as HTMLElement | null
-    if (!scroller) return
-    if (overlayVisible) scroller.style.overflowY = 'hidden'
-    else scroller.style.overflowY = 'auto'
+    if (!scroller) {
+      iOSDebugLog('error', 'Critical: #scroll-root element not found', 'TimelinePage')
+      return
+    }
+    
+    if (overlayVisible) {
+      scroller.style.overflowY = 'hidden'
+      iOSDebugLog('dom', 'Scroll blocked - overlay visible', 'TimelinePage')
+    } else {
+      scroller.style.overflowY = 'auto'
+      iOSDebugLog('warning', '🚨 OVERLAY NOW HIDDEN - Scroll reactivated (CRITICAL TRANSITION)', 'TimelinePage', {
+        scrollerElement: !!scroller,
+        scrollerOverflow: scroller.style.overflowY,
+        documentOverflow: document.documentElement.style.overflowY,
+        bodyOverflow: document.body.style.overflowY
+      })
+    }
   }, [overlayVisible])
 
   const handleOverlaySubmit = async (e?: React.FormEvent) => {
