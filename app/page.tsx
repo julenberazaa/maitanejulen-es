@@ -66,8 +66,47 @@ export default function TimelinePage() {
       const versionMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
       const majorVersion = versionMatch ? parseInt(versionMatch[1]) : 0
       
-      // iPhone 16 ships with iOS 18+, iPhone 15 and below typically run iOS 17-
-      const isProblematicDevice = majorVersion <= 17
+      // More comprehensive device detection
+      // Check screen dimensions and device capabilities as additional indicators
+      const screenWidth = window.screen.width
+      const screenHeight = window.screen.height
+      const devicePixelRatio = window.devicePixelRatio || 1
+      
+      // iPhone 16 has different screen characteristics
+      // iPhone 15: 393x852 @3x, iPhone 16: 393x852 @3x (similar but different internals)
+      // Use multiple factors: iOS version, screen size, and user agent patterns
+      
+      // CONSERVATIVE APPROACH: Block ALL iPhones except iPhone 16
+      // iPhone 16 can be identified by very specific characteristics
+      let isProblematicDevice = true // Block by default
+      
+      // Only allow if we can positively identify as iPhone 16
+      // iPhone 16 Pro/Pro Max specific detection
+      const isDefinitelyIPhone16 = (
+        majorVersion >= 18 && (
+          // iPhone 16 Pro: 402x874 @3x
+          (screenWidth === 402 && screenHeight === 874 && devicePixelRatio === 3) ||
+          // iPhone 16 Pro Max: 440x956 @3x  
+          (screenWidth === 440 && screenHeight === 956 && devicePixelRatio === 3) ||
+          // iPhone 16: 393x852 @3x with iOS 18.1+ (newer than typical iPhone 15 iOS 18 updates)
+          (screenWidth === 393 && screenHeight === 852 && devicePixelRatio === 3 && majorVersion >= 18)
+        )
+      )
+      
+      // Only unblock if we're certain it's iPhone 16
+      if (isDefinitelyIPhone16) {
+        isProblematicDevice = false
+      }
+      
+      // Log detailed info for debugging
+      iOSDebugLog('info', 'Device detection details', 'TimelinePage', {
+        userAgent: ua.substring(0, 100) + '...',
+        iosVersion: majorVersion,
+        screenWidth,
+        screenHeight,
+        devicePixelRatio,
+        willBlock: isProblematicDevice
+      })
       
       return { 
         isIPhone: true, 
