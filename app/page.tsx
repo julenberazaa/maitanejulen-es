@@ -890,39 +890,30 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
-      {/* iPhone blocking overlay - ALWAYS SHOW if shouldBlockDevice is true */}
+      {/* iPhone blocking overlay - Same style as password screen */}
       {shouldBlockDevice && (
-        <div className="fixed inset-0 z-[1001] bg-white">
-          {/* Fallback white background */}
-          <div className="absolute inset-0 bg-white" />
-          
-          {/* Main background with image */}
+        <div className="fixed inset-0 z-[1001]">
+          {/* Same background as password screen */}
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url('/a12.jpg')` }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
+          <div className="absolute inset-0 bg-black/10" />
           
+          {/* Centered content */}
           <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
-            <div className="max-w-2xl text-center">
-              <div className="bg-terracotta rounded-2xl p-8 shadow-2xl">
-                <Heart className="w-16 h-16 mx-auto mb-6 text-ivory animate-pulse" />
-                <h2 className="text-3xl font-bold text-ivory mb-6 font-script">
-                  ¡Dispositivo iPhone detectado!
-                </h2>
-                <p className="text-xl text-ivory/90 leading-relaxed font-manuscript mb-6">
-                  Estamos trabajando para optimizar nuestra página web en dispositivos iPhone. Te recomendamos visitar la página desde un <strong>ordenador</strong> o dispositivo <strong>Android</strong> para una experiencia completa.
-                </p>
-                <p className="text-lg text-ivory/80 font-manuscript mb-4">
-                  ¡Gracias por tu paciencia! ❤️
-                </p>
-                
-                {/* Debug info */}
-                <div className="mt-6 text-sm text-ivory/60 font-mono">
-                  <div>Razón: {blockingReason}</div>
-                  {deviceInfo && (
-                    <div>iOS {deviceInfo.version} • {window.screen?.width}x{window.screen?.height}</div>
-                  )}
+            <div className="text-center">
+              {/* Brown box similar to password container */}
+              <div className="bg-terracotta rounded-2xl p-10 shadow-2xl max-w-md mx-auto">
+                <Heart className="w-20 h-20 mx-auto mb-8 text-ivory animate-pulse" />
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-ivory mb-6 leading-tight">
+                    Estamos trabajando para crear la página para iOS.
+                  </h2>
+                  <p className="text-lg text-ivory/90 font-medium">
+                    Gracias por la espera.
+                  </p>
                 </div>
               </div>
             </div>
