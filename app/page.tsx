@@ -895,7 +895,6 @@ export default function TimelinePage() {
         <div 
           className="fixed top-0 left-0 w-full z-[1001]"
           style={{ 
-            height: '100vh',
             height: '100dvh' // Dynamic viewport height for mobile
           }}
         >
@@ -943,7 +942,6 @@ export default function TimelinePage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              minHeight: '100vh',
               minHeight: '100dvh'
             }}
           >
