@@ -764,17 +764,8 @@ deactivateIOSDebug()
     </div>
   )
 
-  // Show toggle button when hidden
-  const toggleButton = !isVisible && (
-    <button
-      onClick={() => setIsVisible(true)}
-      className="fixed top-4 right-4 w-12 h-12 bg-red-600 text-white rounded-full shadow-lg flex items-center justify-center text-lg hover:bg-red-700 transition-colors"
-      style={{ zIndex: 99998 }}
-      title="Show iOS Debug Logger"
-    >
-      🚨
-    </button>
-  )
+  // Show toggle button when hidden - DISABLED for production
+  const toggleButton = null
 
   return createPortal(
     <>
