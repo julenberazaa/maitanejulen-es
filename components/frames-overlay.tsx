@@ -18,16 +18,25 @@ export default function FramesOverlay(): React.JSX.Element | null {
   const prefetchTimersRef = useRef<Record<string, number>>({})
   const [webpSupported, setWebpSupported] = useState<boolean | null>(null)
   const [isIOS, setIsIOS] = useState(false)
+  const [isIPhone, setIsIPhone] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768)
     }
     
-    // Detección de iOS
+    // Detección de iOS + iPhone específico
     const checkIOS = () => {
       const userAgent = navigator.userAgent
-      setIsIOS(/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream)
+      const iOS = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream
+      const iPhone = (window as any).__isIPhone || (/iPhone/.test(userAgent) && !(window as any).MSStream)
+      
+      setIsIOS(iOS)
+      setIsIPhone(iPhone)
+      
+      if (iPhone) {
+        iOSDebugLog('info', 'FramesOverlay: iPhone detected - will use native scroll system', 'FramesOverlay')
+      }
     }
     
     checkMobile()
@@ -48,14 +57,17 @@ export default function FramesOverlay(): React.JSX.Element | null {
     )
     setSlowConnection(isSlowConnection)
 
-    // Minimal delay once FixedZoom is ready (first hard cut applied)
-    // iOS: Delay mucho más agresivo para evitar conflictos con FixedZoom
-    const delay = isIOS ? 2000 : (isSlowConnection ? 1200 : (isMobile ? 400 : 100))
-    
-    if (isIOS) {
-      iOSDebugLog('info', `FramesOverlay detected iOS - using ${delay}ms delay`, 'FramesOverlay', {
-        isSlowConnection, isMobile
-      })
+    // iPhone: Delay ultra-conservador para evitar conflictos con FixedZoom
+    let delay = 100
+    if (isIPhone) {
+      delay = 3000  // iPhone: Delay muy largo para que FixedZoom complete
+      iOSDebugLog('info', `FramesOverlay detected iPhone - using ${delay}ms delay to avoid FixedZoom conflicts`, 'FramesOverlay')
+    } else if (isIOS) {
+      delay = 2000  // iPad: delay moderado
+    } else if (isSlowConnection) {
+      delay = 1200
+    } else if (isMobile) {
+      delay = 400
     }
     let cleanupFns: Array<() => void> = []
     
@@ -63,13 +75,27 @@ export default function FramesOverlay(): React.JSX.Element | null {
     let hasUserInteracted = false
     const enableOnInteraction = () => {
       hasUserInteracted = true
-      // iOS: Requerir interacción del usuario más estrictamente
-      if (isIOS) {
-        iOSDebugLog('info', 'iOS user interaction detected - enabling frame loading with 500ms delay', 'FramesOverlay')
+      // iPhone: Requerir interacción Y esperar a que FixedZoom complete
+      if (isIPhone) {
+        const waitForFixedZoom = () => {
+          if ((window as any).__iPhoneFixedZoomComplete) {
+            setTimeout(() => {
+              setEnableFrameLoading(true)
+              iOSDebugLog('info', 'iPhone: Frame loading enabled after FixedZoom completion + user interaction', 'FramesOverlay')
+            }, 1000) // Delay adicional para iPhone
+          } else {
+            // Esperar a que FixedZoom complete
+            setTimeout(waitForFixedZoom, 200)
+          }
+        }
+        iOSDebugLog('info', 'iPhone: User interaction detected - waiting for FixedZoom completion', 'FramesOverlay')
+        waitForFixedZoom()
+      } else if (isIOS) {
+        iOSDebugLog('info', 'iPad user interaction detected - enabling frame loading with 500ms delay', 'FramesOverlay')
         setTimeout(() => {
           setEnableFrameLoading(true)
-          iOSDebugLog('info', 'iOS frame loading enabled after user interaction', 'FramesOverlay')
-        }, 500) // Delay adicional para iOS
+          iOSDebugLog('info', 'iPad frame loading enabled after user interaction', 'FramesOverlay')
+        }, 500)
       } else if (!isSlowConnection || hasUserInteracted) {
         setEnableFrameLoading(true)
       }
@@ -161,21 +187,38 @@ export default function FramesOverlay(): React.JSX.Element | null {
     const scroller = document.getElementById('scroll-root')
 
     const updateVisible = () => {
-      const currentScrollTop = scroller ? scroller.scrollTop : (window.scrollY || document.documentElement.scrollTop || 0)
-      const viewportHeight = scroller ? scroller.clientHeight : (window.innerHeight || 0)
+      // iPhone: Usar scroll nativo del documento
+      let currentScrollTop: number
+      let viewportHeight: number
+      
+      if (isIPhone) {
+        // iPhone: Solo window scroll nativo
+        currentScrollTop = window.pageYOffset || document.documentElement.scrollTop || 0
+        viewportHeight = window.innerHeight || 0
+        iOSDebugLog('performance', `iPhone scroll update: ${currentScrollTop}px`, 'FramesOverlay')
+      } else {
+        // Otros dispositivos: lógica original
+        currentScrollTop = scroller ? scroller.scrollTop : (window.scrollY || document.documentElement.scrollTop || 0)
+        viewportHeight = scroller ? scroller.clientHeight : (window.innerHeight || 0)
+      }
+      
       const scale = getFixedLayoutScale()
       const next = new Set<string>()
       const toPrefetchIds: string[] = []
+      
       for (const frame of OVERLAY_FRAMES) {
         if (frame.visible === false) continue
         const finalY = (frame.y ?? 0) + (frame.mobileOffsetY ?? 0)
         const cssY = finalY * scale
+        
         if (cssY >= currentScrollTop - PRELOAD_MARGIN && cssY <= currentScrollTop + viewportHeight + PRELOAD_MARGIN) {
           next.add(frame.id)
           toPrefetchIds.push(frame.id)
         }
       }
+      
       setVisibleFrameIds(next)
+      
       // Kick off prefetch for candidates
       for (const id of toPrefetchIds) {
         const frame = OVERLAY_FRAMES.find(f => f.id === id)
@@ -184,17 +227,35 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
 
     updateVisible()
-    if (scroller) scroller.addEventListener('scroll', updateVisible, { passive: true })
-    else window.addEventListener('scroll', updateVisible, { passive: true })
-    window.addEventListener('resize', updateVisible)
-    const timers = [50, 200, 600].map(ms => setTimeout(updateVisible, ms))
-    return () => {
-      if (scroller) scroller.removeEventListener('scroll', updateVisible)
-      else window.removeEventListener('scroll', updateVisible)
-      window.removeEventListener('resize', updateVisible)
-      timers.forEach(clearTimeout)
+    
+    // iPhone: Solo usar window scroll eventos
+    if (isIPhone) {
+      window.addEventListener('scroll', updateVisible, { passive: true })
+      window.addEventListener('resize', updateVisible)
+      
+      // iPhone: Menos timers para reducir overhead
+      const timers = [500, 1500].map(ms => setTimeout(updateVisible, ms))
+      
+      return () => {
+        window.removeEventListener('scroll', updateVisible)
+        window.removeEventListener('resize', updateVisible)
+        timers.forEach(clearTimeout)
+      }
+    } else {
+      // Otros dispositivos: lógica original
+      if (scroller) scroller.addEventListener('scroll', updateVisible, { passive: true })
+      else window.addEventListener('scroll', updateVisible, { passive: true })
+      window.addEventListener('resize', updateVisible)
+      const timers = [50, 200, 600].map(ms => setTimeout(updateVisible, ms))
+      
+      return () => {
+        if (scroller) scroller.removeEventListener('scroll', updateVisible)
+        else window.removeEventListener('scroll', updateVisible)
+        window.removeEventListener('resize', updateVisible)
+        timers.forEach(clearTimeout)
+      }
     }
-  }, [isMobile, enableFrameLoading])
+  }, [isMobile, enableFrameLoading, isIPhone])
 
   // Cleanup any scheduled prefetch timers on unmount
   useEffect(() => {
@@ -205,8 +266,8 @@ export default function FramesOverlay(): React.JSX.Element | null {
     }
   }, [])
 
-  // iOS: Menos retries para evitar saturación
-  const MAX_RETRIES = isIOS ? 2 : (isMobile ? 4 : 3)
+  // iPhone: Mínimos retries para evitar saturación
+  const MAX_RETRIES = isIPhone ? 1 : (isIOS ? 2 : (isMobile ? 4 : 3))
 
   const getOptimizedSrc = (src: string, forMobile: boolean = isMobile): string => {
     if (!src.endsWith('.png')) return src
@@ -281,8 +342,15 @@ export default function FramesOverlay(): React.JSX.Element | null {
         return
       }
       setRetryCounts((prev) => ({ ...prev, [id]: nextAttempt }))
-      // iOS: Backoff más conservador para evitar saturación
-      const backoff = isIOS ? Math.min(3000 * nextAttempt, 8000) : (isMobile ? Math.min(1500 * nextAttempt, 4000) : Math.min(2000 * nextAttempt, 6000))
+      // iPhone: Backoff ultra-conservador para evitar saturación
+      let backoff: number
+      if (isIPhone) {
+        backoff = Math.min(5000 * nextAttempt, 10000) // iPhone: Muy lento
+      } else if (isIOS) {
+        backoff = Math.min(3000 * nextAttempt, 8000)  // iPad: Moderado
+      } else {
+        backoff = isMobile ? Math.min(1500 * nextAttempt, 4000) : Math.min(2000 * nextAttempt, 6000)
+      }
       console.log(`[FRAMES] Scheduling retry ${nextAttempt}/${MAX_RETRIES} for ${id} in ${backoff}ms`)
       const timer = window.setTimeout(() => {
         delete prefetchTimersRef.current[id]
@@ -347,8 +415,15 @@ export default function FramesOverlay(): React.JSX.Element | null {
     })
     mutationObserver.observe(document.body, { childList: true, subtree: true, attributes: false })
 
-    // iOS: Menos timers para reducir overhead
-    const timerDelays = isIOS ? [200, 1000, 3000] : [50, 200, 600, 1200, 2000]
+    // iPhone: Mínimos timers para reducir overhead
+    let timerDelays: number[]
+    if (isIPhone) {
+      timerDelays = [1000, 3000] // iPhone: Solo 2 timers
+    } else if (isIOS) {
+      timerDelays = [200, 1000, 3000] // iPad: Moderado
+    } else {
+      timerDelays = [50, 200, 600, 1200, 2000] // Desktop/Android: Completo
+    }
     const timers = timerDelays.map(ms => setTimeout(updateContainerHeight, ms))
 
     return () => {

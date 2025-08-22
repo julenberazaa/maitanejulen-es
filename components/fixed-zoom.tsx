@@ -29,7 +29,8 @@ export default function FixedZoom() {
     }
 
     const isIOS = isIOSSafari()
-    const isIPhoneDevice = isIPhone()
+    // Usar detección ultra-temprana si está disponible
+    const isIPhoneDevice = (window as any).__isIPhone || isIPhone()
     let fixedZoomReadyDispatched = false
 
     function dispatchFixedZoomReadyOnce() {
@@ -42,6 +43,12 @@ export default function FixedZoom() {
     }
 
     function applyZoom() {
+      // iPhone: Prevenir ejecuciones múltiples
+      if (isIPhoneDevice && (window as any).__iPhoneFixedZoomComplete) {
+        iOSDebugLog('info', 'iPhone: applyZoom skipped - already completed', 'FixedZoom')
+        return
+      }
+      
       try {
         iOSDebugLog('info', 'FixedZoom applyZoom() started', 'FixedZoom')
         
@@ -234,16 +241,24 @@ export default function FixedZoom() {
     }
 
     function handleResize() {
-      if (resizeTimeout) clearTimeout(resizeTimeout)
-      // iPhone-específico: Throttling extremo para evitar cascadas
-      let delay = 150
+      // iPhone: NO manejar resize después de completado
       if (isIPhoneDevice) {
-        delay = 800  // iPhone: Delay muy largo para evitar resize storms
-        iOSDebugLog('info', 'iPhone: Using conservative resize throttling (800ms)', 'FixedZoom')
-      } else if (isIOS) {
-        delay = 300  // iPad: Moderado
+        if ((window as any).__iPhoneFixedZoomComplete) {
+          iOSDebugLog('info', 'iPhone: Resize ignored - FixedZoom completed', 'FixedZoom')
+          return
+        }
+        // Si no está completado, usar delay extremo
+        if (resizeTimeout) clearTimeout(resizeTimeout)
+        resizeTimeout = setTimeout(() => {
+          applyZoom()
+        }, 1200) // iPhone: Delay muy largo
+        iOSDebugLog('info', 'iPhone: Using ultra-conservative resize throttling (1200ms)', 'FixedZoom')
+        return
       }
       
+      // Otros dispositivos: comportamiento original
+      if (resizeTimeout) clearTimeout(resizeTimeout)
+      const delay = isIOS ? 300 : 150
       resizeTimeout = setTimeout(() => {
         applyZoom()
       }, delay)
@@ -271,26 +286,20 @@ export default function FixedZoom() {
     let timeouts: NodeJS.Timeout[] = []
     
     if (isIPhoneDevice) {
-      // iPhone ULTRA-CONSERVADOR: Mínimos timeouts para prevenir memory pressure
-      iOSDebugLog('warning', 'iPhone detected - using ULTRA-conservative strategy', 'FixedZoom')
-      timeouts = [
-        setTimeout(() => {
-          iOSDebugLog('info', 'iPhone minimal timeout 1/2 (200ms)', 'FixedZoom')
-          applyZoom()
-        }, 200),
-        setTimeout(() => {
-          iOSDebugLog('info', 'iPhone minimal timeout 2/2 (1000ms)', 'FixedZoom')
-          applyZoom()
-        }, 1000)
-      ]
+      // iPhone ULTRA-MINIMAL: Un solo timeout para eliminar race conditions completamente
+      iOSDebugLog('warning', 'iPhone detected - using SINGLE-SHOT strategy to eliminate race conditions', 'FixedZoom')
       
-      // iPhone: Un solo requestAnimationFrame diferido
-      setTimeout(() => {
-        requestAnimationFrame(() => {
-          iOSDebugLog('performance', 'iPhone single deferred RAF', 'FixedZoom')
-          applyZoom()
-        })
-      }, 300)
+      // CRÍTICO: Solo UN applyZoom después del CSS initial render
+      const singleTimeout = setTimeout(() => {
+        iOSDebugLog('info', 'iPhone SINGLE applyZoom execution (500ms)', 'FixedZoom')
+        applyZoom()
+        
+        // Marcar como completado para evitar interferencias
+        ;(window as any).__iPhoneFixedZoomComplete = true
+        iOSDebugLog('info', 'iPhone FixedZoom marked as complete - no more executions', 'FixedZoom')
+      }, 500) // Tiempo suficiente para que CSS se aplique
+      
+      timeouts = [singleTimeout]
     } else if (isIOS) {
       // iPad: Estrategia moderadamente conservadora
       iOSDebugLog('info', 'iPad detected - using conservative HARD CUT strategy', 'FixedZoom')
@@ -361,13 +370,20 @@ export default function FixedZoom() {
     }
 
     window.addEventListener('resize', handleResize)
-    // iPhone-específico: Orientationchange ultra-diferido
-    const orientationDelay = isIPhoneDevice ? 1200 : (isIOS ? 500 : 200)
+    // iPhone-específico: Orientationchange solo si no está completado
     window.addEventListener('orientationchange', () => {
       if (isIPhoneDevice) {
-        iOSDebugLog('info', 'iPhone: Deferring orientation change handling', 'FixedZoom')
+        if ((window as any).__iPhoneFixedZoomComplete) {
+          iOSDebugLog('info', 'iPhone: Orientation change ignored - FixedZoom completed', 'FixedZoom')
+          return
+        }
+        iOSDebugLog('info', 'iPhone: Handling orientation change with 1500ms delay', 'FixedZoom')
+        setTimeout(applyZoom, 1500)
+      } else {
+        // Otros dispositivos: delay original
+        const delay = isIOS ? 500 : 200
+        setTimeout(applyZoom, delay)
       }
-      setTimeout(applyZoom, orientationDelay)
     })
 
     return () => {

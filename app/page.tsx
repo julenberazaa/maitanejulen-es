@@ -52,13 +52,16 @@ export default function TimelinePage() {
   useEffect(() => { overlayVisibleRef.current = overlayVisible }, [overlayVisible])
   useEffect(() => { setHasMounted(true) }, [])
 
-  // Forzar scroll al top en cada recarga de la página sin animación
+  // iPhone: Usar detección ultra-temprana para posicionamiento inmediato
   useEffect(() => {
-    // Detección específica de iPhone vs otros iOS devices
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
-    const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+    const isIPhone = (window as any).__isIPhone || /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
     
-    iOSDebugLog('info', 'Page initialization started', 'TimelinePage', { isIOS, isIPhone })
+    iOSDebugLog('info', 'Page initialization started', 'TimelinePage', { 
+      isIOS, 
+      isIPhone, 
+      ultraEarlyDetection: !!(window as any).__isIPhone 
+    })
     
     // Evitar que el navegador restaure la posición de scroll anterior
     if ('scrollRestoration' in history) {
@@ -66,19 +69,42 @@ export default function TimelinePage() {
       iOSDebugLog('info', 'Scroll restoration set to manual', 'TimelinePage')
     }
     
-    // Forzar posición al top inmediatamente sin animación
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-    document.documentElement.scrollTop = 0
-    document.body.scrollTop = 0
-    iOSDebugLog('dom', 'Forced scroll to top', 'TimelinePage')
+    // iPhone: Posicionamiento ultra-agresivo para prevenir bouncing
+    if (isIPhone) {
+      // iPhone: Multi-approach scroll reset
+      window.scrollTo(0, 0)
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      
+      // Forzar también en el next tick
+      setTimeout(() => {
+        window.scrollTo(0, 0)
+        document.documentElement.scrollTop = 0
+        document.body.scrollTop = 0
+      }, 0)
+      
+      iOSDebugLog('dom', 'iPhone: Ultra-aggressive scroll reset to top', 'TimelinePage')
+    } else {
+      // Otros dispositivos: comportamiento original
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      iOSDebugLog('dom', 'Standard scroll to top', 'TimelinePage')
+    }
 
-    // Bloquear scroll durante el primer segundo para estabilizar marcos
+    // Bloquear scroll durante overlay - iPhone usa enfoque diferente
     const prevHtmlOverflowY = document.documentElement.style.overflowY
     const prevBodyOverflowY = document.body.style.overflowY
-    // Bloquear scroll en html y body durante overlay
-    document.documentElement.style.overflowY = 'hidden'
-    document.body.style.overflowY = 'hidden'
-    iOSDebugLog('dom', 'Scroll blocked during overlay', 'TimelinePage')
+    
+    if (!isIPhone) {
+      // Desktop/Android: bloqueo original
+      document.documentElement.style.overflowY = 'hidden'
+      document.body.style.overflowY = 'hidden'
+      iOSDebugLog('dom', 'Standard scroll blocked during overlay', 'TimelinePage')
+    } else {
+      // iPhone: el scroll ya está manejado por CSS nativo
+      iOSDebugLog('dom', 'iPhone: Using native scroll - no manual blocking', 'TimelinePage')
+    }
     
     // iPhone: Timeout ultra-conservador para estabilizar scroll
     let unlockDelay = 1000
@@ -90,20 +116,24 @@ export default function TimelinePage() {
     
     iOSDebugLog('info', `Setting unlock delay: ${unlockDelay}ms (iPhone: ${isIPhone})`, 'TimelinePage')
     
-    const unlock = setTimeout(() => {
-      // Mantener bloqueo si el overlay sigue visible
-      if (!overlayVisibleRef.current) {
-        // iPhone: No modificar overflow del documento - usar scroll nativo
-        if (!isIPhone) {
+    // iPhone: No usar unlock timeout - el scroll nativo ya está manejado
+    if (isIPhone) {
+      iOSDebugLog('info', 'iPhone: Skipping unlock timeout - using native scroll', 'TimelinePage')
+      return () => {} // Return empty cleanup
+    } else {
+      // Otros dispositivos: lógica original de unlock
+      const unlock = setTimeout(() => {
+        if (!overlayVisibleRef.current) {
           document.documentElement.style.overflowY = prevHtmlOverflowY || ''
           document.body.style.overflowY = prevBodyOverflowY || ''
+          iOSDebugLog('dom', 'Scroll unlocked after timeout', 'TimelinePage')
+        } else {
+          iOSDebugLog('info', 'Scroll unlock skipped - overlay still visible', 'TimelinePage')
         }
-        iOSDebugLog('dom', `Scroll unlocked after timeout (iPhone native: ${isIPhone})`, 'TimelinePage')
-      } else {
-        iOSDebugLog('info', 'Scroll unlock skipped - overlay still visible', 'TimelinePage')
-      }
-    }, unlockDelay)
-    return () => clearTimeout(unlock)
+      }, unlockDelay)
+      
+      return () => clearTimeout(unlock)
+    }
   }, [])
 
   // HARD CUT: La lógica de corte de scroll ahora está en FixedZoom.
@@ -225,11 +255,24 @@ export default function TimelinePage() {
     const handleScroll = () => {
       if (heroRef.current) {
         const scrolled = window.pageYOffset
-        // iPhone: Escala más conservadora para reducir GPU load
-        const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
-        const scaleMultiplier = isIPhone ? 0.0002 : 0.0005
-        const scale = 1 + scrolled * scaleMultiplier
-        heroRef.current.style.transform = `scale(${scale})`
+        // iPhone: Escala más conservadora + throttling
+        const isCurrentIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+        
+        if (isCurrentIPhone) {
+          // iPhone: Throttling del hero scaling para reducir redraws
+          const now = Date.now()
+          if (!(heroRef.current as any).__lastUpdate || now - (heroRef.current as any).__lastUpdate > 100) {
+            const scaleMultiplier = 0.0001  // Escala muy conservadora
+            const scale = 1 + scrolled * scaleMultiplier
+            heroRef.current.style.transform = `scale(${scale})`
+            ;(heroRef.current as any).__lastUpdate = now
+          }
+        } else {
+          // Otros dispositivos: comportamiento original
+          const scaleMultiplier = 0.0005
+          const scale = 1 + scrolled * scaleMultiplier
+          heroRef.current.style.transform = `scale(${scale})`
+        }
       }
 
       if (finalSectionRef.current && finalSectionBgRef.current && finalSectionImageRef.current) {
@@ -347,26 +390,25 @@ export default function TimelinePage() {
           iOSDebugLog('warning', 'About to hide overlay - CRITICAL POINT', 'TimelinePage')
           setOverlayVisible(false)
           
-          // iPhone-específico: Reactivación de scroll más suave
-          requestAnimationFrame(() => {
-            const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
-            
-            if (isIPhone) {
-              // iPhone: Restaurar scroll del documento principal
-              iOSDebugLog('dom', 'iPhone: Reactivating native document scroll', 'TimelinePage')
-              document.documentElement.style.overflow = ''
-              document.body.style.overflow = ''
-              // No disparar evento scroll artificial en iPhone
-            } else {
-              // Otros dispositivos: Lógica original
+          // iPhone-específico: Reactivación inmediata sin requestAnimationFrame
+          const isCurrentIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+          
+          if (isCurrentIPhone) {
+            // iPhone: Reactivación inmediata sin delays
+            iOSDebugLog('dom', 'iPhone: Immediate native document scroll reactivation', 'TimelinePage')
+            document.documentElement.style.overflow = ''
+            document.body.style.overflow = ''
+            iOSDebugLog('info', 'iPhone: Scroll reactivation completed immediately', 'TimelinePage')
+          } else {
+            // Otros dispositivos: Lógica original con requestAnimationFrame
+            requestAnimationFrame(() => {
               iOSDebugLog('dom', 'Reactivating scroll after overlay hidden', 'TimelinePage')
               document.documentElement.style.overflowY = ''
               document.body.style.overflowY = ''
               window.dispatchEvent(new Event('scroll'))
-            }
-            
-            iOSDebugLog('info', 'Scroll reactivation completed', 'TimelinePage')
-          })
+              iOSDebugLog('info', 'Scroll reactivation completed', 'TimelinePage')
+            })
+          }
         }, 1000) // Mantener fade 1s completo
       } else {
         setOverlayError('Contraseña incorrecta')
@@ -1637,13 +1679,24 @@ export default function TimelinePage() {
             <button 
               onClick={() => {
                 setShowVideo(true)
-                // Scroll automático 60px hacia abajo después de la animación
-                setTimeout(() => {
+                // iPhone: Scroll inmediato sin animación
+                const isCurrentIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+                
+                if (isCurrentIPhone) {
+                  // iPhone: Scroll inmediato para evitar animaciones complejas
                   window.scrollBy({
                     top: 160,
-                    behavior: 'smooth'
+                    behavior: 'auto'  // Sin animación en iPhone
                   })
-                }, 750) // Esperar 750ms para que termine la animación de 700ms
+                } else {
+                  // Otros dispositivos: animación original
+                  setTimeout(() => {
+                    window.scrollBy({
+                      top: 160,
+                      behavior: 'smooth'
+                    })
+                  }, 750)
+                }
               }}
               className="bg-terracotta hover:bg-terracotta/90 text-ivory px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2 mx-auto"
             >

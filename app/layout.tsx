@@ -17,6 +17,36 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* CRÍTICO: iPhone detection ULTRA-TEMPRANO - antes de cualquier CSS */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              // Detección iPhone inmediata
+              var isIPhone = typeof navigator !== 'undefined' && /iPhone/.test(navigator.userAgent) && !window.MSStream;
+              
+              if (isIPhone) {
+                // Aplicar clase inmediatamente
+                document.documentElement.className += ' ios-scroll-native';
+                
+                // Global flag para otros componentes
+                window.__isIPhone = true;
+                window.__iphoneScrollNative = true;
+                
+                // Forzar scroll position inmediatamente
+                if (typeof window !== 'undefined') {
+                  window.scrollTo(0, 0);
+                  document.documentElement.scrollTop = 0;
+                  document.body.scrollTop = 0;
+                }
+                
+                console.log('🍎 ULTRA-EARLY iPhone Detection: Native scroll mode activated');
+              } else {
+                window.__isIPhone = false;
+              }
+            })();
+          `
+        }} />
+        
         {/* Favicon links */}
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -123,21 +153,36 @@ export default function RootLayout({
               .ios-scroll-native .relative video {
                 transition: opacity 0.8s ease !important;
               }
-            }
-          `
-        }} />
-        {/* iPhone detection script - debe ejecutarse antes del render */}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              if (typeof window !== 'undefined') {
-                var isIPhone = /iPhone/.test(navigator.userAgent) && !window.MSStream;
-                if (isIPhone) {
-                  document.documentElement.classList.add('ios-scroll-native');
-                  console.log('🍎 iPhone detected: Activating native scroll mode');
-                }
+              
+              /* iPhone: Prevenir scroll bouncing y problemas de posicionamiento */
+              .ios-scroll-native html,
+              .ios-scroll-native body {
+                position: relative !important;
+                -webkit-overflow-scrolling: auto !important;
+                overscroll-behavior: none !important;
+                overflow-anchor: none !important;
+                scroll-behavior: auto !important;
               }
-            })();
+              
+              /* iPhone: Forzar posición inicial */
+              .ios-scroll-native body {
+                transform: translateZ(0) !important;
+                backface-visibility: hidden !important;
+              }
+              
+              /* iPhone: Prevenir reflows durante scroll */
+              .ios-scroll-native * {
+                backface-visibility: hidden !important;
+              }
+              
+              /* iPhone: Elementos que causan problemas de scroll */
+              .ios-scroll-native .timeline-item,
+              .ios-scroll-native .hero-section,
+              .ios-scroll-native #final-video-section {
+                will-change: auto !important;
+                transform: translateZ(0) !important;
+              }
+            }
           `
         }} />
       </head>
