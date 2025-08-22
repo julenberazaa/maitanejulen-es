@@ -52,79 +52,78 @@ export default function TimelinePage() {
   useEffect(() => { overlayVisibleRef.current = overlayVisible }, [overlayVisible])
   useEffect(() => { setHasMounted(true) }, [])
   
-  // iPhone-specific blocking (iPhone 15 and below)
-  const [shouldBlockDevice, setShouldBlockDevice] = useState(false)
+  // iPhone-specific blocking - IMMEDIATE DETECTION to prevent race conditions
+  const getInitialBlockingState = () => {
+    if (typeof window === 'undefined') return false // SSR safety
+    const userAgent = navigator.userAgent
+    return /iPhone/.test(userAgent) && !(window as any).MSStream
+  }
+  
+  const [shouldBlockDevice, setShouldBlockDevice] = useState(getInitialBlockingState)
   const [deviceInfo, setDeviceInfo] = useState<{isIPhone: boolean; version: number} | null>(null)
 
-  // iPhone device detection and blocking logic
+  // iPhone device detection and detailed logging
   useEffect(() => {
-    const getIOSInfo = () => {
-      const ua = navigator.userAgent
-      if (!/iPhone/.test(ua)) return { isIPhone: false, shouldBlock: false, version: 0 }
-      
-      // Extract iOS version
-      const versionMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
-      const majorVersion = versionMatch ? parseInt(versionMatch[1]) : 0
-      
-      // More comprehensive device detection
-      // Check screen dimensions and device capabilities as additional indicators
-      const screenWidth = window.screen.width
-      const screenHeight = window.screen.height
-      const devicePixelRatio = window.devicePixelRatio || 1
-      
-      // iPhone 16 has different screen characteristics
-      // iPhone 15: 393x852 @3x, iPhone 16: 393x852 @3x (similar but different internals)
-      // Use multiple factors: iOS version, screen size, and user agent patterns
-      
-      // CONSERVATIVE APPROACH: Block ALL iPhones except iPhone 16
-      // iPhone 16 can be identified by very specific characteristics
-      let isProblematicDevice = true // Block by default
-      
-      // Only allow if we can positively identify as iPhone 16
-      // iPhone 16 Pro/Pro Max specific detection
-      const isDefinitelyIPhone16 = (
-        majorVersion >= 18 && (
-          // iPhone 16 Pro: 402x874 @3x
-          (screenWidth === 402 && screenHeight === 874 && devicePixelRatio === 3) ||
-          // iPhone 16 Pro Max: 440x956 @3x  
-          (screenWidth === 440 && screenHeight === 956 && devicePixelRatio === 3) ||
-          // iPhone 16: 393x852 @3x with iOS 18.1+ (newer than typical iPhone 15 iOS 18 updates)
-          (screenWidth === 393 && screenHeight === 852 && devicePixelRatio === 3 && majorVersion >= 18)
-        )
+    if (typeof window === 'undefined') return
+    
+    const ua = navigator.userAgent
+    const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
+    
+    if (!isIPhone) {
+      // Not an iPhone - allow access
+      setShouldBlockDevice(false)
+      setDeviceInfo({ isIPhone: false, version: 0 })
+      iOSDebugLog('info', 'Non-iPhone device detected - access allowed', 'TimelinePage')
+      return
+    }
+    
+    // Extract iOS version for logging
+    const versionMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
+    const majorVersion = versionMatch ? parseInt(versionMatch[1]) : 0
+    
+    // ULTRA-CONSERVATIVE: Block ALL iPhones by default
+    // Only allow iPhone 16 if we can positively identify it
+    let shouldAllow = false
+    
+    // iPhone 16 Pro/Pro Max/Plus detection based on unique screen dimensions
+    const screenWidth = window.screen.width
+    const screenHeight = window.screen.height  
+    const devicePixelRatio = window.devicePixelRatio || 1
+    
+    // Very specific iPhone 16 detection
+    const isDefinitelyIPhone16 = (
+      majorVersion >= 18 && (
+        // iPhone 16 Pro: 402x874 @3x
+        (screenWidth === 402 && screenHeight === 874 && devicePixelRatio === 3) ||
+        // iPhone 16 Pro Max: 440x956 @3x  
+        (screenWidth === 440 && screenHeight === 956 && devicePixelRatio === 3)
+        // Note: Removing base iPhone 16 detection to be ultra-conservative
       )
-      
-      // Only unblock if we're certain it's iPhone 16
-      if (isDefinitelyIPhone16) {
-        isProblematicDevice = false
-      }
-      
-      // Log detailed info for debugging
-      iOSDebugLog('info', 'Device detection details', 'TimelinePage', {
-        userAgent: ua.substring(0, 100) + '...',
-        iosVersion: majorVersion,
-        screenWidth,
-        screenHeight,
-        devicePixelRatio,
-        willBlock: isProblematicDevice
-      })
-      
-      return { 
-        isIPhone: true, 
-        shouldBlock: isProblematicDevice,
-        version: majorVersion 
-      }
+    )
+    
+    if (isDefinitelyIPhone16) {
+      shouldAllow = true
     }
     
-    const info = getIOSInfo()
-    setDeviceInfo({ isIPhone: info.isIPhone, version: info.version })
-    setShouldBlockDevice(info.shouldBlock)
+    setDeviceInfo({ isIPhone: true, version: majorVersion })
+    setShouldBlockDevice(!shouldAllow)
     
-    if (info.shouldBlock) {
-      iOSDebugLog('warning', `iPhone device blocked: iOS ${info.version} (iPhone 15 and below)`, 'TimelinePage')
-      return // Skip rest of initialization for blocked devices
+    // Detailed logging
+    iOSDebugLog('info', 'iPhone detection results', 'TimelinePage', {
+      userAgent: ua.substring(0, 120),
+      iosVersion: majorVersion,
+      screenWidth,
+      screenHeight,
+      devicePixelRatio,
+      isDefinitelyIPhone16,
+      finalDecision: shouldAllow ? 'ALLOW' : 'BLOCK'
+    })
+    
+    if (!shouldAllow) {
+      iOSDebugLog('warning', `iPhone BLOCKED: iOS ${majorVersion} - Not confirmed as iPhone 16 Pro/Pro Max`, 'TimelinePage')
+    } else {
+      iOSDebugLog('info', `iPhone ALLOWED: iOS ${majorVersion} - Confirmed iPhone 16 Pro/Pro Max`, 'TimelinePage')
     }
-    
-    iOSDebugLog('info', `iPhone device allowed: iOS ${info.version} (iPhone 16+)`, 'TimelinePage')
   }, [])
 
   // iPhone: Usar detección ultra-temprana para posicionamiento inmediato
@@ -914,7 +913,7 @@ export default function TimelinePage() {
                   ¡Casi listo!
                 </h2>
                 <p className="text-xl text-ivory/90 leading-relaxed font-manuscript mb-6">
-                  Estamos trabajando para optimizar nuestra página web en dispositivos iPhone. Te recomendamos visitar la página desde un ordenador o dispositivo Android para una experiencia completa.
+                  Estamos trabajando para optimizar nuestra página web en dispositivos iPhone. Te recomendamos visitar la página desde un <strong>ordenador</strong> o dispositivo <strong>Android</strong> para una experiencia completa.
                 </p>
                 <p className="text-lg text-ivory/80 font-manuscript">
                   ¡Gracias por tu paciencia! ❤️
