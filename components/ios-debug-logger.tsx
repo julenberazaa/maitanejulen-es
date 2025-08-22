@@ -113,10 +113,27 @@ Run iOSDebug.printLogs() to see what happened before crash/reload
     const info = detectIOSInfo()
     setIOSInfo(info)
     
-    // Only activate logging on problem iOS versions
+    // Only activate logging on problem iOS versions OR manual activation
     if (info.isProblemVersion) {
       setIsActive(true)
       addLog('info', `iOS Debug Logger activated for ${info.deviceModel} iOS ${info.version}`)
+    }
+    
+    // Manual activation for testing (check URL parameter or localStorage)
+    const urlParams = new URLSearchParams(window.location.search)
+    const manualActivation = urlParams.get('ios-debug') === 'true' || 
+                           localStorage.getItem('ios-debug-manual') === 'true'
+    
+    if (manualActivation && !info.isProblemVersion) {
+      setIsActive(true)
+      setIOSInfo({
+        isIOS: true,
+        version: 'Simulated iOS 16.7',
+        isProblemVersion: true,
+        deviceModel: 'iPhone 15 Pro (Simulated)'
+      })
+      addLog('info', `iOS Debug Logger MANUALLY activated for testing`)
+      console.log('🧪 MANUAL iOS DEBUG MODE - Add ?ios-debug=true to URL or run localStorage.setItem("ios-debug-manual", "true")')
     }
   }, [])
 
@@ -476,15 +493,15 @@ ${logText}
       // Global console shortcuts
       ;(window as any).iOSDebug = (window as any).__iOSDebugLogger
       
-      // Auto-print instructions for USB debugging
+      // Auto-print instructions for debugging
       console.log(`
 🚨 iOS DEBUG LOGGER ACTIVE
 ========================
 Device: ${iosInfo?.deviceModel} - iOS ${iosInfo?.version}
 
-USB-C DEBUGGING COMMANDS:
+DEBUGGING COMMANDS:
 iOSDebug.printLogs()       - Print all logs to console
-iOSDebug.exportLogs()      - Export full report
+iOSDebug.exportLogs()      - Export full report  
 iOSDebug.getLogs()         - Get raw logs array
 iOSDebug.clearLogs()       - Clear all logs
 
@@ -498,8 +515,50 @@ CRITICAL: Look for "About to hide overlay - CRITICAL POINT"
       delete (window as any).iOSDebug
     }
   }, [isActive, iosInfo])
+  
+  // Global activation function (always available)
+  useEffect(() => {
+    ;(window as any).activateIOSDebug = () => {
+      localStorage.setItem('ios-debug-manual', 'true')
+      window.location.reload()
+    }
+    
+    ;(window as any).deactivateIOSDebug = () => {
+      localStorage.removeItem('ios-debug-manual')
+      localStorage.removeItem('ios-debug-logs')
+      localStorage.removeItem('ios-debug-formatted')
+      console.log('🗑️ iOS Debug deactivated and logs cleared')
+    }
+    
+    // Instructions for manual activation (always shown)
+    if (!isActive) {
+      console.log(`
+🧪 iOS DEBUG - MANUAL ACTIVATION AVAILABLE
+==========================================
+To activate iOS debugging on any device:
 
-  if (!isActive || !iosInfo?.isProblemVersion) {
+METHOD 1 - URL Parameter:
+Add ?ios-debug=true to current URL
+
+METHOD 2 - Console Command:  
+activateIOSDebug()
+
+METHOD 3 - Direct localStorage:
+localStorage.setItem('ios-debug-manual', 'true')
+window.location.reload()
+
+To deactivate:
+deactivateIOSDebug()
+`)
+    }
+
+    return () => {
+      delete (window as any).activateIOSDebug  
+      delete (window as any).deactivateIOSDebug
+    }
+  }, [isActive])
+
+  if (!isActive) {
     return null
   }
 
