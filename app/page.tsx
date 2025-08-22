@@ -890,28 +890,72 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
-      {/* iPhone blocking overlay - Same style as password screen */}
+      {/* iPhone blocking overlay - Mobile-optimized centering */}
       {shouldBlockDevice && (
-        <div className="fixed inset-0 z-[1001]">
-          {/* Same background as password screen */}
+        <div 
+          className="fixed top-0 left-0 w-full z-[1001]"
+          style={{ 
+            height: '100vh',
+            height: '100dvh' // Dynamic viewport height for mobile
+          }}
+        >
+          {/* Background layers - force rendering with inline styles */}
           <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url('/a12.jpg')` }}
+            style={{ 
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundImage: `url('/a12.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
           />
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
-          <div className="absolute inset-0 bg-black opacity-10" />
+          <div 
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(to bottom right, #E2A17A, #BB8269, #936357, #432534)',
+              opacity: 0.9
+            }}
+          />
+          <div 
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0, 0, 0, 0.1)'
+            }}
+          />
           
-          {/* Centered content - improved mobile centering */}
-          <div className="relative z-10 w-full h-full flex items-center justify-center p-4 sm:p-6">
-            <div className="w-full max-w-sm mx-auto">
-              {/* Brown box similar to password container - better mobile sizing */}
-              <div className="bg-terracotta rounded-2xl p-8 sm:p-10 shadow-2xl w-full">
+          {/* Mobile-specific vertical centering */}
+          <div 
+            className="relative z-10 p-4"
+            style={{ 
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '100vh',
+              minHeight: '100dvh'
+            }}
+          >
+            <div style={{ width: '100%', maxWidth: '320px' }}>
+              {/* Brown box */}
+              <div className="bg-terracotta rounded-2xl p-8 shadow-2xl" style={{ width: '100%' }}>
                 <Heart className="w-20 h-20 mx-auto mb-8 text-ivory animate-pulse" />
                 <div className="text-center">
-                  <h2 className="text-2xl sm:text-3xl font-manuscript text-ivory mb-6 leading-tight">
+                  <h2 className="text-2xl font-manuscript text-ivory mb-6 leading-tight">
                     Estamos trabajando para crear la página para iOS.
                   </h2>
-                  <p className="text-lg sm:text-xl text-ivory/90 font-manuscript">
+                  <p className="text-lg text-ivory/90 font-manuscript">
                     Gracias por la espera.
                   </p>
                 </div>
