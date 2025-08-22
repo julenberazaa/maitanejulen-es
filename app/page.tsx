@@ -890,65 +890,22 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
-      {/* iPhone blocking overlay - Mobile-optimized centering */}
+      {/* iPhone blocking overlay - EXACT COPY of working password screen structure */}
       {shouldBlockDevice && (
-        <div 
-          className="fixed top-0 left-0 w-full z-[1001]"
-          style={{ 
-            height: '100dvh' // Dynamic viewport height for mobile
-          }}
-        >
-          {/* Background layers - force full height coverage */}
+        <div className="fixed inset-0 z-[1001]">
+          {/* Background layers - EXACT same structure as password screen */}
           <div
-            style={{ 
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100dvh',
-              backgroundImage: `url('/a12.jpg')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              backgroundAttachment: 'fixed'
-            }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url('/a12.jpg')` }}
           />
-          <div 
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100dvh',
-              background: 'linear-gradient(to bottom right, #E2A17A, #BB8269, #936357, #432534)',
-              opacity: 0.9
-            }}
-          />
-          <div 
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100dvh',
-              backgroundColor: 'rgba(0, 0, 0, 0.1)'
-            }}
-          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
+          <div className="absolute inset-0 bg-black opacity-10" />
           
-          {/* Mobile-specific vertical centering */}
-          <div 
-            className="relative z-10 p-4"
-            style={{ 
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: '100dvh'
-            }}
-          >
-            <div style={{ width: '100%', maxWidth: '400px' }}>
+          {/* Centered content - same structure as password screen */}
+          <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+            <div className="w-full max-w-md mx-auto">
               {/* Brown box - larger size */}
-              <div className="bg-terracotta rounded-2xl shadow-2xl" style={{ width: '100%', padding: '3rem' }}>
+              <div className="bg-terracotta rounded-2xl p-12 shadow-2xl">
                 <Heart className="w-24 h-24 mx-auto mb-10 text-ivory animate-pulse" />
                 <div className="text-center">
                   <h2 className="text-3xl font-manuscript text-ivory mb-8 leading-tight font-bold">
