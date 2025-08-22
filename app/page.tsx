@@ -893,10 +893,13 @@ export default function TimelinePage() {
       {/* iPhone blocking overlay - Fixed background and perfect centering */}
       {shouldBlockDevice && (
         <div className="fixed inset-0 z-[1001]">
-          {/* Background layers - Force rendering with correct opacity */}
+          {/* Background layers - Force image loading and fallback */}
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url('/a12.jpg')` }}
+            style={{ 
+              backgroundImage: `url('/a12.jpg'), linear-gradient(45deg, #8B4513, #A0522D)`,
+              backgroundColor: '#8B4513'
+            }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
           <div className="absolute inset-0 bg-black" style={{ opacity: 0.1 }} />
@@ -912,15 +915,15 @@ export default function TimelinePage() {
               minHeight: '100dvh'
             }}
           >
-            <div className="w-full max-w-md mx-auto">
-              {/* Brown box - larger size */}
-              <div className="bg-terracotta rounded-2xl p-12 shadow-2xl">
-                <Heart className="w-24 h-24 mx-auto mb-10 text-ivory animate-pulse" />
+            <div className="w-full max-w-lg mx-auto">
+              {/* Brown box - even larger size */}
+              <div className="bg-terracotta rounded-3xl p-16 shadow-2xl">
+                <Heart className="w-28 h-28 mx-auto mb-12 text-ivory animate-pulse" />
                 <div className="text-center">
-                  <h2 className="text-3xl font-manuscript text-ivory mb-8 leading-tight font-bold">
+                  <h2 className="text-4xl font-manuscript text-ivory mb-10 leading-tight font-bold">
                     Estamos trabajando para crear la página para iOS.
                   </h2>
-                  <p className="text-xl text-ivory/90 font-manuscript font-medium">
+                  <p className="text-2xl text-ivory/90 font-manuscript font-medium">
                     Gracias por la espera.
                   </p>
                 </div>
