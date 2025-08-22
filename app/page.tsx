@@ -56,9 +56,10 @@ export default function TimelinePage() {
             style={{ 
               height: '100dvh',
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               justifyContent: 'center',
-              minHeight: '100dvh'
+              minHeight: '100dvh',
+              paddingTop: '15vh'
             }}
           >
             <div className="w-full max-w-2xl mx-auto">
@@ -1004,9 +1005,10 @@ export default function TimelinePage() {
             style={{ 
               height: '100dvh',
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               justifyContent: 'center',
-              minHeight: '100dvh'
+              minHeight: '100dvh',
+              paddingTop: '15vh'
             }}
           >
             <div className="w-full max-w-2xl mx-auto">
