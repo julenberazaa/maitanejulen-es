@@ -73,10 +73,18 @@ export default function FramesOverlay(): React.JSX.Element | null {
     
     // Also wait for user interaction to ensure critical content loads first
     let hasUserInteracted = false
+    // iPhone: Semáforo para prevenir doble ejecución (causa de long tasks de 10s+)
+    let iPhoneFrameLoadingInitiated = false
     const enableOnInteraction = () => {
       hasUserInteracted = true
       // iPhone: Requerir interacción Y esperar a que FixedZoom complete
       if (isIPhone) {
+        // CRITICAL FIX: Prevenir múltiple ejecución en iPhone
+        if (iPhoneFrameLoadingInitiated) {
+          iOSDebugLog('info', 'iPhone: Frame loading already initiated - skipping duplicate execution', 'FramesOverlay')
+          return
+        }
+        iPhoneFrameLoadingInitiated = true
         const waitForFixedZoom = () => {
           if ((window as any).__iPhoneFixedZoomComplete) {
             setTimeout(() => {
