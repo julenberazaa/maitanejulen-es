@@ -54,10 +54,11 @@ export default function TimelinePage() {
 
   // Forzar scroll al top en cada recarga de la página sin animación
   useEffect(() => {
-    // Detección de iOS
+    // Detección específica de iPhone vs otros iOS devices
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+    const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
     
-    iOSDebugLog('info', 'Page initialization started', 'TimelinePage', { isIOS })
+    iOSDebugLog('info', 'Page initialization started', 'TimelinePage', { isIOS, isIPhone })
     
     // Evitar que el navegador restaure la posición de scroll anterior
     if ('scrollRestoration' in history) {
@@ -79,16 +80,25 @@ export default function TimelinePage() {
     document.body.style.overflowY = 'hidden'
     iOSDebugLog('dom', 'Scroll blocked during overlay', 'TimelinePage')
     
-    // iOS: Timeout más conservador para desbloqueo
-    const unlockDelay = isIOS ? 1500 : 1000
-    iOSDebugLog('info', `Setting unlock delay: ${unlockDelay}ms`, 'TimelinePage')
+    // iPhone: Timeout ultra-conservador para estabilizar scroll
+    let unlockDelay = 1000
+    if (isIPhone) {
+      unlockDelay = 2500  // iPhone necesita más tiempo
+    } else if (isIOS) {
+      unlockDelay = 1500  // iPad moderado
+    }
+    
+    iOSDebugLog('info', `Setting unlock delay: ${unlockDelay}ms (iPhone: ${isIPhone})`, 'TimelinePage')
     
     const unlock = setTimeout(() => {
       // Mantener bloqueo si el overlay sigue visible
       if (!overlayVisibleRef.current) {
-        document.documentElement.style.overflowY = prevHtmlOverflowY || ''
-        document.body.style.overflowY = prevBodyOverflowY || ''
-        iOSDebugLog('dom', 'Scroll unlocked after timeout', 'TimelinePage')
+        // iPhone: No modificar overflow del documento - usar scroll nativo
+        if (!isIPhone) {
+          document.documentElement.style.overflowY = prevHtmlOverflowY || ''
+          document.body.style.overflowY = prevBodyOverflowY || ''
+        }
+        iOSDebugLog('dom', `Scroll unlocked after timeout (iPhone native: ${isIPhone})`, 'TimelinePage')
       } else {
         iOSDebugLog('info', 'Scroll unlock skipped - overlay still visible', 'TimelinePage')
       }
@@ -215,7 +225,10 @@ export default function TimelinePage() {
     const handleScroll = () => {
       if (heroRef.current) {
         const scrolled = window.pageYOffset
-        const scale = 1 + scrolled * 0.0005
+        // iPhone: Escala más conservadora para reducir GPU load
+        const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+        const scaleMultiplier = isIPhone ? 0.0002 : 0.0005
+        const scale = 1 + scrolled * scaleMultiplier
         heroRef.current.style.transform = `scale(${scale})`
       }
 
@@ -261,25 +274,43 @@ export default function TimelinePage() {
     } catch {}
   }, [])
 
-  // Bloquear scroll mientras el overlay esté visible (Política scroller único: #scroll-root)
+  // iPhone-específico: Control de scroll más conservador
   useEffect(() => {
+    const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
     const scroller = document.getElementById('scroll-root') as HTMLElement | null
-    if (!scroller) {
+    
+    if (!scroller && !isIPhone) {
       iOSDebugLog('error', 'Critical: #scroll-root element not found', 'TimelinePage')
       return
     }
     
     if (overlayVisible) {
-      scroller.style.overflowY = 'hidden'
-      iOSDebugLog('dom', 'Scroll blocked - overlay visible', 'TimelinePage')
+      if (isIPhone) {
+        // iPhone: Bloquear scroll en el documento principal
+        document.body.style.overflow = 'hidden'
+        document.documentElement.style.overflow = 'hidden'
+        iOSDebugLog('dom', 'iPhone: Document scroll blocked - overlay visible', 'TimelinePage')
+      } else if (scroller) {
+        // Otros dispositivos: Usar #scroll-root
+        scroller.style.overflowY = 'hidden'
+        iOSDebugLog('dom', 'Scroll blocked - overlay visible', 'TimelinePage')
+      }
     } else {
-      scroller.style.overflowY = 'auto'
-      iOSDebugLog('warning', '🚨 OVERLAY NOW HIDDEN - Scroll reactivated (CRITICAL TRANSITION)', 'TimelinePage', {
-        scrollerElement: !!scroller,
-        scrollerOverflow: scroller.style.overflowY,
-        documentOverflow: document.documentElement.style.overflowY,
-        bodyOverflow: document.body.style.overflowY
-      })
+      if (isIPhone) {
+        // iPhone: Restaurar scroll nativo
+        document.body.style.overflow = ''
+        document.documentElement.style.overflow = ''
+        iOSDebugLog('warning', '🚨 iPhone OVERLAY HIDDEN - Native scroll restored', 'TimelinePage')
+      } else if (scroller) {
+        // Otros dispositivos: Restaurar #scroll-root
+        scroller.style.overflowY = 'auto'
+        iOSDebugLog('warning', '🚨 OVERLAY NOW HIDDEN - Scroll reactivated (CRITICAL TRANSITION)', 'TimelinePage', {
+          scrollerElement: !!scroller,
+          scrollerOverflow: scroller.style.overflowY,
+          documentOverflow: document.documentElement.style.overflowY,
+          bodyOverflow: document.body.style.overflowY
+        })
+      }
     }
   }, [overlayVisible])
 
@@ -316,12 +347,24 @@ export default function TimelinePage() {
           iOSDebugLog('warning', 'About to hide overlay - CRITICAL POINT', 'TimelinePage')
           setOverlayVisible(false)
           
-          // Forzar reflujo y reactivar scroll tras ocultar el overlay
+          // iPhone-específico: Reactivación de scroll más suave
           requestAnimationFrame(() => {
-            iOSDebugLog('dom', 'Reactivating scroll after overlay hidden', 'TimelinePage')
-            document.documentElement.style.overflowY = ''
-            document.body.style.overflowY = ''
-            window.dispatchEvent(new Event('scroll'))
+            const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+            
+            if (isIPhone) {
+              // iPhone: Restaurar scroll del documento principal
+              iOSDebugLog('dom', 'iPhone: Reactivating native document scroll', 'TimelinePage')
+              document.documentElement.style.overflow = ''
+              document.body.style.overflow = ''
+              // No disparar evento scroll artificial en iPhone
+            } else {
+              // Otros dispositivos: Lógica original
+              iOSDebugLog('dom', 'Reactivating scroll after overlay hidden', 'TimelinePage')
+              document.documentElement.style.overflowY = ''
+              document.body.style.overflowY = ''
+              window.dispatchEvent(new Event('scroll'))
+            }
+            
             iOSDebugLog('info', 'Scroll reactivation completed', 'TimelinePage')
           })
         }, 1000) // Mantener fade 1s completo

@@ -113,10 +113,14 @@ Run iOSDebug.printLogs() to see what happened before crash/reload
     const info = detectIOSInfo()
     setIOSInfo(info)
     
-    // Only activate logging on problem iOS versions OR manual activation
-    if (info.isProblemVersion) {
+    // iPhone-específico: Activar siempre en iPhone para prevenir crashes
+    const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+    
+    // Activar en versiones problemáticas O en cualquier iPhone
+    if (info.isProblemVersion || isIPhone) {
       setIsActive(true)
-      addLog('info', `iOS Debug Logger activated for ${info.deviceModel} iOS ${info.version}`)
+      const reason = isIPhone ? 'iPhone device detected' : 'Problem iOS version'
+      addLog('info', `iOS Debug Logger activated for ${info.deviceModel} iOS ${info.version} (${reason})`)
     }
     
     // Manual activation for testing (check URL parameter or localStorage)
@@ -292,24 +296,71 @@ Run iOSDebug.printLogs() to see what happened before crash/reload
     const handleMemoryWarning = () => {
       addLog('memory', '🧠 Memory pressure warning detected')
       setIsVisible(true)
+      
+      // iPhone-específico: Forzar garbage collection agresivo
+      const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+      if (isIPhone) {
+        addLog('memory', 'iPhone: Triggering aggressive memory cleanup', 'MemoryManager')
+        
+        // Limpiar caches de imágenes
+        setTimeout(() => {
+          const images = document.querySelectorAll('img')
+          let cleanedCount = 0
+          images.forEach((img) => {
+            if (!img.getBoundingClientRect().width) {
+              img.src = ''
+              cleanedCount++
+            }
+          })
+          addLog('memory', `iPhone: Cleaned ${cleanedCount} invisible images`, 'MemoryManager')
+        }, 100)
+        
+        // Pausar carouseles no visibles
+        setTimeout(() => {
+          const carousels = document.querySelectorAll('[data-carousel-active="false"]')
+          addLog('memory', `iPhone: Found ${carousels.length} inactive carousels for pause`, 'MemoryManager')
+        }, 200)
+      }
     }
 
-    // Performance monitoring
+    // iPhone-específico: Performance monitoring más agresivo
     let observer: PerformanceObserver | null = null
+    const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+    
     if ('PerformanceObserver' in window) {
       observer = new PerformanceObserver((list) => {
         const entries = list.getEntries()
         entries.forEach((entry) => {
-          if (entry.duration > 50) {
+          // iPhone: Umbral más bajo para detectar problemas antes
+          const threshold = isIPhone ? 30 : 50
+          
+          if (entry.duration > threshold) {
             performanceIssuesRef.current++
-            addLog('performance', `⏱️ Long task detected: ${entry.duration.toFixed(2)}ms`, undefined, entry.name, {
+            addLog('performance', `⏱️ Long task detected: ${entry.duration.toFixed(2)}ms${isIPhone ? ' (iPhone threshold)' : ''}`, undefined, entry.name, {
               duration: entry.duration,
-              startTime: entry.startTime
+              startTime: entry.startTime,
+              isIPhone
             })
             
-            if (performanceIssuesRef.current >= 5) {
+            // iPhone: Mostrar overlay más pronto
+            const alertThreshold = isIPhone ? 3 : 5
+            if (performanceIssuesRef.current >= alertThreshold) {
               setIsVisible(true)
-              addLog('warning', '🐌 Performance degradation detected')
+              addLog('warning', `🐌 Performance degradation detected (${performanceIssuesRef.current} issues)${isIPhone ? ' - iPhone critical' : ''}`)
+              
+              // iPhone: Memory pressure check automático
+              if (isIPhone && (performance as any).memory) {
+                const memInfo = (performance as any).memory
+                const memoryUsage = memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit
+                if (memoryUsage > 0.8) {
+                  addLog('memory', `iPhone: Critical memory usage: ${(memoryUsage * 100).toFixed(1)}%`, 'MemoryMonitor', {
+                    usedJSHeapSize: memInfo.usedJSHeapSize,
+                    jsHeapSizeLimit: memInfo.jsHeapSizeLimit,
+                    totalJSHeapSize: memInfo.totalJSHeapSize
+                  })
+                  handleMemoryWarning()
+                }
+              }
             }
           }
         })
@@ -320,6 +371,28 @@ Run iOSDebug.printLogs() to see what happened before crash/reload
       } catch (e) {
         addLog('warning', 'Performance observer not fully supported')
       }
+    }
+    
+    // iPhone-específico: Memory monitoring periódico
+    let memoryMonitor: NodeJS.Timeout | null = null
+    if (isIPhone && (performance as any).memory) {
+      memoryMonitor = setInterval(() => {
+        try {
+          const memInfo = (performance as any).memory
+          const memoryUsage = memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit
+          
+          if (memoryUsage > 0.7) {
+            addLog('memory', `iPhone: High memory usage: ${(memoryUsage * 100).toFixed(1)}%`, 'MemoryMonitor')
+          }
+          
+          if (memoryUsage > 0.9) {
+            addLog('memory', 'iPhone: CRITICAL memory usage - triggering cleanup', 'MemoryMonitor')
+            handleMemoryWarning()
+          }
+        } catch (e) {
+          // Ignore memory API errors
+        }
+      }, 5000) // Check every 5 seconds on iPhone
     }
 
     window.addEventListener('error', handleError)
@@ -333,6 +406,7 @@ Run iOSDebug.printLogs() to see what happened before crash/reload
       // @ts-ignore
       window.removeEventListener('memorywarning', handleMemoryWarning)
       if (observer) observer.disconnect()
+      if (memoryMonitor) clearInterval(memoryMonitor)
     }
   }, [isActive])
 
@@ -411,6 +485,38 @@ ${logText}
     })
   }
 
+  // iPhone-específico: Funciones de emergency cleanup
+  const triggerIPhoneEmergencyCleanup = () => {
+    const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+    if (!isIPhone) return
+    
+    addLog('memory', 'iPhone: EMERGENCY CLEANUP TRIGGERED', 'EmergencyCleanup')
+    
+    // Pausar todos los carouseles
+    const carouselElements = document.querySelectorAll('[data-experience-id]')
+    carouselElements.forEach((el) => {
+      (el as HTMLElement).style.animationPlayState = 'paused'
+    })
+    
+    // Eliminar transform-gpu de elementos no críticos
+    const gpuElements = document.querySelectorAll('.transform-gpu')
+    gpuElements.forEach((el) => {
+      el.classList.remove('transform-gpu')
+      el.classList.add('emergency-cleanup')
+    })
+    
+    // Reducir calidad de video
+    const videos = document.querySelectorAll('video')
+    videos.forEach((video) => {
+      video.pause()
+      if (video.src && !video.src.includes('preview')) {
+        video.preload = 'none'
+      }
+    })
+    
+    addLog('memory', `iPhone: Emergency cleanup completed - paused ${carouselElements.length} carousels, ${gpuElements.length} GPU elements, ${videos.length} videos`, 'EmergencyCleanup')
+  }
+
   // Expose comprehensive debug functions to window for external components and console access
   useEffect(() => {
     if (isActive) {
@@ -419,6 +525,9 @@ ${logText}
         show: () => setIsVisible(true),
         hide: () => setIsVisible(false),
         isActive: true,
+        
+        // iPhone-específico: Función de emergency cleanup
+        triggerEmergencyCleanup: triggerIPhoneEmergencyCleanup,
         
         // Console-accessible functions for USB debugging
         getLogs: () => {
@@ -487,24 +596,48 @@ ${logText}
         },
         
         getErrorCount: () => errorCountRef.current,
-        getPerformanceIssues: () => performanceIssuesRef.current
+        getPerformanceIssues: () => performanceIssuesRef.current,
+        
+        // iPhone-específico: Funciones de diagnóstico
+        checkMemoryUsage: () => {
+          if ((performance as any).memory) {
+            const memInfo = (performance as any).memory
+            const usage = (memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit * 100).toFixed(1)
+            console.log(`📱 iPhone Memory Usage: ${usage}%`)
+            return {
+              usage: parseFloat(usage),
+              usedJSHeapSize: memInfo.usedJSHeapSize,
+              jsHeapSizeLimit: memInfo.jsHeapSizeLimit,
+              totalJSHeapSize: memInfo.totalJSHeapSize
+            }
+          }
+          return null
+        },
+        
+        emergencyCleanup: triggerIPhoneEmergencyCleanup
       }
       
       // Global console shortcuts
       ;(window as any).iOSDebug = (window as any).__iOSDebugLogger
       
       // Auto-print instructions for debugging
+      const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+      
       console.log(`
 🚨 iOS DEBUG LOGGER ACTIVE
 ========================
-Device: ${iosInfo?.deviceModel} - iOS ${iosInfo?.version}
+Device: ${iosInfo?.deviceModel} - iOS ${iosInfo?.version}${isIPhone ? ' (iPhone Detected)' : ''}
 
 DEBUGGING COMMANDS:
-iOSDebug.printLogs()       - Print all logs to console
-iOSDebug.exportLogs()      - Export full report  
-iOSDebug.getLogs()         - Get raw logs array
-iOSDebug.clearLogs()       - Clear all logs
-
+iOSDebug.printLogs()         - Print all logs to console
+iOSDebug.exportLogs()        - Export full report  
+iOSDebug.getLogs()           - Get raw logs array
+iOSDebug.clearLogs()         - Clear all logs
+${isIPhone ? `
+🍎 iPhone-SPECIFIC COMMANDS:
+iOSDebug.checkMemoryUsage()  - Check current memory usage
+iOSDebug.emergencyCleanup()  - Trigger emergency performance cleanup
+` : ''}
 WATCH FOR: Logs with emoji 🔴🟡 before crash
 CRITICAL: Look for "About to hide overlay - CRITICAL POINT"
 `)

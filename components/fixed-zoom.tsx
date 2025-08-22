@@ -17,13 +17,19 @@ export default function FixedZoom() {
     let observerTimeout: NodeJS.Timeout | null = null
     let resizeObserver: ResizeObserver | null = null
 
-    // Detección específica de iOS Safari
+    // Detección específica de iOS Safari + iPhone específico
     const isIOSSafari = () => {
       const userAgent = navigator.userAgent
       return /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream
     }
 
+    const isIPhone = () => {
+      const userAgent = navigator.userAgent
+      return /iPhone/.test(userAgent) && !(window as any).MSStream
+    }
+
     const isIOS = isIOSSafari()
+    const isIPhoneDevice = isIPhone()
     let fixedZoomReadyDispatched = false
 
     function dispatchFixedZoomReadyOnce() {
@@ -52,8 +58,13 @@ export default function FixedZoom() {
         })
         
         if (fixedLayout && wrapper) {
-          // Optimización iOS: Batch DOM operations
-          if (isIOS) {
+          // iPhone-específico: DOM operations ultra-conservativas
+          if (isIPhoneDevice) {
+            // iPhone: No usar willChange - causa memory leaks en iOS Safari
+            fixedLayout.style.willChange = ''
+            wrapper.style.willChange = ''
+          } else if (isIOS) {
+            // iPad: Mantener optimizaciones moderadas
             fixedLayout.style.willChange = 'transform'
             wrapper.style.willChange = 'height'
           }
@@ -92,8 +103,14 @@ export default function FixedZoom() {
             const isMobileViewport = (window.innerWidth || 0) <= 768
             let overlayBottomCSS = 0
             
-            // Optimización iOS: Saltar cálculo de frames si no es crítico
-            if (!isIOS) {
+            // iPhone-específico: Cálculos ultra-simplificados para evitar crashes
+            if (isIPhoneDevice) {
+              // iPhone: Usar altura fija estimada - no calcular frames dinámicamente
+              overlayBottomCSS = Math.max(6500 * scale, videoBottomAbsolute + 500)
+              iOSDebugLog('info', 'iPhone: Using static overlay calculation to prevent crashes', 'FixedZoom', {
+                overlayBottomCSS, videoBottomAbsolute, scale
+              })
+            } else if (!isIOS) {
               try {
                 for (const frame of OVERLAY_FRAMES) {
                   if (frame.visible === false) continue
@@ -105,7 +122,7 @@ export default function FixedZoom() {
                 }
               } catch {}
             } else {
-              // iOS: Cálculo simplificado usando solo el último frame visible
+              // iPad: Cálculo simplificado usando solo el último frame visible
               try {
                 const lastFrame = OVERLAY_FRAMES.filter(f => f.visible !== false).pop()
                 if (lastFrame) {
@@ -141,8 +158,12 @@ export default function FixedZoom() {
             document.body.style.overflow = ''
             document.body.style.overflowY = ''
 
-            // Optimización iOS: Limpiar willChange después de operaciones
-            if (isIOS) {
+            // iPhone-específico: No usar timers adicionales - causan memory pressure
+            if (isIPhoneDevice) {
+              // iPhone: No limpiar willChange con timers
+              iOSDebugLog('info', 'iPhone: Skipping willChange cleanup timer', 'FixedZoom')
+            } else if (isIOS) {
+              // iPad: Mantener limpieza moderada
               setTimeout(() => {
                 fixedLayout.style.willChange = ''
                 wrapper.style.willChange = ''
@@ -158,8 +179,14 @@ export default function FixedZoom() {
             const isMobileViewport = (window.innerWidth || 0) <= 768
             let overlayBottomCSS = 0
             
-            // iOS: Fallback simplificado
-            if (!isIOS) {
+            // iPhone-específico: Fallback ultra-conservador
+            if (isIPhoneDevice) {
+              // iPhone: Altura fija muy conservadora
+              overlayBottomCSS = Math.max(visualHeight, 7000 * scale)
+              iOSDebugLog('info', 'iPhone: Using ultra-conservative height fallback', 'FixedZoom', {
+                visualHeight, overlayBottomCSS
+              })
+            } else if (!isIOS) {
               try {
                 for (const frame of OVERLAY_FRAMES) {
                   if (frame.visible === false) continue
@@ -171,7 +198,7 @@ export default function FixedZoom() {
                 }
               } catch {}
             } else {
-              // iOS: Usar altura estimada más conservadora
+              // iPad: Usar altura estimada más conservadora
               overlayBottomCSS = Math.max(visualHeight, 6500 * scale)
             }
             
@@ -180,8 +207,11 @@ export default function FixedZoom() {
             wrapper.style.height = `${needed + mobileBuffer}px`
             wrapper.style.minHeight = `${needed}px`
             
-            // iOS: Limpiar willChange en fallback también
-            if (isIOS) {
+            // iPhone-específico: No timers de limpieza en fallback
+            if (isIPhoneDevice) {
+              // iPhone: Evitar timers completamente
+            } else if (isIOS) {
+              // iPad: Mantener limpieza moderada
               setTimeout(() => {
                 fixedLayout.style.willChange = ''
                 wrapper.style.willChange = ''
@@ -205,17 +235,24 @@ export default function FixedZoom() {
 
     function handleResize() {
       if (resizeTimeout) clearTimeout(resizeTimeout)
-      // iOS: Throttling más agresivo para resize
-      const delay = isIOS ? 300 : 150
+      // iPhone-específico: Throttling extremo para evitar cascadas
+      let delay = 150
+      if (isIPhoneDevice) {
+        delay = 800  // iPhone: Delay muy largo para evitar resize storms
+        iOSDebugLog('info', 'iPhone: Using conservative resize throttling (800ms)', 'FixedZoom')
+      } else if (isIOS) {
+        delay = 300  // iPad: Moderado
+      }
+      
       resizeTimeout = setTimeout(() => {
         applyZoom()
       }, delay)
     }
 
-    // Observa cambios en el contenido y recalcula con debounce
+    // iPhone-específico: ResizeObserver completamente deshabilitado
     const fixedLayoutEl = document.getElementById('fixed-layout')
     if (fixedLayoutEl && 'ResizeObserver' in window && !isIOS) {
-      // iOS: Desactivar ResizeObserver para reducir overhead
+      // Solo desktop/Android: ResizeObserver habilitado
       resizeObserver = new ResizeObserver(() => {
         if (observerTimeout) clearTimeout(observerTimeout)
         observerTimeout = setTimeout(() => {
@@ -223,6 +260,8 @@ export default function FixedZoom() {
         }, 150)
       })
       resizeObserver.observe(fixedLayoutEl)
+    } else if (isIPhoneDevice) {
+      iOSDebugLog('info', 'iPhone: ResizeObserver disabled to prevent loops', 'FixedZoom')
     }
 
     // HARD CUT AGRESIVO: Aplicar corte inmediato y múltiples refuerzos
@@ -231,28 +270,49 @@ export default function FixedZoom() {
     
     let timeouts: NodeJS.Timeout[] = []
     
-    if (isIOS) {
-      // iOS OPTIMIZADO: Estrategia conservadora para evitar crashes
-      iOSDebugLog('info', 'iOS detected - using conservative HARD CUT strategy', 'FixedZoom')
+    if (isIPhoneDevice) {
+      // iPhone ULTRA-CONSERVADOR: Mínimos timeouts para prevenir memory pressure
+      iOSDebugLog('warning', 'iPhone detected - using ULTRA-conservative strategy', 'FixedZoom')
       timeouts = [
         setTimeout(() => {
-          iOSDebugLog('info', 'iOS HARD CUT timeout 1/3 (100ms)', 'FixedZoom')
+          iOSDebugLog('info', 'iPhone minimal timeout 1/2 (200ms)', 'FixedZoom')
+          applyZoom()
+        }, 200),
+        setTimeout(() => {
+          iOSDebugLog('info', 'iPhone minimal timeout 2/2 (1000ms)', 'FixedZoom')
+          applyZoom()
+        }, 1000)
+      ]
+      
+      // iPhone: Un solo requestAnimationFrame diferido
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          iOSDebugLog('performance', 'iPhone single deferred RAF', 'FixedZoom')
+          applyZoom()
+        })
+      }, 300)
+    } else if (isIOS) {
+      // iPad: Estrategia moderadamente conservadora
+      iOSDebugLog('info', 'iPad detected - using conservative HARD CUT strategy', 'FixedZoom')
+      timeouts = [
+        setTimeout(() => {
+          iOSDebugLog('info', 'iPad HARD CUT timeout 1/3 (100ms)', 'FixedZoom')
           applyZoom()
         }, 100),
         setTimeout(() => {
-          iOSDebugLog('info', 'iOS HARD CUT timeout 2/3 (500ms)', 'FixedZoom')
+          iOSDebugLog('info', 'iPad HARD CUT timeout 2/3 (500ms)', 'FixedZoom')
           applyZoom()
         }, 500),
         setTimeout(() => {
-          iOSDebugLog('info', 'iOS HARD CUT timeout 3/3 (1500ms)', 'FixedZoom')
+          iOSDebugLog('info', 'iPad HARD CUT timeout 3/3 (1500ms)', 'FixedZoom')
           applyZoom()
         }, 1500)
       ]
       
-      // iOS: Solo 2 requestAnimationFrame espaciados
+      // iPad: Solo 2 requestAnimationFrame espaciados
       let rafCount = 0
       const iosOptimizedRaf = () => {
-        iOSDebugLog('performance', `iOS RAF ${rafCount + 1}/2`, 'FixedZoom')
+        iOSDebugLog('performance', `iPad RAF ${rafCount + 1}/2`, 'FixedZoom')
         if (rafCount === 0) {
           setTimeout(applyZoom, 0) // Primer RAF inmediato
         } else if (rafCount === 1) {
@@ -301,8 +361,14 @@ export default function FixedZoom() {
     }
 
     window.addEventListener('resize', handleResize)
-    // iOS: Throttling más conservador para orientationchange
-    window.addEventListener('orientationchange', () => setTimeout(applyZoom, isIOS ? 500 : 200))
+    // iPhone-específico: Orientationchange ultra-diferido
+    const orientationDelay = isIPhoneDevice ? 1200 : (isIOS ? 500 : 200)
+    window.addEventListener('orientationchange', () => {
+      if (isIPhoneDevice) {
+        iOSDebugLog('info', 'iPhone: Deferring orientation change handling', 'FixedZoom')
+      }
+      setTimeout(applyZoom, orientationDelay)
+    })
 
     return () => {
       timeouts.forEach(clearTimeout)

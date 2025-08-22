@@ -29,11 +29,13 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Pinyon+Script&family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet" />
         <style dangerouslySetInnerHTML={{
           __html: `
-            /* Sistema de zoom fijo - CSS base */
+            /* iPhone-específico: Detección por user agent en CSS (via CSS.supports fallback) */
+            
+            /* Sistema de zoom fijo - CSS base para Desktop/Android */
             html { overflow: hidden; margin: 0; padding: 0; }
             body { margin: 0; padding: 0; overflow: hidden; background: #ffffff; }
 
-            /* Único scroller explícito */
+            /* Único scroller explícito para Desktop/Android */
             #scroll-root {
               position: relative;
               height: 100vh;
@@ -42,6 +44,27 @@ export default function RootLayout({
               overflow-x: hidden;
               overscroll-behavior: none;
               -webkit-overflow-scrolling: touch;
+            }
+
+            /* iPhone-específico: Override para usar scroll nativo */
+            @supports (-webkit-touch-callout: none) {
+              /* Esta regla solo se aplica en iOS Safari */
+              .ios-scroll-native html {
+                overflow: auto !important;
+                height: auto !important;
+              }
+              
+              .ios-scroll-native body {
+                overflow: auto !important;
+                height: auto !important;
+              }
+              
+              .ios-scroll-native #scroll-root {
+                position: static !important;
+                height: auto !important;
+                overflow: visible !important;
+                -webkit-overflow-scrolling: auto !important;
+              }
             }
             
             #fixed-layout-wrapper {
@@ -60,6 +83,61 @@ export default function RootLayout({
               display: flow-root; /* evita colapso de márgenes */
               overflow: hidden; /* evita scroll interno secundario en el lienzo */
             }
+            
+            /* iPhone-específico: Layout más simple */
+            @supports (-webkit-touch-callout: none) {
+              .ios-scroll-native #fixed-layout {
+                overflow: visible !important;
+              }
+              
+              .ios-scroll-native #fixed-layout-wrapper {
+                overflow: visible !important;
+                height: auto !important;
+              }
+              
+              /* iPhone: Optimizaciones anti-crash */
+              .ios-scroll-native .transform-gpu {
+                transform: none !important;
+                will-change: auto !important;
+              }
+              
+              .ios-scroll-native .emergency-cleanup {
+                animation: none !important;
+                transition: opacity 0.3s ease !important;
+                transform: none !important;
+              }
+              
+              /* iPhone: Scroll suave y sin conflictos */
+              .ios-scroll-native * {
+                -webkit-overflow-scrolling: auto !important;
+                overscroll-behavior: contain !important;
+              }
+              
+              /* iPhone: Reducir complejidad de animaciones */
+              .ios-scroll-native .timeline-item {
+                animation-duration: 0.5s !important;
+              }
+              
+              /* iPhone: Simplificar carouseles */
+              .ios-scroll-native .relative img,
+              .ios-scroll-native .relative video {
+                transition: opacity 0.8s ease !important;
+              }
+            }
+          `
+        }} />
+        {/* iPhone detection script - debe ejecutarse antes del render */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              if (typeof window !== 'undefined') {
+                var isIPhone = /iPhone/.test(navigator.userAgent) && !window.MSStream;
+                if (isIPhone) {
+                  document.documentElement.classList.add('ios-scroll-native');
+                  console.log('🍎 iPhone detected: Activating native scroll mode');
+                }
+              }
+            })();
           `
         }} />
       </head>

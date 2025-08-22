@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import { iOSDebugLog } from './ios-debug-logger'
 
 interface MediaItem {
   type: 'image' | 'video'
@@ -20,6 +21,17 @@ interface ImageCarouselProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function ImageCarousel({ images, media, alt, onImageClick, onVideoClick, onOpenMediaCarousel, experienceId, className, ...rest }: ImageCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
 
+  // Detección específica de iPhone
+  const isIPhone = useMemo(() => {
+    if (typeof window === 'undefined') return false
+    const userAgent = navigator.userAgent
+    return /iPhone/.test(userAgent) && !(window as any).MSStream
+  }, [])
+
+  // iPhone: Limitar carouseles activos para prevenir GPU overload
+  const [isCarouselActive, setIsCarouselActive] = useState(!isIPhone)
+  const carouselRef = useRef<HTMLDivElement>(null)
+
   // Build media list with backward compatibility
   const mediaItems: MediaItem[] = useMemo(() => {
     if (media && media.length) return media
@@ -33,22 +45,60 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
   // Keep refs for possible multiple videos
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({})
 
+  // iPhone: Intersection Observer para activar carousel solo cuando es visible
+  useEffect(() => {
+    if (!isIPhone || !carouselRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+            setIsCarouselActive(true)
+            iOSDebugLog('info', `iPhone: Carousel activated for ${experienceId}`, 'ImageCarousel')
+          } else {
+            setIsCarouselActive(false)
+            iOSDebugLog('info', `iPhone: Carousel deactivated for ${experienceId}`, 'ImageCarousel')
+          }
+        })
+      },
+      {
+        rootMargin: '50px',
+        threshold: [0, 0.1, 0.5]
+      }
+    )
+
+    observer.observe(carouselRef.current)
+    return () => observer.disconnect()
+  }, [isIPhone, experienceId])
+
   // Auto-advance for images only; for video wait until it finishes
   useEffect(() => {
     if (totalItems <= 1) return
     if (isVideoActive) return // do not auto-advance while video is active
+    
+    // iPhone: Solo auto-advance si el carousel está activo y visible
+    if (isIPhone && !isCarouselActive) return
 
+    // iPhone: Intervalo más lento para reducir GPU pressure
+    const intervalDuration = isIPhone ? 6000 : 4000
+    
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex === totalItems - 1 ? 0 : prevIndex + 1))
-    }, 4000)
+    }, intervalDuration)
     return () => clearInterval(interval)
-  }, [totalItems, isVideoActive])
+  }, [totalItems, isVideoActive, isIPhone, isCarouselActive])
 
   // Handle video playback when its slide becomes active
   useEffect(() => {
     if (!isVideoActive) return
     const videoEl = videoRefs.current[activeIndex]
     if (!videoEl) return
+
+    // iPhone: Solo reproducir video si el carousel está activo
+    if (isIPhone && !isCarouselActive) {
+      iOSDebugLog('info', 'iPhone: Skipping video playback - carousel not active', 'ImageCarousel')
+      return
+    }
 
     // Ensure start from beginning
     try {
@@ -60,18 +110,32 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
       setActiveIndex((prev) => (prev === totalItems - 1 ? 0 : prev + 1))
     }
     videoEl.addEventListener('ended', onEnded)
-    // Try to play; ignore promise rejections for autoplay
-    const playPromise = videoEl.play()
-    if (playPromise && typeof playPromise.catch === 'function') {
-      playPromise.catch(() => {})
+    
+    // iPhone: Manejo más conservador de video playback
+    if (isIPhone) {
+      setTimeout(() => {
+        const playPromise = videoEl.play()
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {
+            iOSDebugLog('warning', 'iPhone: Video autoplay failed', 'ImageCarousel')
+          })
+        }
+      }, 200) // Delay para iPhone
+    } else {
+      // Desktop/Android: Reproducción inmediata
+      const playPromise = videoEl.play()
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {})
+      }
     }
+    
     return () => {
       videoEl.removeEventListener('ended', onEnded)
       try {
         videoEl.pause()
       } catch {}
     }
-  }, [activeIndex, isVideoActive, totalItems])
+  }, [activeIndex, isVideoActive, totalItems, isIPhone, isCarouselActive])
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const current = mediaItems[activeIndex]
@@ -97,6 +161,7 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
 
   return (
     <div
+      ref={carouselRef}
       {...rest}
       className={`relative w-full h-full cursor-pointer${className ? ` ${className}` : ''}`}
       onClick={handleContainerClick}
@@ -111,7 +176,10 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
             height: '100%',
             objectFit: 'cover',
             opacity: index === activeIndex ? 1 : 0,
-            transition: 'opacity 1.5s ease-in-out, transform 0.5s ease-in-out',
+            // iPhone: Transiciones simplificadas para reducir GPU load
+            transition: isIPhone 
+              ? 'opacity 1s ease-in-out' 
+              : 'opacity 1.5s ease-in-out, transform 0.5s ease-in-out',
             zIndex: index === activeIndex ? 20 : 10,
           }
           if (item.type === 'image') {
@@ -121,7 +189,10 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
                 src={item.src}
                 alt={`${alt} - Imagen ${index + 1}`}
                 draggable={false}
-                className={`transition-transform duration-500 ease-in-out transform-gpu will-change-transform ${index === activeIndex ? 'hover:scale-105' : ''}`}
+                className={isIPhone 
+                  ? `transition-opacity duration-1000 ease-in-out ${index === activeIndex ? '' : ''}` // iPhone: Solo opacity, sin GPU transforms
+                  : `transition-transform duration-500 ease-in-out transform-gpu will-change-transform ${index === activeIndex ? 'hover:scale-105' : ''}`
+                }
                 style={commonStyle}
                 loading="lazy"
                 decoding="async"
@@ -136,9 +207,15 @@ export default function ImageCarousel({ images, media, alt, onImageClick, onVide
               playsInline
               controls={false}
               muted
-              className={`transition-transform duration-500 ease-in-out transform-gpu will-change-transform ${index === activeIndex ? 'hover:scale-105' : ''}`}
+              className={isIPhone 
+                ? `transition-opacity duration-1000 ease-in-out ${index === activeIndex ? '' : ''}` // iPhone: Solo opacity, sin GPU transforms  
+                : `transition-transform duration-500 ease-in-out transform-gpu will-change-transform ${index === activeIndex ? 'hover:scale-105' : ''}`
+              }
               style={commonStyle}
-              preload={index === activeIndex ? 'auto' : 'metadata'}
+              preload={isIPhone 
+                ? (index === activeIndex && isCarouselActive ? 'auto' : 'none') // iPhone: Preload más conservador
+                : (index === activeIndex ? 'auto' : 'metadata')
+              }
             />
           )
         })}
