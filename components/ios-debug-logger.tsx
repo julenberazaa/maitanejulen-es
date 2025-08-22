@@ -730,7 +730,7 @@ deactivateIOSDebug()
 
       {/* Device Info */}
       <div className="px-3 py-2 bg-yellow-600/30 border-b border-yellow-500/50">
-        <div>{iosInfo.deviceModel} - iOS {iosInfo.version}</div>
+        <div>{iosInfo?.deviceModel} - iOS {iosInfo?.version}</div>
         <div>Errors: {errorCountRef.current} | Perf Issues: {performanceIssuesRef.current}</div>
       </div>
 
