@@ -901,22 +901,26 @@ export default function TimelinePage() {
     setMediaActiveIndex((prev) => (prev === 0 ? selectedMedia.items.length - 1 : prev - 1))
   }
 
-  // Render debugging
-  iOSDebugLog('info', '🎨 RENDER: Component rendering', 'TimelinePage', {
-    shouldBlockDevice,
-    blockingReason,
-    deviceInfo,
-    hasMounted
-  })
+  // Render debugging - only if window exists
+  if (typeof window !== 'undefined') {
+    iOSDebugLog('info', '🎨 RENDER: Component rendering', 'TimelinePage', {
+      shouldBlockDevice,
+      blockingReason,
+      deviceInfo,
+      hasMounted
+    })
+  }
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
       {/* iPhone blocking overlay - Fixed background and perfect centering */}
       {shouldBlockDevice && (() => {
-        iOSDebugLog('info', '🎨 RENDER: Blocking overlay rendering', 'TimelinePage', {
-          shouldBlockDevice,
-          blockingReason
-        })
+        if (typeof window !== 'undefined') {
+          iOSDebugLog('info', '🎨 RENDER: Blocking overlay rendering', 'TimelinePage', {
+            shouldBlockDevice,
+            blockingReason
+          })
+        }
         return (
         <div className="fixed inset-0 z-[1001]">
           {/* Background layers - Force image loading and fallback */}
