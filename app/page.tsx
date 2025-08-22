@@ -51,9 +51,48 @@ export default function TimelinePage() {
   const overlayVisibleRef = useRef(overlayVisible)
   useEffect(() => { overlayVisibleRef.current = overlayVisible }, [overlayVisible])
   useEffect(() => { setHasMounted(true) }, [])
+  
+  // iPhone-specific blocking (iPhone 15 and below)
+  const [shouldBlockDevice, setShouldBlockDevice] = useState(false)
+  const [deviceInfo, setDeviceInfo] = useState<{isIPhone: boolean; version: number} | null>(null)
+
+  // iPhone device detection and blocking logic
+  useEffect(() => {
+    const getIOSInfo = () => {
+      const ua = navigator.userAgent
+      if (!/iPhone/.test(ua)) return { isIPhone: false, shouldBlock: false, version: 0 }
+      
+      // Extract iOS version
+      const versionMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
+      const majorVersion = versionMatch ? parseInt(versionMatch[1]) : 0
+      
+      // iPhone 16 ships with iOS 18+, iPhone 15 and below typically run iOS 17-
+      const isProblematicDevice = majorVersion <= 17
+      
+      return { 
+        isIPhone: true, 
+        shouldBlock: isProblematicDevice,
+        version: majorVersion 
+      }
+    }
+    
+    const info = getIOSInfo()
+    setDeviceInfo({ isIPhone: info.isIPhone, version: info.version })
+    setShouldBlockDevice(info.shouldBlock)
+    
+    if (info.shouldBlock) {
+      iOSDebugLog('warning', `iPhone device blocked: iOS ${info.version} (iPhone 15 and below)`, 'TimelinePage')
+      return // Skip rest of initialization for blocked devices
+    }
+    
+    iOSDebugLog('info', `iPhone device allowed: iOS ${info.version} (iPhone 16+)`, 'TimelinePage')
+  }, [])
 
   // iPhone: Usar detección ultra-temprana para posicionamiento inmediato
   useEffect(() => {
+    // Skip initialization if device is blocked
+    if (shouldBlockDevice) return
+    
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
     const isIPhone = (window as any).__isIPhone || /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
     
@@ -302,6 +341,9 @@ export default function TimelinePage() {
 
   // Leer permiso previo desde localStorage y omitir contraseña en localhost
   useEffect(() => {
+    // Skip if device is blocked
+    if (shouldBlockDevice) return
+    
     try {
       const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
       const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || /^192\.168\./.test(hostname) || /^10\./.test(hostname)
@@ -315,7 +357,7 @@ export default function TimelinePage() {
       const granted = localStorage.getItem('access-granted')
       if (granted === '1') setOverlayVisible(false)
     } catch {}
-  }, [])
+  }, [shouldBlockDevice])
 
   // iPhone-específico: Control de scroll más conservador
   useEffect(() => {
@@ -817,8 +859,40 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
+      {/* iPhone blocking overlay for iPhone 15 and below */}
+      {shouldBlockDevice && deviceInfo?.isIPhone && (
+        <div className="fixed inset-0 z-[1001]">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url('/a12.jpg')` }}
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
+          <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+            <div className="max-w-2xl text-center">
+              <div className="bg-terracotta rounded-2xl p-8 shadow-2xl">
+                <Heart className="w-16 h-16 mx-auto mb-6 text-ivory animate-pulse" />
+                <h2 className="text-3xl font-bold text-ivory mb-6 font-script">
+                  ¡Casi listo!
+                </h2>
+                <p className="text-xl text-ivory/90 leading-relaxed font-manuscript mb-6">
+                  Estamos trabajando para optimizar nuestra página web en dispositivos iPhone. Te recomendamos visitar la página desde un ordenador o dispositivo Android para una experiencia completa.
+                </p>
+                <p className="text-lg text-ivory/80 font-manuscript">
+                  ¡Gracias por tu paciencia! ❤️
+                </p>
+                {deviceInfo && (
+                  <div className="mt-4 text-sm text-ivory/70">
+                    iOS {deviceInfo.version} detectado
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Overlay inline SSR (antes del montaje) para evitar FOUC */}
-      {!hasMounted && (
+      {!shouldBlockDevice && !hasMounted && (
         <div className={`fixed inset-0 z-[1000] ${fadeToBlack ? 'pointer-events-none' : ''}`}>
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -880,7 +954,7 @@ export default function TimelinePage() {
           `}</style>
         </div>
       )}
-      {overlayVisible && hasMounted && createPortal((
+      {!shouldBlockDevice && overlayVisible && hasMounted && createPortal((
         <div className={`fixed inset-0 z-[1000] ${fadeToBlack ? 'pointer-events-none' : ''}`}>
           {/* Fondo imagen adaptativo */}
           <div
@@ -955,7 +1029,7 @@ export default function TimelinePage() {
         </div>
       ), document.body)}
       {/* Static frames overlay, above base content but below modal/video */}
-      {!overlayVisible && <FramesOverlay />}
+      {!shouldBlockDevice && !overlayVisible && <FramesOverlay />}
       {/* Image Modal via portal to escape transformed ancestors */}
       {selectedImage.src && createPortal(
         (
@@ -1184,6 +1258,9 @@ export default function TimelinePage() {
         document.body
       )}
 
+      {/* Main content - only render if device is not blocked */}
+      {!shouldBlockDevice && (
+        <>
       {/* Hero Section */}
       <section className="relative py-32 bg-gradient-to-br from-terracotta to-sage overflow-hidden" style={{ height: 'var(--hero-height, 680px)' }}>
         <div
@@ -1721,6 +1798,8 @@ export default function TimelinePage() {
           </div>
         </div>
       </section>
+        </>
+      )}
     </div>
   )
 }
