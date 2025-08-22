@@ -52,77 +52,70 @@ export default function TimelinePage() {
   useEffect(() => { overlayVisibleRef.current = overlayVisible }, [overlayVisible])
   useEffect(() => { setHasMounted(true) }, [])
   
-  // iPhone-specific blocking - IMMEDIATE DETECTION to prevent race conditions
-  const getInitialBlockingState = () => {
-    if (typeof window === 'undefined') return false // SSR safety
-    const userAgent = navigator.userAgent
-    return /iPhone/.test(userAgent) && !(window as any).MSStream
-  }
-  
-  const [shouldBlockDevice, setShouldBlockDevice] = useState(getInitialBlockingState)
+  // iPhone-specific blocking - ULTRA-AGGRESSIVE BLOCKING
+  // Start with blocking ALL until we confirm it's safe
+  const [shouldBlockDevice, setShouldBlockDevice] = useState(true) // BLOCK BY DEFAULT
   const [deviceInfo, setDeviceInfo] = useState<{isIPhone: boolean; version: number} | null>(null)
+  const [blockingReason, setBlockingReason] = useState('Initial safety block')
 
-  // iPhone device detection and detailed logging
+  // Device detection - determine if we should allow access
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    
-    const ua = navigator.userAgent
-    const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
-    
-    if (!isIPhone) {
-      // Not an iPhone - allow access
-      setShouldBlockDevice(false)
-      setDeviceInfo({ isIPhone: false, version: 0 })
-      iOSDebugLog('info', 'Non-iPhone device detected - access allowed', 'TimelinePage')
+    if (typeof window === 'undefined') {
+      setBlockingReason('SSR - window undefined')
       return
     }
     
-    // Extract iOS version for logging
-    const versionMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
-    const majorVersion = versionMatch ? parseInt(versionMatch[1]) : 0
-    
-    // ULTRA-CONSERVATIVE: Block ALL iPhones by default
-    // Only allow iPhone 16 if we can positively identify it
-    let shouldAllow = false
-    
-    // iPhone 16 Pro/Pro Max/Plus detection based on unique screen dimensions
-    const screenWidth = window.screen.width
-    const screenHeight = window.screen.height  
-    const devicePixelRatio = window.devicePixelRatio || 1
-    
-    // Very specific iPhone 16 detection
-    const isDefinitelyIPhone16 = (
-      majorVersion >= 18 && (
-        // iPhone 16 Pro: 402x874 @3x
-        (screenWidth === 402 && screenHeight === 874 && devicePixelRatio === 3) ||
-        // iPhone 16 Pro Max: 440x956 @3x  
-        (screenWidth === 440 && screenHeight === 956 && devicePixelRatio === 3)
-        // Note: Removing base iPhone 16 detection to be ultra-conservative
-      )
-    )
-    
-    if (isDefinitelyIPhone16) {
-      shouldAllow = true
-    }
-    
-    setDeviceInfo({ isIPhone: true, version: majorVersion })
-    setShouldBlockDevice(!shouldAllow)
-    
-    // Detailed logging
-    iOSDebugLog('info', 'iPhone detection results', 'TimelinePage', {
-      userAgent: ua.substring(0, 120),
-      iosVersion: majorVersion,
-      screenWidth,
-      screenHeight,
-      devicePixelRatio,
-      isDefinitelyIPhone16,
-      finalDecision: shouldAllow ? 'ALLOW' : 'BLOCK'
-    })
-    
-    if (!shouldAllow) {
-      iOSDebugLog('warning', `iPhone BLOCKED: iOS ${majorVersion} - Not confirmed as iPhone 16 Pro/Pro Max`, 'TimelinePage')
-    } else {
-      iOSDebugLog('info', `iPhone ALLOWED: iOS ${majorVersion} - Confirmed iPhone 16 Pro/Pro Max`, 'TimelinePage')
+    try {
+      const ua = navigator.userAgent
+      const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
+      
+      iOSDebugLog('info', 'Device detection started', 'TimelinePage', {
+        userAgent: ua.substring(0, 120),
+        isIPhone
+      })
+      
+      if (!isIPhone) {
+        // Not an iPhone - allow access immediately
+        setShouldBlockDevice(false)
+        setDeviceInfo({ isIPhone: false, version: 0 })
+        setBlockingReason('Not iPhone - access granted')
+        iOSDebugLog('info', 'Non-iPhone device detected - access allowed', 'TimelinePage')
+        return
+      }
+      
+      // It's an iPhone - extract version and screen info
+      const versionMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
+      const majorVersion = versionMatch ? parseInt(versionMatch[1]) : 0
+      
+      const screenWidth = window.screen.width
+      const screenHeight = window.screen.height  
+      const devicePixelRatio = window.devicePixelRatio || 1
+      
+      // BLOCK ALL iPhones for now - as requested
+      // Only allow specific iPhone 16 Pro/Pro Max models if needed later
+      const shouldAllow = false // Ultra-conservative: block ALL iPhones
+      
+      setDeviceInfo({ isIPhone: true, version: majorVersion })
+      setShouldBlockDevice(!shouldAllow)
+      setBlockingReason(`iPhone detected - iOS ${majorVersion} - BLOCKED as requested`)
+      
+      // Comprehensive logging
+      iOSDebugLog('info', 'iPhone detection completed', 'TimelinePage', {
+        userAgent: ua.substring(0, 120),
+        iosVersion: majorVersion,
+        screenWidth,
+        screenHeight,
+        devicePixelRatio,
+        finalDecision: shouldAllow ? 'ALLOW' : 'BLOCK',
+        blockingReason: `iPhone detected - iOS ${majorVersion} - BLOCKED as requested`
+      })
+      
+      iOSDebugLog('warning', `🚫 iPhone BLOCKED: iOS ${majorVersion} (${screenWidth}x${screenHeight} @${devicePixelRatio}x)`, 'TimelinePage')
+      
+    } catch (error) {
+      // If detection fails, stay blocked for safety
+      setBlockingReason(`Detection error: ${error}`)
+      iOSDebugLog('error', 'Device detection failed - staying blocked for safety', 'TimelinePage', { error })
     }
   }, [])
 
@@ -897,32 +890,40 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
-      {/* iPhone blocking overlay for iPhone 15 and below */}
-      {shouldBlockDevice && deviceInfo?.isIPhone && (
-        <div className="fixed inset-0 z-[1001]">
+      {/* iPhone blocking overlay - ALWAYS SHOW if shouldBlockDevice is true */}
+      {shouldBlockDevice && (
+        <div className="fixed inset-0 z-[1001] bg-white">
+          {/* Fallback white background */}
+          <div className="absolute inset-0 bg-white" />
+          
+          {/* Main background with image */}
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url('/a12.jpg')` }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
+          
           <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
             <div className="max-w-2xl text-center">
               <div className="bg-terracotta rounded-2xl p-8 shadow-2xl">
                 <Heart className="w-16 h-16 mx-auto mb-6 text-ivory animate-pulse" />
                 <h2 className="text-3xl font-bold text-ivory mb-6 font-script">
-                  ¡Casi listo!
+                  ¡Dispositivo iPhone detectado!
                 </h2>
                 <p className="text-xl text-ivory/90 leading-relaxed font-manuscript mb-6">
                   Estamos trabajando para optimizar nuestra página web en dispositivos iPhone. Te recomendamos visitar la página desde un <strong>ordenador</strong> o dispositivo <strong>Android</strong> para una experiencia completa.
                 </p>
-                <p className="text-lg text-ivory/80 font-manuscript">
+                <p className="text-lg text-ivory/80 font-manuscript mb-4">
                   ¡Gracias por tu paciencia! ❤️
                 </p>
-                {deviceInfo && (
-                  <div className="mt-4 text-sm text-ivory/70">
-                    iOS {deviceInfo.version} detectado
-                  </div>
-                )}
+                
+                {/* Debug info */}
+                <div className="mt-6 text-sm text-ivory/60 font-mono">
+                  <div>Razón: {blockingReason}</div>
+                  {deviceInfo && (
+                    <div>iOS {deviceInfo.version} • {window.screen?.width}x{window.screen?.height}</div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
