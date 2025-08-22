@@ -898,38 +898,39 @@ export default function TimelinePage() {
             height: '100dvh' // Dynamic viewport height for mobile
           }}
         >
-          {/* Background layers - force rendering with inline styles */}
+          {/* Background layers - force full height coverage */}
           <div
             style={{ 
-              position: 'absolute',
+              position: 'fixed',
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
+              width: '100vw',
+              height: '100dvh',
               backgroundImage: `url('/a12.jpg')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
+              backgroundRepeat: 'no-repeat',
+              backgroundAttachment: 'fixed'
             }}
           />
           <div 
             style={{
-              position: 'absolute',
+              position: 'fixed',
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
+              width: '100vw',
+              height: '100dvh',
               background: 'linear-gradient(to bottom right, #E2A17A, #BB8269, #936357, #432534)',
               opacity: 0.9
             }}
           />
           <div 
             style={{
-              position: 'absolute',
+              position: 'fixed',
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
+              width: '100vw',
+              height: '100dvh',
               backgroundColor: 'rgba(0, 0, 0, 0.1)'
             }}
           />
@@ -945,15 +946,15 @@ export default function TimelinePage() {
               minHeight: '100dvh'
             }}
           >
-            <div style={{ width: '100%', maxWidth: '320px' }}>
-              {/* Brown box */}
-              <div className="bg-terracotta rounded-2xl p-8 shadow-2xl" style={{ width: '100%' }}>
-                <Heart className="w-20 h-20 mx-auto mb-8 text-ivory animate-pulse" />
+            <div style={{ width: '100%', maxWidth: '400px' }}>
+              {/* Brown box - larger size */}
+              <div className="bg-terracotta rounded-2xl shadow-2xl" style={{ width: '100%', padding: '3rem' }}>
+                <Heart className="w-24 h-24 mx-auto mb-10 text-ivory animate-pulse" />
                 <div className="text-center">
-                  <h2 className="text-2xl font-manuscript text-ivory mb-6 leading-tight">
+                  <h2 className="text-3xl font-manuscript text-ivory mb-8 leading-tight font-bold">
                     Estamos trabajando para crear la página para iOS.
                   </h2>
-                  <p className="text-lg text-ivory/90 font-manuscript">
+                  <p className="text-xl text-ivory/90 font-manuscript font-medium">
                     Gracias por la espera.
                   </p>
                 </div>
