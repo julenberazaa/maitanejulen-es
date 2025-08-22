@@ -60,8 +60,15 @@ export default function TimelinePage() {
 
   // Device detection - determine if we should allow access
   useEffect(() => {
+    iOSDebugLog('info', '🔍 BLOCKING SYSTEM: useEffect started', 'TimelinePage', {
+      windowExists: typeof window !== 'undefined',
+      shouldBlockDeviceState: shouldBlockDevice,
+      blockingReasonState: blockingReason
+    })
+    
     if (typeof window === 'undefined') {
       setBlockingReason('SSR - window undefined')
+      iOSDebugLog('warning', '🔍 BLOCKING SYSTEM: SSR detected - staying blocked', 'TimelinePage')
       return
     }
     
@@ -69,9 +76,10 @@ export default function TimelinePage() {
       const ua = navigator.userAgent
       const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
       
-      iOSDebugLog('info', 'Device detection started', 'TimelinePage', {
+      iOSDebugLog('info', '🔍 BLOCKING SYSTEM: Device detection started', 'TimelinePage', {
         userAgent: ua.substring(0, 120),
-        isIPhone
+        isIPhone,
+        currentShouldBlockDevice: shouldBlockDevice
       })
       
       if (!isIPhone) {
@@ -115,8 +123,13 @@ export default function TimelinePage() {
     } catch (error) {
       // If detection fails, stay blocked for safety
       setBlockingReason(`Detection error: ${error}`)
-      iOSDebugLog('error', 'Device detection failed - staying blocked for safety', 'TimelinePage', { error })
+      iOSDebugLog('error', '🔍 BLOCKING SYSTEM: Detection failed - staying blocked for safety', 'TimelinePage', { error })
     }
+    
+    iOSDebugLog('info', '🔍 BLOCKING SYSTEM: useEffect completed', 'TimelinePage', {
+      finalShouldBlockDevice: shouldBlockDevice,
+      finalBlockingReason: blockingReason
+    })
   }, [])
 
   // iPhone: Usar detección ultra-temprana para posicionamiento inmediato
@@ -888,10 +901,23 @@ export default function TimelinePage() {
     setMediaActiveIndex((prev) => (prev === 0 ? selectedMedia.items.length - 1 : prev - 1))
   }
 
+  // Render debugging
+  iOSDebugLog('info', '🎨 RENDER: Component rendering', 'TimelinePage', {
+    shouldBlockDevice,
+    blockingReason,
+    deviceInfo,
+    hasMounted
+  })
+
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
       {/* iPhone blocking overlay - Fixed background and perfect centering */}
-      {shouldBlockDevice && (
+      {shouldBlockDevice && (() => {
+        iOSDebugLog('info', '🎨 RENDER: Blocking overlay rendering', 'TimelinePage', {
+          shouldBlockDevice,
+          blockingReason
+        })
+        return (
         <div className="fixed inset-0 z-[1001]">
           {/* Background layers - Force image loading and fallback */}
           <div
@@ -931,7 +957,8 @@ export default function TimelinePage() {
             </div>
           </div>
         </div>
-      )}
+        )
+      })()}
       
       {/* Overlay inline SSR (antes del montaje) para evitar FOUC */}
       {!shouldBlockDevice && !hasMounted && (
