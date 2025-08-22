@@ -61,14 +61,14 @@ export default function TimelinePage() {
               minHeight: '100dvh'
             }}
           >
-            <div className="w-full max-w-lg mx-auto">
-              <div className="bg-terracotta rounded-3xl p-16 shadow-2xl">
-                <Heart className="w-28 h-28 mx-auto mb-12 text-ivory animate-pulse" />
+            <div className="w-full max-w-2xl mx-auto">
+              <div className="bg-terracotta rounded-3xl p-20 shadow-2xl">
+                <Heart className="w-36 h-36 mx-auto mb-16 text-ivory animate-pulse" />
                 <div className="text-center">
-                  <h2 className="text-4xl font-manuscript text-ivory mb-10 leading-tight font-bold">
-                    Estamos trabajando para crear la página para iOS.
+                  <h2 className="text-5xl font-manuscript text-ivory mb-12 leading-tight font-bold">
+                    Estamos trabajando para crear la página para iOS, míralo en Android o Windows 😉
                   </h2>
-                  <p className="text-2xl text-ivory/90 font-manuscript font-medium">
+                  <p className="text-3xl text-ivory/90 font-manuscript font-medium">
                     Gracias por la espera.
                   </p>
                 </div>
@@ -1009,15 +1009,15 @@ export default function TimelinePage() {
               minHeight: '100dvh'
             }}
           >
-            <div className="w-full max-w-lg mx-auto">
+            <div className="w-full max-w-2xl mx-auto">
               {/* Brown box - even larger size */}
-              <div className="bg-terracotta rounded-3xl p-16 shadow-2xl">
-                <Heart className="w-28 h-28 mx-auto mb-12 text-ivory animate-pulse" />
+              <div className="bg-terracotta rounded-3xl p-20 shadow-2xl">
+                <Heart className="w-36 h-36 mx-auto mb-16 text-ivory animate-pulse" />
                 <div className="text-center">
-                  <h2 className="text-4xl font-manuscript text-ivory mb-10 leading-tight font-bold">
-                    Estamos trabajando para crear la página para iOS.
+                  <h2 className="text-5xl font-manuscript text-ivory mb-12 leading-tight font-bold">
+                    Estamos trabajando para crear la página para iOS, míralo en Android o Windows 😉
                   </h2>
-                  <p className="text-2xl text-ivory/90 font-manuscript font-medium">
+                  <p className="text-3xl text-ivory/90 font-manuscript font-medium">
                     Gracias por la espera.
                   </p>
                 </div>
