@@ -118,45 +118,54 @@ export default function TimelinePage() {
   useEffect(() => { setHasMounted(true) }, [])
   
   // iPhone-specific blocking - ULTRA-AGGRESSIVE BLOCKING
-  // Start with blocking ALL until we confirm it's safe
-  const [shouldBlockDevice, setShouldBlockDevice] = useState(true) // BLOCK BY DEFAULT
-  const [deviceInfo, setDeviceInfo] = useState<{isIPhone: boolean; version: number} | null>(null)
-  const [blockingReason, setBlockingReason] = useState('Initial safety block')
-
-  // Device detection - determine if we should allow access
-  useEffect(() => {
-    iOSDebugLog('info', '🔍 BLOCKING SYSTEM: useEffect started', 'TimelinePage', {
-      windowExists: typeof window !== 'undefined',
-      shouldBlockDeviceState: shouldBlockDevice,
-      blockingReasonState: blockingReason
-    })
+  // Initialize with immediate device detection to prevent flash on non-iOS devices
+  const [shouldBlockDevice, setShouldBlockDevice] = useState(() => {
+    // SSR safety - block during server rendering
+    if (typeof window === 'undefined') return true
     
+    // Immediate device detection to prevent flash
+    const ua = navigator.userAgent
+    const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
+    
+    // Only block if it's actually an iPhone, allow all other devices immediately
+    return isIPhone
+  })
+  const [deviceInfo, setDeviceInfo] = useState<{isIPhone: boolean; version: number} | null>(null)
+  const [blockingReason, setBlockingReason] = useState(() => {
+    if (typeof window === 'undefined') return 'SSR safety block'
+    const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+    return isIPhone ? 'iPhone detected - blocked immediately' : 'Non-iPhone - access granted'
+  })
+
+  // Device detection - enhanced logging and iPhone-specific setup only
+  useEffect(() => {
+    // Skip if window is not available (SSR)
     if (typeof window === 'undefined') {
       setBlockingReason('SSR - window undefined')
       iOSDebugLog('warning', '🔍 BLOCKING SYSTEM: SSR detected - staying blocked', 'TimelinePage')
       return
     }
     
+    const ua = navigator.userAgent
+    const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
+    
+    iOSDebugLog('info', '🔍 BLOCKING SYSTEM: Enhanced setup started', 'TimelinePage', {
+      userAgent: ua.substring(0, 120),
+      isIPhone,
+      shouldBlockDevice
+    })
+    
+    if (!isIPhone) {
+      // Non-iPhone device - just set device info for logging
+      setDeviceInfo({ isIPhone: false, version: 0 })
+      setBlockingReason('Not iPhone - access granted')
+      iOSDebugLog('info', 'Non-iPhone device confirmed - access granted', 'TimelinePage')
+      return
+    }
+    
     try {
-      const ua = navigator.userAgent
-      const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
       
-      iOSDebugLog('info', '🔍 BLOCKING SYSTEM: Device detection started', 'TimelinePage', {
-        userAgent: ua.substring(0, 120),
-        isIPhone,
-        currentShouldBlockDevice: shouldBlockDevice
-      })
-      
-      if (!isIPhone) {
-        // Not an iPhone - allow access immediately
-        setShouldBlockDevice(false)
-        setDeviceInfo({ isIPhone: false, version: 0 })
-        setBlockingReason('Not iPhone - access granted')
-        iOSDebugLog('info', 'Non-iPhone device detected - access allowed', 'TimelinePage')
-        return
-      }
-      
-      // It's an iPhone - extract version and screen info
+      // It's an iPhone - extract version and screen info for logging
       const versionMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
       const majorVersion = versionMatch ? parseInt(versionMatch[1]) : 0
       
@@ -164,36 +173,33 @@ export default function TimelinePage() {
       const screenHeight = window.screen.height  
       const devicePixelRatio = window.devicePixelRatio || 1
       
-      // BLOCK ALL iPhones for now - as requested
-      // Only allow specific iPhone 16 Pro/Pro Max models if needed later
-      const shouldAllow = false // Ultra-conservative: block ALL iPhones
-      
+      // Set device info for logging (blocking already handled by useState)
       setDeviceInfo({ isIPhone: true, version: majorVersion })
-      setShouldBlockDevice(!shouldAllow)
       setBlockingReason(`iPhone detected - iOS ${majorVersion} - BLOCKED as requested`)
       
       // Comprehensive logging
-      iOSDebugLog('info', 'iPhone detection completed', 'TimelinePage', {
+      iOSDebugLog('info', 'iPhone details extracted', 'TimelinePage', {
         userAgent: ua.substring(0, 120),
         iosVersion: majorVersion,
         screenWidth,
         screenHeight,
         devicePixelRatio,
-        finalDecision: shouldAllow ? 'ALLOW' : 'BLOCK',
+        blockingStatus: 'ALREADY BLOCKED (from useState)',
         blockingReason: `iPhone detected - iOS ${majorVersion} - BLOCKED as requested`
       })
       
-      iOSDebugLog('warning', `🚫 iPhone BLOCKED: iOS ${majorVersion} (${screenWidth}x${screenHeight} @${devicePixelRatio}x)`, 'TimelinePage')
+      iOSDebugLog('warning', `🚫 iPhone CONFIRMED BLOCKED: iOS ${majorVersion} (${screenWidth}x${screenHeight} @${devicePixelRatio}x)`, 'TimelinePage')
       
     } catch (error) {
-      // If detection fails, stay blocked for safety
-      setBlockingReason(`Detection error: ${error}`)
-      iOSDebugLog('error', '🔍 BLOCKING SYSTEM: Detection failed - staying blocked for safety', 'TimelinePage', { error })
+      // If detection fails for iPhone, keep it blocked (already blocked by useState)
+      setBlockingReason(`iPhone detection error: ${error}`)
+      iOSDebugLog('error', '🔍 iPhone detection failed - staying blocked for safety', 'TimelinePage', { error })
     }
     
-    iOSDebugLog('info', '🔍 BLOCKING SYSTEM: useEffect completed', 'TimelinePage', {
-      finalShouldBlockDevice: shouldBlockDevice,
-      finalBlockingReason: blockingReason
+    iOSDebugLog('info', '🔍 BLOCKING SYSTEM: Enhanced setup completed', 'TimelinePage', {
+      deviceType: isIPhone ? 'iPhone' : 'Non-iPhone',
+      blockingStatus: shouldBlockDevice ? 'BLOCKED' : 'ALLOWED',
+      blockingReason
     })
   }, [])
 
