@@ -890,19 +890,28 @@ export default function TimelinePage() {
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
-      {/* iPhone blocking overlay - EXACT COPY of working password screen structure */}
+      {/* iPhone blocking overlay - Fixed background and perfect centering */}
       {shouldBlockDevice && (
         <div className="fixed inset-0 z-[1001]">
-          {/* Background layers - EXACT same structure as password screen */}
+          {/* Background layers - Force rendering with correct opacity */}
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url('/a12.jpg')` }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
-          <div className="absolute inset-0 bg-black opacity-10" />
+          <div className="absolute inset-0 bg-black" style={{ opacity: 0.1 }} />
           
-          {/* Centered content - same structure as password screen */}
-          <div className="relative z-10 w-full h-full flex items-center justify-center px-6">
+          {/* Perfect centering - force full height and flex centering */}
+          <div 
+            className="relative z-10 w-full px-6"
+            style={{ 
+              height: '100dvh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '100dvh'
+            }}
+          >
             <div className="w-full max-w-md mx-auto">
               {/* Brown box - larger size */}
               <div className="bg-terracotta rounded-2xl p-12 shadow-2xl">
