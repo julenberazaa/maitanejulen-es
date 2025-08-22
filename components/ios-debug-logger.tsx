@@ -353,7 +353,7 @@ Run iOSDebug.printLogs() to see what happened before crash/reload
                 const memInfo = (performance as any).memory
                 const memoryUsage = memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit
                 if (memoryUsage > 0.8) {
-                  addLog('memory', `iPhone: Critical memory usage: ${(memoryUsage * 100).toFixed(1)}%`, 'MemoryMonitor', {
+                  addLog('memory', `iPhone: Critical memory usage: ${(memoryUsage * 100).toFixed(1)}%`, undefined, 'MemoryMonitor', {
                     usedJSHeapSize: memInfo.usedJSHeapSize,
                     jsHeapSizeLimit: memInfo.jsHeapSizeLimit,
                     totalJSHeapSize: memInfo.totalJSHeapSize
