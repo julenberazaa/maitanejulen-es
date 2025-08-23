@@ -16,20 +16,10 @@ interface ImageState {
 
 
 export default function TimelinePage() {
-  // IMMEDIATE iPhone blocking - no useEffect delays
+  // IMMEDIATE iPhone blocking - simplified to avoid hydration mismatch
   const shouldBlockImmediately = (() => {
     if (typeof window === 'undefined') return true // Block during SSR for safety
-    
-    const ua = navigator.userAgent
-    const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
-    
-    if (isIPhone && typeof window !== 'undefined') {
-      iOSDebugLog('warning', '🚨 IMMEDIATE BLOCK: iPhone detected - blocking immediately', 'TimelinePage', {
-        userAgent: ua.substring(0, 120)
-      })
-    }
-    
-    return isIPhone // Block all iPhones immediately
+    return false // Let useEffect handle the logic to avoid hydration issues
   })()
   
   // If iPhone detected, show blocking overlay immediately
@@ -117,32 +107,29 @@ export default function TimelinePage() {
   useEffect(() => { overlayVisibleRef.current = overlayVisible }, [overlayVisible])
   useEffect(() => { setHasMounted(true) }, [])
   
-  // iPhone-specific blocking - ULTRA-AGGRESSIVE BLOCKING
-  // Initialize with immediate device detection to prevent flash on non-iOS devices
-  const [shouldBlockDevice, setShouldBlockDevice] = useState(() => {
-    // SSR safety - block during server rendering
-    if (typeof window === 'undefined') return true
-    
-    // Immediate device detection to prevent flash
-    const ua = navigator.userAgent
-    const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
-    
-    // Only block if it's actually an iPhone, allow all other devices immediately
-    return isIPhone
-  })
+  // iPhone-specific blocking - Simplified to avoid hydration mismatch
+  const [shouldBlockDevice, setShouldBlockDevice] = useState(true) // Start blocked, useEffect will handle logic
   const [deviceInfo, setDeviceInfo] = useState<{isIPhone: boolean; version: number} | null>(null)
-  const [blockingReason, setBlockingReason] = useState(() => {
-    if (typeof window === 'undefined') return 'SSR safety block'
-    const isIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
-    return isIPhone ? 'iPhone detected - blocked immediately' : 'Non-iPhone - access granted'
-  })
+  const [blockingReason, setBlockingReason] = useState('Initial safety block')
 
-  // Device detection - enhanced logging and iPhone-specific setup only
+  // Device detection with localhost handling
   useEffect(() => {
     // Skip if window is not available (SSR)
     if (typeof window === 'undefined') {
       setBlockingReason('SSR - window undefined')
       iOSDebugLog('warning', '🔍 BLOCKING SYSTEM: SSR detected - staying blocked', 'TimelinePage')
+      return
+    }
+    
+    // Check if localhost - skip all blocking in development
+    const hostname = window.location.hostname
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || /^192\.168\./.test(hostname) || /^10\./.test(hostname)
+    
+    if (isLocalhost) {
+      iOSDebugLog('info', '🏠 LOCALHOST DETECTED - Skipping all blocking for development', 'TimelinePage')
+      setShouldBlockDevice(false)
+      setDeviceInfo({ isIPhone: false, version: 0 })
+      setBlockingReason('Localhost - development mode - access granted')
       return
     }
     
@@ -156,7 +143,8 @@ export default function TimelinePage() {
     })
     
     if (!isIPhone) {
-      // Non-iPhone device - just set device info for logging
+      // Non-iPhone device - allow access
+      setShouldBlockDevice(false)
       setDeviceInfo({ isIPhone: false, version: 0 })
       setBlockingReason('Not iPhone - access granted')
       iOSDebugLog('info', 'Non-iPhone device confirmed - access granted', 'TimelinePage')
