@@ -6,6 +6,7 @@ import { Heart, Plane, MapPin, Camera, Video, Sun, Star, Ship, BellRingIcon as R
 import ImageCarousel from "@/components/image-carousel"
 import FramesOverlay from "@/components/frames-overlay"
 import { iOSDebugLog } from "@/components/ios-debug-logger"
+import { emergencyLog } from "@/components/emergency-debug"
 
 interface ImageState {
   src: string | null
@@ -16,6 +17,9 @@ interface ImageState {
 
 
 export default function TimelinePage() {
+  // Emergency logging for debugging white screen
+  emergencyLog('info', 'TimelinePage component started rendering')
+  
   // NO MORE iPhone blocking - allow access to all devices
 
   const heroRef = useRef<HTMLDivElement>(null)
@@ -52,7 +56,11 @@ export default function TimelinePage() {
   const [hasMounted, setHasMounted] = useState(false)
   const overlayVisibleRef = useRef(overlayVisible)
   useEffect(() => { overlayVisibleRef.current = overlayVisible }, [overlayVisible])
-  useEffect(() => { setHasMounted(true) }, [])
+  useEffect(() => { 
+    emergencyLog('info', 'useEffect mounting - setting hasMounted to true')
+    setHasMounted(true)
+    emergencyLog('info', 'hasMounted set to true')
+  }, [])
   
   // iPhone-specific blocking - Simplified to avoid hydration mismatch
   // No more device blocking - removed for iPhone support
@@ -400,7 +408,9 @@ export default function TimelinePage() {
           }
           
           iOSDebugLog('warning', 'About to hide overlay - CRITICAL POINT', 'TimelinePage')
+          emergencyLog('warn', 'About to set overlayVisible to false - showing main content')
           setOverlayVisible(false)
+          emergencyLog('info', 'overlayVisible set to false')
           
           // iPhone-específico: Reactivación inmediata sin requestAnimationFrame
           const isCurrentIPhone = /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
@@ -843,6 +853,12 @@ export default function TimelinePage() {
       hasMounted
     })
   }
+
+  // Emergency log before render
+  emergencyLog('info', 'About to render TimelinePage', {
+    hasMounted,
+    overlayVisible
+  })
 
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
