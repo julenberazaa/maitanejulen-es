@@ -778,6 +778,16 @@ deactivateIOSDebug()
 
 // Export the logging function for external use
 export const iOSDebugLog = (type: 'error' | 'warning' | 'info' | 'dom' | 'memory' | 'performance', message: string, component?: string, details?: any) => {
+  // Skip logging on localhost for cleaner development experience
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || /^192\.168\./.test(hostname) || /^10\./.test(hostname)
+    
+    if (isLocalhost) {
+      return // Skip all logging on localhost
+    }
+  }
+  
   const logger = (window as any).__iOSDebugLogger
   if (logger && logger.isActive) {
     logger.addLog(type, message, undefined, component, details)
