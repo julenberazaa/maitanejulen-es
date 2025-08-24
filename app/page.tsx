@@ -1215,9 +1215,8 @@ export default function TimelinePage() {
         document.body
       )}
 
-      {/* Main content - only render if device is not blocked */}
-      {(
-        <>
+      {/* Main content - accessible to all devices */}
+      <>
       {/* Hero Section */}
       <section className="relative py-32 bg-gradient-to-br from-terracotta to-sage overflow-hidden" style={{ height: 'var(--hero-height, 680px)' }}>
         <div
@@ -1756,7 +1755,6 @@ export default function TimelinePage() {
         </div>
       </section>
         </>
-      )}
     </div>
   )
 }
