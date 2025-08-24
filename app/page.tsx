@@ -55,93 +55,13 @@ export default function TimelinePage() {
   useEffect(() => { setHasMounted(true) }, [])
   
   // iPhone-specific blocking - Simplified to avoid hydration mismatch
-  const [shouldBlockDevice, setShouldBlockDevice] = useState(true) // Start blocked, useEffect will handle logic
-  const [deviceInfo, setDeviceInfo] = useState<{isIPhone: boolean; version: number} | null>(null)
-  const [blockingReason, setBlockingReason] = useState('Initial safety block')
+  // No more device blocking - removed for iPhone support
 
-  // Device detection with localhost handling
-  useEffect(() => {
-    // Skip if window is not available (SSR)
-    if (typeof window === 'undefined') {
-      setBlockingReason('SSR - window undefined')
-      iOSDebugLog('warning', '🔍 BLOCKING SYSTEM: SSR detected - staying blocked', 'TimelinePage')
-      return
-    }
-    
-    // Check if localhost - skip all blocking in development
-    const hostname = window.location.hostname
-    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || /^192\.168\./.test(hostname) || /^10\./.test(hostname)
-    
-    if (isLocalhost) {
-      iOSDebugLog('info', '🏠 LOCALHOST DETECTED - Skipping all blocking for development', 'TimelinePage')
-      setShouldBlockDevice(false)
-      setDeviceInfo({ isIPhone: false, version: 0 })
-      setBlockingReason('Localhost - development mode - access granted')
-      return
-    }
-    
-    const ua = navigator.userAgent
-    const isIPhone = /iPhone/.test(ua) && !(window as any).MSStream
-    
-    iOSDebugLog('info', '🔍 BLOCKING SYSTEM: Enhanced setup started', 'TimelinePage', {
-      userAgent: ua.substring(0, 120),
-      isIPhone,
-      shouldBlockDevice
-    })
-    
-    if (!isIPhone) {
-      // Non-iPhone device - allow access
-      setShouldBlockDevice(false)
-      setDeviceInfo({ isIPhone: false, version: 0 })
-      setBlockingReason('Not iPhone - access granted')
-      iOSDebugLog('info', 'Non-iPhone device confirmed - access granted', 'TimelinePage')
-      return
-    }
-    
-    try {
-      
-      // It's an iPhone - extract version and screen info for logging
-      const versionMatch = ua.match(/OS (\d+)_(\d+)_?(\d+)?/)
-      const majorVersion = versionMatch ? parseInt(versionMatch[1]) : 0
-      
-      const screenWidth = window.screen.width
-      const screenHeight = window.screen.height  
-      const devicePixelRatio = window.devicePixelRatio || 1
-      
-      // Set device info for logging (blocking already handled by useState)
-      setDeviceInfo({ isIPhone: true, version: majorVersion })
-      setBlockingReason(`iPhone detected - iOS ${majorVersion} - BLOCKED as requested`)
-      
-      // Comprehensive logging
-      iOSDebugLog('info', 'iPhone details extracted', 'TimelinePage', {
-        userAgent: ua.substring(0, 120),
-        iosVersion: majorVersion,
-        screenWidth,
-        screenHeight,
-        devicePixelRatio,
-        blockingStatus: 'ALREADY BLOCKED (from useState)',
-        blockingReason: `iPhone detected - iOS ${majorVersion} - BLOCKED as requested`
-      })
-      
-      iOSDebugLog('warning', `🚫 iPhone CONFIRMED BLOCKED: iOS ${majorVersion} (${screenWidth}x${screenHeight} @${devicePixelRatio}x)`, 'TimelinePage')
-      
-    } catch (error) {
-      // If detection fails for iPhone, keep it blocked (already blocked by useState)
-      setBlockingReason(`iPhone detection error: ${error}`)
-      iOSDebugLog('error', '🔍 iPhone detection failed - staying blocked for safety', 'TimelinePage', { error })
-    }
-    
-    iOSDebugLog('info', '🔍 BLOCKING SYSTEM: Enhanced setup completed', 'TimelinePage', {
-      deviceType: isIPhone ? 'iPhone' : 'Non-iPhone',
-      blockingStatus: shouldBlockDevice ? 'BLOCKED' : 'ALLOWED',
-      blockingReason
-    })
-  }, [])
 
   // iPhone: Usar detección ultra-temprana para posicionamiento inmediato
   useEffect(() => {
-    // Skip initialization if device is blocked
-    if (shouldBlockDevice) return
+    // Wait until content is mounted
+    if (!hasMounted) return
     
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
     const isIPhone = (window as any).__isIPhone || /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
@@ -392,7 +312,7 @@ export default function TimelinePage() {
   // Leer permiso previo desde localStorage y omitir contraseña en localhost
   useEffect(() => {
     // Skip if device is blocked
-    if (shouldBlockDevice) return
+    if (!hasMounted) return
     
     try {
       const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
@@ -407,7 +327,7 @@ export default function TimelinePage() {
       const granted = localStorage.getItem('access-granted')
       if (granted === '1') setOverlayVisible(false)
     } catch {}
-  }, [shouldBlockDevice])
+  }, [hasMounted])
 
   // iPhone-específico: Control de scroll más conservador
   useEffect(() => {
@@ -519,7 +439,7 @@ export default function TimelinePage() {
   // Iniciar el chat de Tuenti cuando la sección sea visible
   useEffect(() => {
     // Wait until device is not blocked and content is rendered
-    if (shouldBlockDevice) return
+    if (!hasMounted) return
     
     // Add a small delay to ensure DOM is fully rendered
     const timer = setTimeout(() => {
@@ -545,7 +465,7 @@ export default function TimelinePage() {
     }, 100) // Small delay to ensure DOM is ready
 
     return () => clearTimeout(timer)
-  }, [shouldBlockDevice]) // Depend on shouldBlockDevice
+  }, [hasMounted])
 
   // Lógica del chat de Tuenti
   useEffect(() => {
@@ -920,9 +840,6 @@ export default function TimelinePage() {
   // Render debugging - only if window exists
   if (typeof window !== 'undefined') {
     iOSDebugLog('info', '🎨 RENDER: Component rendering', 'TimelinePage', {
-      shouldBlockDevice,
-      blockingReason,
-      deviceInfo,
       hasMounted
     })
   }
@@ -930,59 +847,9 @@ export default function TimelinePage() {
   return (
     <div className="bg-ivory text-midnight overflow-x-hidden relative">
       {/* iPhone blocking overlay - Fixed background and perfect centering */}
-      {shouldBlockDevice && (() => {
-        if (typeof window !== 'undefined') {
-          iOSDebugLog('info', '🎨 RENDER: Blocking overlay rendering', 'TimelinePage', {
-            shouldBlockDevice,
-            blockingReason
-          })
-        }
-        return (
-        <div className="fixed inset-0 z-[1001]">
-          {/* Background layers - Force image loading and fallback */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ 
-              backgroundImage: `url('/a12.jpg'), linear-gradient(45deg, #8B4513, #A0522D)`,
-              backgroundColor: '#8B4513'
-            }}
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
-          <div className="absolute inset-0 bg-black" style={{ opacity: 0.1 }} />
-          
-          {/* Perfect centering - force full height and flex centering */}
-          <div 
-            className="relative z-10 w-full px-6"
-            style={{ 
-              height: '100dvh',
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'center',
-              minHeight: '100dvh',
-              paddingTop: '15vh'
-            }}
-          >
-            <div className="w-full max-w-2xl mx-auto">
-              {/* Brown box - even larger size */}
-              <div className="bg-terracotta rounded-3xl p-20 shadow-2xl">
-                <Heart className="w-36 h-36 mx-auto mb-16 text-ivory animate-pulse" />
-                <div className="text-center">
-                  <h2 className="text-5xl font-manuscript text-ivory mb-12 leading-tight font-bold">
-                    Estamos trabajando para crear la página para iOS, míralo en Android o Windows 😉
-                  </h2>
-                  <p className="text-3xl text-ivory/90 font-manuscript font-medium">
-                    Gracias por la espera.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        )
-      })()}
       
       {/* Overlay inline SSR (antes del montaje) para evitar FOUC */}
-      {!shouldBlockDevice && !hasMounted && (
+      {!hasMounted && (
         <div className={`fixed inset-0 z-[1000] ${fadeToBlack ? 'pointer-events-none' : ''}`}>
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -1044,7 +911,7 @@ export default function TimelinePage() {
           `}</style>
         </div>
       )}
-      {!shouldBlockDevice && overlayVisible && hasMounted && createPortal((
+      {overlayVisible && hasMounted && createPortal((
         <div className={`fixed inset-0 z-[1000] ${fadeToBlack ? 'pointer-events-none' : ''}`}>
           {/* Fondo imagen adaptativo */}
           <div
@@ -1119,7 +986,7 @@ export default function TimelinePage() {
         </div>
       ), document.body)}
       {/* Static frames overlay, above base content but below modal/video */}
-      {!shouldBlockDevice && !overlayVisible && <FramesOverlay />}
+      {!overlayVisible && <FramesOverlay />}
       {/* Image Modal via portal to escape transformed ancestors */}
       {selectedImage.src && createPortal(
         (
@@ -1349,7 +1216,7 @@ export default function TimelinePage() {
       )}
 
       {/* Main content - only render if device is not blocked */}
-      {!shouldBlockDevice && (
+      {(
         <>
       {/* Hero Section */}
       <section className="relative py-32 bg-gradient-to-br from-terracotta to-sage overflow-hidden" style={{ height: 'var(--hero-height, 680px)' }}>
