@@ -57,6 +57,7 @@ export default function FramesOverlay(): React.JSX.Element | null {
   // Detect slow connection and delay frame loading, but only after FixedZoom signals ready
   useEffect(() => {
     // Check connection speed
+    
     const connection = (navigator as any)?.connection
     const isSlowConnection = connection && (
       connection.effectiveType === 'slow-2g' || 
