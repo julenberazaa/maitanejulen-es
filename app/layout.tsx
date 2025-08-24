@@ -76,7 +76,7 @@ export default function RootLayout({
               -webkit-overflow-scrolling: touch;
             }
 
-            /* iPhone-específico: Override para usar scroll nativo */
+            /* iPhone-específico: Override para usar scroll nativo simple */
             @supports (-webkit-touch-callout: none) {
               /* Esta regla solo se aplica en iOS Safari */
               .ios-scroll-native html {
@@ -94,6 +94,15 @@ export default function RootLayout({
                 height: auto !important;
                 overflow: visible !important;
                 -webkit-overflow-scrolling: auto !important;
+              }
+              
+              /* iPhone: Simplify wrapper to prevent conflicts */
+              .ios-scroll-native #fixed-layout-wrapper {
+                height: auto !important;
+                max-height: none !important;
+                min-height: auto !important;
+                overflow: visible !important;
+                overflow-y: visible !important;
               }
             }
             

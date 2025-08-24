@@ -43,7 +43,36 @@ export default function FixedZoom() {
     }
 
     function applyZoom() {
-      // iPhone: Prevenir ejecuciones múltiples
+      // iPhone: Use simplified approach without "hard cut" to prevent crashes
+      if (isIPhoneDevice) {
+        iOSDebugLog('info', 'iPhone: Using simplified zoom without hard cut', 'FixedZoom')
+        
+        const viewport = window.innerWidth
+        const scale = viewport / EFFECTIVE_BASE_WIDTH
+        const fixedLayout = document.getElementById('fixed-layout') as HTMLElement | null
+        const wrapper = document.getElementById('fixed-layout-wrapper') as HTMLElement | null
+        
+        if (fixedLayout && wrapper) {
+          // Simple scaling without complex height calculations
+          fixedLayout.style.width = `${EFFECTIVE_BASE_WIDTH}px`
+          fixedLayout.style.transform = `scale(${scale})`
+          fixedLayout.style.transformOrigin = 'top left'
+          
+          // Allow natural height - no hard cut
+          wrapper.style.height = 'auto'
+          wrapper.style.maxHeight = 'none'
+          wrapper.style.minHeight = 'auto'
+          wrapper.style.overflow = 'visible'
+          wrapper.style.overflowY = 'visible'
+          
+          iOSDebugLog('info', 'iPhone: Simple scaling applied successfully', 'FixedZoom')
+        }
+        
+        dispatchFixedZoomReadyOnce()
+        return
+      }
+      
+      // iPhone: Prevenir ejecuciones múltiples (for non-iPhone logic below)
       if (isIPhoneDevice && (window as any).__iPhoneFixedZoomComplete) {
         iOSDebugLog('info', 'iPhone: applyZoom skipped - already completed', 'FixedZoom')
         return
@@ -286,18 +315,14 @@ export default function FixedZoom() {
     let timeouts: NodeJS.Timeout[] = []
     
     if (isIPhoneDevice) {
-      // iPhone ULTRA-MINIMAL: Un solo timeout para eliminar race conditions completamente
-      iOSDebugLog('warning', 'iPhone detected - using SINGLE-SHOT strategy to eliminate race conditions', 'FixedZoom')
+      // iPhone SIMPLIFIED: Single execution without aggressive timeouts
+      iOSDebugLog('info', 'iPhone detected - using simplified single execution', 'FixedZoom')
       
-      // CRÍTICO: Solo UN applyZoom después del CSS initial render
+      // Apply zoom once after DOM is ready
       const singleTimeout = setTimeout(() => {
-        iOSDebugLog('info', 'iPhone SINGLE applyZoom execution (500ms)', 'FixedZoom')
+        iOSDebugLog('info', 'iPhone: Single simplified zoom execution', 'FixedZoom')
         applyZoom()
-        
-        // Marcar como completado para evitar interferencias
-        ;(window as any).__iPhoneFixedZoomComplete = true
-        iOSDebugLog('info', 'iPhone FixedZoom marked as complete - no more executions', 'FixedZoom')
-      }, 500) // Tiempo suficiente para que CSS se aplique
+      }, 100) // Minimal delay
       
       timeouts = [singleTimeout]
     } else if (isIOS) {

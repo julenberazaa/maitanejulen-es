@@ -8,6 +8,13 @@ import { iOSDebugLog } from './ios-debug-logger'
 const BASE_DESIGN_WIDTH = 1920
 
 export default function FramesOverlay(): React.JSX.Element | null {
+  // iPhone: Completely disable frames overlay to prevent complexity and crashes
+  const isIPhone = typeof window !== 'undefined' && /iPhone/.test(navigator.userAgent) && !(window as any).MSStream
+  
+  if (isIPhone) {
+    iOSDebugLog('info', 'iPhone detected: FramesOverlay completely disabled', 'FramesOverlay')
+    return null
+  }
   const [isMobile, setIsMobile] = useState(false)
   const [containerHeight, setContainerHeight] = useState('100%')
   const [visibleFrameIds, setVisibleFrameIds] = useState<Set<string>>(new Set())

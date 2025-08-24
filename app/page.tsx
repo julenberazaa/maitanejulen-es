@@ -16,60 +16,7 @@ interface ImageState {
 
 
 export default function TimelinePage() {
-  // IMMEDIATE iPhone blocking - simplified to avoid hydration mismatch
-  const shouldBlockImmediately = (() => {
-    if (typeof window === 'undefined') return true // Block during SSR for safety
-    return false // Let useEffect handle the logic to avoid hydration issues
-  })()
-  
-  // If iPhone detected, show blocking overlay immediately
-  if (shouldBlockImmediately && typeof window !== 'undefined') {
-    iOSDebugLog('info', '🚨 RENDER: Showing immediate iPhone blocking overlay', 'TimelinePage')
-    
-    return (
-      <div className="bg-ivory text-midnight overflow-x-hidden relative">
-        <div className="fixed inset-0 z-[1001]">
-          {/* Background layers */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ 
-              backgroundImage: `url('/a12.jpg'), linear-gradient(45deg, #8B4513, #A0522D)`,
-              backgroundColor: '#8B4513'
-            }}
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom_right,_#E2A17A,_#BB8269,_#936357,_#432534)] opacity-90" />
-          <div className="absolute inset-0 bg-black" style={{ opacity: 0.1 }} />
-          
-          {/* Perfect centering */}
-          <div 
-            className="relative z-10 w-full px-6"
-            style={{ 
-              height: '100dvh',
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'center',
-              minHeight: '100dvh',
-              paddingTop: '15vh'
-            }}
-          >
-            <div className="w-full max-w-2xl mx-auto">
-              <div className="bg-terracotta rounded-3xl p-20 shadow-2xl">
-                <Heart className="w-36 h-36 mx-auto mb-16 text-ivory animate-pulse" />
-                <div className="text-center">
-                  <h2 className="text-5xl font-manuscript text-ivory mb-12 leading-tight font-bold">
-                    Estamos trabajando para crear la página para iOS, míralo en Android o Windows 😉
-                  </h2>
-                  <p className="text-3xl text-ivory/90 font-manuscript font-medium">
-                    Gracias por la espera.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // NO MORE iPhone blocking - allow access to all devices
 
   const heroRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLIFrameElement>(null)
@@ -571,24 +518,34 @@ export default function TimelinePage() {
 
   // Iniciar el chat de Tuenti cuando la sección sea visible
   useEffect(() => {
-    const section = document.getElementById('conocidos-2010')
-    if (!section) return
+    // Wait until device is not blocked and content is rendered
+    if (shouldBlockDevice) return
+    
+    // Add a small delay to ensure DOM is fully rendered
+    const timer = setTimeout(() => {
+      const section = document.getElementById('conocidos-2010')
+      if (!section) {
+        console.warn('Tuenti section not found, will retry...')
+        return
+      }
 
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setTuentiStarted(true)
-            obs.disconnect()
-          }
-        })
-      },
-      { threshold: 0.3 }
-    )
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setTuentiStarted(true)
+              obs.disconnect()
+            }
+          })
+        },
+        { threshold: 0.3 }
+      )
 
-    observer.observe(section)
-    return () => observer.disconnect()
-  }, [])
+      observer.observe(section)
+    }, 100) // Small delay to ensure DOM is ready
+
+    return () => clearTimeout(timer)
+  }, [shouldBlockDevice]) // Depend on shouldBlockDevice
 
   // Lógica del chat de Tuenti
   useEffect(() => {
